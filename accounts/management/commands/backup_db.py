@@ -8,7 +8,7 @@
 
 #     def handle(self, *args, **options):
 #         print("he")
-#         backup_dir = 'D:/AccountStatements/accounts/DB_Backups'
+#         backup_dir = 'D:\expense_manager\backup'
 #         if not os.path.exists(backup_dir):
 #             os.makedirs(backup_dir)
 

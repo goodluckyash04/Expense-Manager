@@ -1,5 +1,5 @@
 accounts/templates/example.html
-
+backup/
 
 # Ignore database files
 *.sqlite3
