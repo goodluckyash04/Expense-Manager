@@ -1,0 +1,226 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+<div class="container-fluid">
+    <div class="row ">
+        <div class="col-12 col-md-4 pt-5 mb-3 px-4">
+        <form action="/addexpense/" method="post">
+            {% csrf_token %}
+
+            <div class="form-check form-check-inline mb-3">
+            <input
+                class="form-check-input"
+                type="radio"
+                name="payment_type"
+                id="Expense"
+                value="Expense"
+                onchange="EMIActivate()"
+                required
+            />
+            <label class="form-check-label" for="Expense">Expense</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+            <input
+                class="form-check-input"
+                type="radio"
+                name="payment_type"
+                id="Income"
+                onchange="EMIActivate()"
+                value="Income"
+            />
+            <label class="form-check-label" for="Income">Income</label>
+
+            </div>
+            <div class="form-check form-check-inline">
+            <input
+            on
+                class="form-check-input"
+                type="radio"
+                name="payment_type"
+                id="EMI"
+                onchange="EMIActivate()"
+                value="EMI"
+            />
+            <label class="form-check-label" for="Income">Loan</label>
+            </div>
+
+            <select
+            class="form-select mb-3"
+            id="category"
+            name="category"
+            aria-label="Default select example"
+            >
+            <option selected>-- Category --</option>
+            <option value="Loan">Loan</option>
+            <option value="Personal">Personal</option>
+            <option value="Food">Food</option>
+            <option value="Shopping">Shopping</option>
+            </select>
+
+            <div class="mb-3">
+            <input
+                type="datetime-local"
+                class="form-control"
+                name="payment_date"
+                id="date"
+                aria-describedby="emailHelp"
+            />
+            </div>
+
+            <div class="mb-3">
+            <input
+                type="number"
+                class="form-control"
+                name="amount"
+                placeholder="Amount"
+                id="amount"
+                aria-describedby="emailHelp"
+                required
+            />
+            </div>
+
+            <select
+            class="form-select mb-3"
+            name="payment_for"
+            id = "payment_for"
+            aria-label="Default select example"
+            onchange="paymentFor()"
+            >
+            <option selected>- Payment For - </option>
+            <option value="Mom">Mom</option>
+            <option value="Dad">Dad</option>
+            <option value="Myself">Myself</option>
+            <option value="Other">Other</option>
+            </select>
+            <div class="mb-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    name="payment_for"
+                    style="display: none;"
+                    id="payment_for_text"
+                    placeholder="payment_for"
+                    aria-describedby="emailHelp"
+                />
+                </div>
+            <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                name="description"
+                placeholder="Expense Description"
+                id="description"
+                required
+            />
+            </div>
+            <div class="mb-3" >
+            <input
+                type="text"
+                class="form-control"
+                name="loan_name"
+                style="display:none"
+                placeholder="Loan Name"
+                id="loan_name"
+                value=""
+                
+            />
+            </div>
+
+            <button
+            id = "submitButton"
+            type="submit"
+            style="background-color: #2b6b32; border: none"
+            class="btn btn-primary"
+            >
+            Add
+            </button>
+           
+        </form>
+        </div>
+        <div class="col-12 col-md-8 px-3 table-responsive" data-simplebar style="max-height:90vh; height: 90vh;">
+        <table class="table">
+            <thead class= "pt-2" style="
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            ">
+            <tr>
+                <th scope="col"><a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+                </th>
+                <th scope="col">Category</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+                <th scope="col">Paid_For</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if paymentData %} {% for i in paymentData %}
+            <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td>{{i.category}}</td>
+                {% if i.payment_type == 'Expense' %}
+                <td>-{{i.amount}}</td>
+                {% else %}
+                <td>{{i.amount}}</td>
+                {% endif %}
+                <td>{{i.payment_date | date:"d M, Y" }}</td>
+                <td>{{i.payment_for}}</td>
+                <td>{{i.description}}</td>
+                <td><a href={% url 'editEntry' i.id %}><i class="fa-solid text-warning fa-pen"></i></a></td>
+                <td><a href={% url 'deleteentry' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
+            </tr>
+            {% endfor %} {% endif %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div> 
+
+{% endblock body %}
+{% block script %}
+<script>
+    function paymentFor(){
+        var pay = document.getElementById("payment_for")
+        var other = document.getElementById("payment_for_text")
+
+        if (pay.value == "Other"){
+            pay.removeAttribute("name")
+            other.setAttribute("name","payment_for")
+            other.removeAttribute('style')
+        }else{
+            other.removeAttribute("name")
+            other.style.display= "none"
+            pay.setAttribute("name","payment_for")
+        }
+    }
+  function EMIActivate(){
+    var EMI = document.getElementById("EMI")
+    var btn = document.getElementById("submitButton")
+    var desc = document.getElementById("description")
+    var cate = document.getElementById("category")
+    var p_for = document.getElementById("payment_for")
+    var loan = document.getElementById("loan_name")
+    if (EMI.checked){
+        btn.textContent = "Convert To EMI"
+        desc.placeholder = "No. of EMIS"
+        desc.type = "number"
+        cate.disabled = true
+        p_for.disabled = true
+        loan.removeAttribute("style")
+    } else {
+         btn.textContent = "Add"
+        desc.placeholder = "Expense Description"
+        desc.type = "text"
+        cate.disabled = false
+        p_for.disabled = false
+        loan.style.display = "none"
+
+    }
+    
+
+  }
+</script>
+{% endblock script %}
+

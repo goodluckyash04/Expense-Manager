@@ -1,0 +1,53 @@
+{% extends 'index.html' %} {% load static %} {% block body %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-10 col-md-4">
+      <form
+        method="post"
+        action="/"
+        class="border rounded p-5"
+        style="margin-top: 45%; background-color: #abf3b3"
+      >
+      {% if msg|first in "PU" %}
+      <p class="text-success mb-0">{{msg}}</p>  
+      {% else %}
+      <p class="text-danger mb-0">{{msg}}</p>  
+      {% endif %}
+        {% csrf_token %}
+        <h3 class="mb-3 text-success">User Login</h3>
+        <div class="mb-3">
+          <input
+            type="text"
+            placeholder="Username"
+            class="form-control"
+            name="username"
+            id="username"
+            aria-describedby="emailHelp"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            name="password"
+            id="password"
+          />
+        </div>
+        <div class="mb-3">
+          <button
+            type="submit"
+            class="btn btn-primary form-control"
+            style="background-color: #2b6b32; border: none"
+          >
+            Login
+          </button>
+        </div>
+        <a class="text-success" href="/signup"> Create Account </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="text-success" href="/forgotPassword"> Forgot Password </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock body %}

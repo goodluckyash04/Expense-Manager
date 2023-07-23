@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block header %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #abf3b3 !important;">
+    <div class="container-fluid">
+      <a class="navbar-brand " href="/home/">Go-Expense</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-between
+      -- Category --
+      " id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active " aria-current="page" href="/home/">Home</a>
+          </li>
+          
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Add
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/addexpense/">Expense</a></li>
+            <li><a class="dropdown-item" href="/addTask/">Task</a></li>
+            <li><a class="dropdown-item" href="/loan/">Loan</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Reports
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/reports/">Finance Report</a></li>
+            <li><a class="dropdown-item" href="/taskReports/">Tasks Report</a></li>
+            <li><a class="dropdown-item" href="/loanReport/">Loan Report</a></li>
+          </ul>
+        </li>
+
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">{{user.name}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/changePassword/"><i class="fa-solid text-secondary fa-key"></i></a>
+          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout/"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </li>
+          </ul>
+      </div>
+    </div>
+  </nav>
+{% endblock header %}

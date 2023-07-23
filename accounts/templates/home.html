@@ -1,0 +1,37 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+
+<div class="row m-3 ">
+    <div class="col-12 col-md-4 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-success">EXPENSE</h5>
+          <p class="card-text text-secondary">Maintain Your Day to Day Expense</p>
+          <a href="/addexpense/" class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
+          <a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-success">TASK</h5>
+          <p class="card-text text-secondary">Don't Stress Your Brain Add Your ToDos Here </p>
+          <a href="/addTask/" class="btn btn-primary" style=" background-color:rgb(77, 168, 104);" ><i class="fa-solid fa-circle-plus"></i></a>
+          <a href="/taskReports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-success">LOAN</h5>
+          <p class="card-text text-secondary">Create Your Virtual Loan To keep track of EMIS</p>
+          <a href="/loan/" class="btn btn-secondary" style=" background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
+          <a href="/loanReport/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+    {% endblock body %}
+

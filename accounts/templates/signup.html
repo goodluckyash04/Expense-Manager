@@ -1,0 +1,80 @@
+{% extends 'index.html' %} {% load static %} {% block body %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-10 col-md-4">
+      <form
+        method="post"
+        action="/signup/"
+        class="border rounded p-5"
+        style="margin-top: 25%; background-color: #abf3b3"
+      >
+      <p class="text-danger mb-0">{{msg}}</p>  
+        {% csrf_token %}
+        <h3 class="mb-3 text-success">User Signup</h3>
+        <div class="mb-3">
+          <input
+            type="text"
+            placeholder="Name"
+            class="form-control"
+            name="name"
+            id="name"
+            aria-describedby="emailHelp"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="text"
+            placeholder="Username"
+            class="form-control"
+            name="username"
+            id="username"
+            aria-describedby="emailHelp"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="email"
+            placeholder="Email"
+            class="form-control"
+            name="email"
+            id="email"
+            aria-describedby="emailHelp"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="password"
+            placeholder="Password"
+            class="form-control"
+            name="password"
+            id="password"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="password"
+            placeholder="Re-Enter Password"
+            class="form-control"
+            name="rpassword"
+            id="rpassword"
+          />
+        </div>
+        <div class="mb-3">
+          <button
+            type="submit"
+            class="btn btn-primary form-control"
+            style="background-color: #2b6b32; border: none"
+          >
+            Signup
+          </button>
+        </div>
+        <a class="text-success" href="/">
+            Already have an Account?
+          </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock body %}

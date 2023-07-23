@@ -1,0 +1,129 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+
+<div class="row mx-3 mt-3 mb-2 justify-content-end" >
+    
+  <div class="col-9 col-md-3 text-end mb-3 ">
+    <form action="/loanReport/" method="post">
+    {% csrf_token %}
+    <select
+    class="form-select mb-3"
+    name="loan"
+    id = "loan"
+    onchange= "if(this.value != 0) { this.form.submit(); }"
+    aria-label="Default select example"
+   
+    >
+    <option selected>-- Loans --</option>
+    {% for i in loanData  %}
+    <option value='{{i.title}}'>{{i.title}}</option>
+    {% endfor %}
+   
+    </select>
+</form>
+  </div>
+  <div class="col-3 col-md-1">
+    <button type="button" onclick="generateCSV()" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
+
+  </div>
+</div>
+<div><h5 class="text-center text-success" id = "key">{{loan_amount}}- ₹{{loan_amount.amount}}</h5></div>
+<div class="row mx-2 table-responsive">
+  <table id ='myTable' class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Loan</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Paid_On</th>
+        <th scope="col">Detail</th>
+        <th scope="col"></th>
+        
+       
+      </tr>
+    </thead>
+    <tbody>
+      {% if loan_amount %}
+        <tr>
+            <td>-</td>
+            <td>{{loan_amount}}</td>
+        <td>{{loan_amount.amount}}</td>
+        <td>{{loan_amount.started_on}}</td>
+        <td>Loan Started</td>
+        <td><a href={% url 'deleteLoan' loan_amount.id %}><i class="fa-solid text-info fa-trash"></i></a></td>
+        </tr>
+        {% endif %}
+      {% if emiData %} {% for i in emiData %}
+      <tr>
+        <td scope="row">{{forloop.counter}}</td>
+        <td>{{i.loan}}</td>
+        <td>-{{i.amount}}</td>
+        <td>{{i.paid_on}}</td>
+        <td>{{i.note}}</td>
+        <td><a href={% url 'deleteEmi' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
+        
+      </tr>
+      {% endfor %}{% else %}
+      <td colspan="8" class="text-center">No Records found</td>
+      {% endif %}
+    </tbody>
+    <tfoot>
+      <tr >
+        <td class="text-center border-0" colspan="2"><b>Total Remaining<b></td>
+        <td class=" border-0"><b>₹{{total}}</b></td>
+        <td class=" border-0" colspan="2"></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+
+{% endblock body %}
+
+{% block script %}
+<script>
+  function generateCSV() {
+    var table = document.getElementById("myTable");
+    var csvContent = "data:text/csv;charset=utf-8,";
+    var cont = document.getElementById("key").textContent.split('-');
+    console.log(cont)
+    // Extract the table headers
+    var headers = table.getElementsByTagName("th");
+    var headerValues = [];
+    for (var i = 0; i < headers.length; i++) {
+      headerValues.push(headers[i].textContent);
+    }
+    csvContent += '"' + headerValues.join('","') + '"\r\n';
+  
+    // Extract the table data
+    var rows = table.getElementsByTagName("tr");
+    for (var i = 0; i < rows.length; i++) {
+      var cells = rows[i].getElementsByTagName("td");
+      var rowValues = [];
+      
+      // Extract cell values
+      for (var j = 0; j < cells.length; j++) {
+        // Wrap date values in double quotes
+        if (j === 2) {
+          rowValues.push('"' + cells[j].textContent + '"');
+        } else {
+          rowValues.push(cells[j].textContent);
+        }
+      }
+  
+      // Format the row as CSV and add to the content
+      csvContent += rowValues.join(",") + "\r\n";
+    }
+  
+    // Create a download link for the CSV file
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${cont[0]}.csv`);
+    document.body.appendChild(link);
+  
+    // Trigger the link to start the download
+    link.click();
+  }
+
+</script>
+{% endblock script %}
