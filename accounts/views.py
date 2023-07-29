@@ -262,8 +262,9 @@ def filter_report(request):
             if request.POST["category"]:
                 filterData &= Q(category=request.POST["category"])
             if request.POST["startdate"] and request.POST["enddate"]:
-                filterData &= Q(payment_date__range=[request.POST["startdate"], request.POST['enddate']])
-
+                endDate = datetime.strptime(request.POST['enddate'],("%Y-%m-%d"))
+                toDate = endDate + timedelta(days=1)
+                filterData &= Q(payment_date__range=[request.POST["startdate"], toDate.strftime("%Y-%m-%d")])
             paymentData = Payment.objects.filter(filterData)
         else:
             if request.POST["payment_type"]:
