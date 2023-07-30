@@ -10,7 +10,7 @@ import random,string
 from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from django.urls import reverse
-
+import calendar
 
 # ...........................................Home Page..................................................
 
@@ -218,6 +218,36 @@ def reports(request):
         return render(request,"reports.html",{"user":user,"paymentData":paymentData,"total":total})
     else:
         return redirect("login")
+    
+def currentMonthreports(request):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+        paymentData = Payment.objects.filter(Q(payment_by = user ) & Q(payment_date__month=current_month) & Q(payment_date__year=current_year))
+        current_month_name = calendar.month_name[current_month]
+        total = 0
+        expenseTotal = 0
+        for i in paymentData:
+            if i.payment_type == "Expense":
+                total-=i.amount
+            else:
+                total+=i.amount
+            if i.category != "Loan":
+                if i.payment_type == "Expense":
+                    expenseTotal-=i.amount
+                else:
+                    expenseTotal+=i.amount
+            else:
+                if i.payment_for == "Myself":
+                    if i.payment_type == "Expense":
+                        expenseTotal-=i.amount
+                    else:
+                        expenseTotal+=i.amount
+        return render(request,"reports.html",{"user":user,"paymentData":paymentData,"expenseTotal":expenseTotal,"total":total,"key":f"{current_month_name} {current_year}"})
+    else:
+        return redirect("login")
+
 
 
 def search_report(request):
@@ -237,11 +267,13 @@ def search_report(request):
         paymentData2 =Payment.objects.filter(payment_by = user ).filter(description__icontains= value)
         paymentData = list(chain(paymentData1,paymentData2))
     total = 0
+    expenseTotal = 0
     for i in paymentData:
         if i.payment_type == "Expense":
             total-=i.amount
         else:
             total+=i.amount
+        
     return render(request,"reports.html",{"user":user,"paymentData":paymentData,"total":total,"key":value})
 
 
@@ -277,13 +309,25 @@ def filter_report(request):
             paymentData =Payment.objects.filter(filterData).exclude(payment_for__in = ["Mom","Dad","Myself"] )
 
         total = 0
+        expenseTotal = 0    
         for i in paymentData:
             if i.payment_type == "Expense":
                 total-=i.amount
             else:
                 total+=i.amount
-       
-        return render(request,"reports.html",{"user":user,"paymentData":paymentData.order_by("payment_date"),"total":total,"data":key})
+            if i.category != "Loan":
+                if i.payment_type == "Expense":
+                    expenseTotal-=i.amount
+                else:
+                    expenseTotal+=i.amount
+            else:
+                if i.payment_for == "Myself":
+                    if i.payment_type == "Expense":
+                        expenseTotal-=i.amount
+                    else:
+                        expenseTotal+=i.amount
+                    
+        return render(request,"reports.html",{"user":user,"paymentData":paymentData.order_by("payment_date"),"total":total,"expenseTotal":expenseTotal,"data":key})
     else:
         return redirect("login")
         

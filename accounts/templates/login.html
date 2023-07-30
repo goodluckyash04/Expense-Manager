@@ -25,7 +25,7 @@
             aria-describedby="emailHelp"
           />
         </div>
-        <div class="mb-3">
+        <div class="mb-3 input-group flex-nowrap">
           <input
             type="password"
             placeholder="Password"
@@ -33,7 +33,11 @@
             name="password"
             id="password"
           />
+          <span class="input-group-text" id="addon-wrapping"><i class="fa-solid fa-eye text-success" id="showPasswordButton" onclick="togglePasswordVisibility()"></i>
+          </span>
+
         </div>
+
         <div class="mb-3">
           <button
             type="submit"
@@ -45,9 +49,31 @@
         </div>
         <a class="text-success" href="/signup"> Create Account </a>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <a class="text-success" href="/forgotPassword"> Forgot Password </a>
+        <a class="text-success" href="/forgotPassword"> Forgot Password</a>
       </form>
     </div>
   </div>
 </div>
 {% endblock body %}
+
+{% block script %}
+<script>
+  function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    var showPasswordButton = document.getElementById("showPasswordButton");
+    
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      showPasswordButton.classList.remove("fa-eye")
+      showPasswordButton.classList.add("fa-eye-slash")
+     
+    } else {
+      passwordInput.type = "password";
+      showPasswordButton.classList.remove("fa-eye-slash")
+      showPasswordButton.classList.add("fa-eye")
+    }
+  }
+  </script>
+  
+  
+{% endblock script %}

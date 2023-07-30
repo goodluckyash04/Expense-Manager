@@ -19,6 +19,7 @@ urlpatterns = [
     path("editEntry/<int:id>",editEntry,name="editEntry"),    
     path("deleteentry/<int:id>",deleteentry,name="deleteentry"),    
     path("reports/",reports,name="reports"),
+    path("currentMonthreports/",currentMonthreports,name="currentMonthreports"),
     path("search/",search_report,name="search_report"),
     path("filter/",filter_report,name="filter_report"),
 

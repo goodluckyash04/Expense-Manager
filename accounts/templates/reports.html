@@ -17,6 +17,7 @@
           <button class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
       </form>
     </div>
+ 
     <div class="col-9 col-md-1 ">
       <a href= "/reports/" class="btn btn btn-outline-danger form-control">Clear</a>
     </div>
@@ -69,7 +70,7 @@
     <tbody>
       {% if paymentData %} {% for i in paymentData %}
       <tr>
-        <td><input type="checkbox" name="record_ids" value={{ i.id }}></td>
+        <td><input type="checkbox" onchange="reviseTotal()" id="select" name="record_ids" value={{ i.id }}></td>
         <td scope="row">{{forloop.counter}}</td>
         <td>{{i.payment_type}}</td>
         <td>{{i.category}}</td>
@@ -92,9 +93,9 @@
     </tbody>
     <tfoot>
       <tr >
-        <td class="text-center border-0" colspan="4"><b>Total<b></td>
-        <td class=" border-0">{{total | floatformat:2}}</td>
-        <td class=" border-0" colspan="7"></td>
+        <td class="text-center border-0"  colspan="4"><b>Total<b></td>
+        <td class=" border-0" id="total">{{total | floatformat:2}}</td>
+        <td class=" border-0" colspan="7">{{expenseTotal | floatformat:2}}</td>
       </tr>
     </tfoot>
   </table>
@@ -112,8 +113,7 @@
       </div>
       <div class="modal-body">
               <form action="/filter/" method="post">
-                  {% csrf_token %}
-                  
+                  {% csrf_token %}         
                   <select
                     class="form-select text-center mb-2"
                     name="payment_type"
@@ -196,7 +196,7 @@
           rowValues.push(cells[j].textContent);
         }
       }
-  
+      
       // Format the row as CSV and add to the content
       csvContent += rowValues.join(",") + "\r\n";
     }
@@ -218,6 +218,15 @@
       checkboxes[i].checked = this.checked;
     }
   });
+
+  function reviseTotal(){
+    actualTotal = document.getElementById("total")
+    console.log(actualTotal.textContent)
+    newValue = document.getElementById("select")
+    
+    console.log(newValue.parentElement.parentElement.children[4])
+
+  }
 
 </script>
 {% endblock script %}

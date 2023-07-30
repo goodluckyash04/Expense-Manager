@@ -8,6 +8,7 @@
           <p class="card-text text-secondary">Maintain Your Day to Day Expense</p>
           <a href="/addexpense/" class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
           <a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+          <a href="/currentMonthreports/" class="btn btn-secondary" id="current-month" onload="getCurrentMonthName()" style="background-color:rgb(77, 168, 104);"></a>
         </div>
       </div>
     </div>
@@ -35,3 +36,27 @@
   </div>
     {% endblock body %}
 
+{% block script%}
+<script>
+function getCurrentMonthName() {
+  const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+  ];
+
+  const currentDate = new Date();
+  const currentMonthNumber = currentDate.getMonth();
+  const currentYearNumber = currentDate.getFullYear();
+  console.log(currentYearNumber)
+  //const currentDate = new Date();
+  //const currentMonthNumber = currentDate.getMonth() + 1; // Months are 0-indexed
+  //return currentMonthNumber.toString().padStart(2, '0');
+    //    }
+
+  return months[currentMonthNumber].substr(0, 3).toUpperCase()+"'" + currentYearNumber.toString().slice(-2);
+}
+
+// Update the HTML content with the current month name
+document.getElementById("current-month").textContent = getCurrentMonthName();
+</script>
+{% endblock script%}
