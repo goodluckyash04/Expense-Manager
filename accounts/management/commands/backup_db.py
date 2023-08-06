@@ -18,41 +18,103 @@
 #             call_command('dumpdata', stdout=f)
 #         print("Backup data generated successfully.")
 
-# Without Storing to system
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
-from django.core.mail import EmailMessage,send_mail
-import io
-import traceback;
-import datetime
-from django.conf import settings
 
+
+
+
+
+# Without Storing to system
+# from django.core.management.base import BaseCommand
+# from django.core.management import call_command
+# from django.core.mail import EmailMessage,send_mail
+# import io
+# import traceback;
+# import datetime
+# from django.conf import settings
+
+
+# class Command(BaseCommand):
+#     help = 'Backup the database and send as an email attachment'
+#     def handle(self, *args, **options):
+#         try:
+#             print("Starting the backup process...")
+#             in_memory_file = io.BytesIO()  # Use io.StringIO() for text-based data
+            
+#             call_command('dumpdata', stdout=in_memory_file)
+#             print("Backup data generated successfully.")
+#             # Sending email with the backup data as an attachment
+#             subject = 'Daily Database Backup'
+#             message = 'Please find the attached database backup file.'
+#             from_email = settings.EMAIL_HOST_USER  # Replace with your email address
+#             recipient_list = ['yash.goodluck4@gmail.com']  # Replace with the recipient's email address
+#             email = EmailMessage(subject, message, from_email, recipient_list)
+#             backup_filename = f'db_backup_{datetime.datetime.now().strftime("%Y-%m-%d")}.json'
+#             email.attach(backup_filename, in_memory_file.getvalue(), 'application/json')
+            
+#             email_sent = email.send()
+#             if email_sent:
+#                 print("Email sent successfully.")
+#             else:
+#                 print("Email sending failed.")
+#         except:
+#             print(traceback.print_exc())    
+
+
+
+
+
+
+import io
+import os
+from django.core.management import call_command
+from django.core.mail import EmailMessage
+from django.core.management.base import BaseCommand
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Backup the database and send as an email attachment'
+
     def handle(self, *args, **options):
         try:
             print("Starting the backup process...")
-            in_memory_file = io.BytesIO()  # Use io.StringIO() for text-based data
+            in_memory_file = io.BytesIO()
             
-            call_command('dumpdata', stdout=in_memory_file)
+            # Perform a database backup
+            db_file_path = settings.DATABASES['default']['NAME']  # Assuming the default database settings
+            with open(db_file_path, 'rb') as f:
+                in_memory_file.write(f.read())
+
             print("Backup data generated successfully.")
-            # Sending email with the backup data as an attachment
+
+            # Sending email with the database backup file as an attachment
             subject = 'Daily Database Backup'
             message = 'Please find the attached database backup file.'
             from_email = settings.EMAIL_HOST_USER  # Replace with your email address
             recipient_list = ['yash.goodluck4@gmail.com']  # Replace with the recipient's email address
             email = EmailMessage(subject, message, from_email, recipient_list)
-            backup_filename = f'db_backup_{datetime.datetime.now().strftime("%Y-%m-%d")}.json'
-            email.attach(backup_filename, in_memory_file.getvalue(), 'application/json')
             
+            backup_filename = os.path.basename(db_file_path)
+            email.attach(backup_filename, in_memory_file.getvalue(), 'application/octet-stream')
+
             email_sent = email.send()
             if email_sent:
                 print("Email sent successfully.")
             else:
                 print("Email sending failed.")
-        except:
-            print(traceback.print_exc())    
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
+
+
+
+
+
+
+
+
+
+
 
 # python manage.py loaddata /path/to/db_backup_YYYY-MM-DD.json
 
