@@ -15,6 +15,7 @@
              {% if entry.payment_type == "Expense" %}
              checked
              {% endif %}
+             onchange="payType()"
             required
           />
           <label class="form-check-label" for="Expense">Expense</label>
@@ -30,17 +31,35 @@
             {% if entry.payment_type == "Income" %}
             checked
             {% endif %}
+            onchange="payType()"
           />
           <label class="form-check-label" for="Income">Income</label>
         </div>
       
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="payment_type"
+            id="Loan"
+            value="Loan"
+            {% if entry.payment_type == "Loan" %}
+            checked
+            {% endif %}
+            onchange="payType()"
+          />
+          <label class="form-check-label" for="Income">Loan</label>
+        </div>
+      
         <select
           class="form-select mb-3"
+          id = "category"
           name="category"
+          onchange="loanCategory()"
           aria-label="Default select example"
         >
-          <option  {% if entry.category == "" %} selected {% endif %}>-- Category --</option>
-          <option {% if entry.category == "Loan" %}selected{% endif %} value="Loan">Loan</option>
+          <option  {% if entry.category == "" %} selected {% endif %} value="">-- Category --</option>
+          <option {% if entry.category == "M_Loan" or "Salary"  %}selected{% endif %} value="M_Loan">Loan</option>
           <option {% if entry.category == "Personal" %}selected{% endif %} value="Personal">Personal</option>
           <option {% if entry.category == "Food" %}selected{% endif %} value="Food">Food</option>
           <option {% if entry.category == "Shopping" %}selected{% endif %} value="Shopping">Shopping</option>
@@ -64,7 +83,7 @@
             name="amount"
             placeholder="Amount"
             value={{entry.amount}}
-            id="exampleInputEmail1"
+            id="amount"
             aria-describedby="emailHelp"
             required
           />
@@ -78,11 +97,12 @@
             onchange="paymentFor()"
             
             >
-            <option  {% if entry.payment_for == "" %} selected {% endif %}>- Payment For -</option>
+            <option  {% if entry.payment_for == "" %} selected {% endif %} value="">- Payment For -</option>
             <option {% if entry.payment_for == "Mom" %}selected{% endif %} value="Mom">Mom</option>
             <option {% if entry.payment_for == "Dad" %}selected{% endif %} value="Dad">Dad</option>
             <option {% if entry.payment_for == "Myself" %}selected{% endif %} value="Myself">Myself</option>
-            {% with 'Mom, Dad, Myself' as valid_options %}
+            <option {% if entry.payment_for == "Home" %}selected{% endif %} value="Home">Home</option>
+            {% with 'Mom, Dad, Myself, Home' as valid_options %}
             <option {% if entry.payment_for not in valid_options %}selected{% endif %} value="Other">Other</option>
             {% endwith %}  
           </select>
@@ -93,7 +113,7 @@
                     name="payment_for"
                     style="display:none;"
                     id="payment_for_text"
-                    {% with 'Mom, Dad, Myself' as valid_options %}
+                    {% with 'Mom, Dad, Myself, Home' as valid_options %}
                    {% if entry.payment_for not in valid_options %} value= {{entry.payment_for}} {% else %} value=""{% endif %}
                    {% endwith %} 
                    placeholder="payment_for"
@@ -113,6 +133,19 @@
           />
         </div>
 
+        <div class="mb-3" >
+          <input
+              type="text"
+              class="form-control"
+              name="loan_name"
+              style="display:none"
+              placeholder="Loan Name"
+              id="loan_name"
+              value="{{entry.description}}"
+          />
+          </div>
+
+
         <button
           type="submit"
           style="background-color: #2b6b32; border: none"
@@ -127,35 +160,5 @@
 {% endblock body %}
 
 {% block script %}
-<script>
-    function paymentFor(){
-        var pay = document.getElementById("payment_for")
-        var other = document.getElementById("payment_for_text")
-
-        if (pay.value == "Other"){
-            pay.removeAttribute("name")
-            other.setAttribute("name","payment_for")
-            other.removeAttribute('style')
-        }else{
-            other.removeAttribute("name")
-            other.style.display= "none"
-            pay.setAttribute("name","payment_for")
-        }
-    }
-  function payment(){
-    console.log("hello")
-    var pay = document.getElementById("payment_for")
-    var other = document.getElementById("payment_for_text")
-    if (pay.value == "Other"){
-      pay.removeAttribute("name")
-      other.setAttribute("name","payment_for")
-      other.removeAttribute('style')
-  }else{
-      other.removeAttribute("name")
-      other.style.display= "none"
-      pay.setAttribute("name","payment_for")
-  }
-  }
-  window.onload = payment;
-</script>
+<script src="../static/js/editExpense.js"></script>
 {% endblock script%}

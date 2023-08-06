@@ -1,30 +1,34 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
+
+
 <div class="container-fluid">
     <div class="row ">
         <div class="col-12 col-md-4 pt-5 mb-3 px-4">
         <form action="/addexpense/" method="post">
             {% csrf_token %}
-
+            
+            <!--------------------------------- Payment Type -------------------------------------->
+            
             <div class="form-check form-check-inline mb-3">
-            <input
+                <input
                 class="form-check-input"
                 type="radio"
                 name="payment_type"
                 id="Expense"
                 value="Expense"
-                onchange="EMIActivate()"
+                onchange="payType()"
                 required
             />
             <label class="form-check-label" for="Expense">Expense</label>
             </div>
-
+            
             <div class="form-check form-check-inline">
             <input
                 class="form-check-input"
                 type="radio"
                 name="payment_type"
                 id="Income"
-                onchange="EMIActivate()"
+                onchange="payType()"
                 value="Income"
             />
             <label class="form-check-label" for="Income">Income</label>
@@ -32,29 +36,33 @@
             </div>
             <div class="form-check form-check-inline">
             <input
-            on
                 class="form-check-input"
                 type="radio"
                 name="payment_type"
-                id="EMI"
-                onchange="EMIActivate()"
-                value="EMI"
+                id="Loan"
+                onchange="payType()"
+                value="Loan"
             />
             <label class="form-check-label" for="Income">Loan</label>
             </div>
+            
+            <!--------------------------------- Category -------------------------------------->
 
             <select
             class="form-select mb-3"
             id="category"
             name="category"
+            onchange="loanCategory()"
             aria-label="Default select example"
             >
-            <option selected>-- Category --</option>
-            <option value="Loan">Loan</option>
+            <option selected value="">-- Category --</option>
+            <option value="M_Loan">Loan</option>
             <option value="Personal">Personal</option>
             <option value="Food">Food</option>
             <option value="Shopping">Shopping</option>
             </select>
+
+            <!--------------------------------- Payment Date-------------------------------------->
 
             <div class="mb-3">
             <input
@@ -64,7 +72,9 @@
                 id="date"
                 aria-describedby="emailHelp"
             />
-            </div>
+            </div> 
+
+            <!--------------------------------- Payment Amount -------------------------------------->
 
             <div class="mb-3">
             <input
@@ -78,6 +88,8 @@
             />
             </div>
 
+            <!--------------------------------- Payment For -------------------------------------->
+
             <select
             class="form-select mb-3"
             name="payment_for"
@@ -85,12 +97,16 @@
             aria-label="Default select example"
             onchange="paymentFor()"
             >
-            <option selected>- Payment For - </option>
+            <option selected>- Payment For -</option>
             <option value="Mom">Mom</option>
             <option value="Dad">Dad</option>
             <option value="Myself">Myself</option>
+            <option value="Home">Home</option>
             <option value="Other">Other</option>
             </select>
+            
+            <!--------------------------------- If Selected Others -------------------------------------->
+            
             <div class="mb-3">
                 <input
                     type="text"
@@ -102,6 +118,8 @@
                     aria-describedby="emailHelp"
                 />
                 </div>
+
+            <!--------------------------------- Payment Description -------------------------------------->
             <div class="mb-3">
             <input
                 type="text"
@@ -112,6 +130,8 @@
                 required
             />
             </div>
+            
+            <!--------------------------------- If Selected Loan -------------------------------------->
             <div class="mb-3" >
             <input
                 type="text"
@@ -121,9 +141,10 @@
                 placeholder="Loan Name"
                 id="loan_name"
                 value=""
-                
             />
             </div>
+
+            <!--------------------------------- Submit -------------------------------------->
 
             <button
             id = "submitButton"
@@ -136,6 +157,11 @@
            
         </form>
         </div>
+
+        
+        <!-------------------------------------------- Report Section --------------------------------------->
+
+
         <div class="col-12 col-md-8 px-3 table-responsive" data-simplebar style="max-height:90vh; height: 90vh;">
         <table class="table">
             <thead class= "pt-2" style="
@@ -180,47 +206,6 @@
 
 {% endblock body %}
 {% block script %}
-<script>
-    function paymentFor(){
-        var pay = document.getElementById("payment_for")
-        var other = document.getElementById("payment_for_text")
-
-        if (pay.value == "Other"){
-            pay.removeAttribute("name")
-            other.setAttribute("name","payment_for")
-            other.removeAttribute('style')
-        }else{
-            other.removeAttribute("name")
-            other.style.display= "none"
-            pay.setAttribute("name","payment_for")
-        }
-    }
-  function EMIActivate(){
-    var EMI = document.getElementById("EMI")
-    var btn = document.getElementById("submitButton")
-    var desc = document.getElementById("description")
-    var cate = document.getElementById("category")
-    var p_for = document.getElementById("payment_for")
-    var loan = document.getElementById("loan_name")
-    if (EMI.checked){
-        btn.textContent = "Convert To EMI"
-        desc.placeholder = "No. of EMIS"
-        desc.type = "number"
-        cate.disabled = true
-        p_for.disabled = true
-        loan.removeAttribute("style")
-    } else {
-         btn.textContent = "Add"
-        desc.placeholder = "Expense Description"
-        desc.type = "text"
-        cate.disabled = false
-        p_for.disabled = false
-        loan.style.display = "none"
-
-    }
-    
-
-  }
-</script>
+<script src="../static/js/addExpense.js"></script>
 {% endblock script %}
 

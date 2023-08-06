@@ -1,5 +1,9 @@
 from django.urls import path
 from .views import *
+from .view_expense import *
+from .view_loan import *
+from .view_task import *
+
 
 urlpatterns = [
 

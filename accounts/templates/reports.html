@@ -37,9 +37,15 @@
 <p  class="mt-3 ms-5 text-secondary">Keyword :<b><span id="key" class=" text-success">{{key}}</span></b></p>
 {% elif data %}
 <p  class="mt-3 ms-5 text-secondary">Keywords :
-  {% for i in data.values %}
- {% if i != ""  %}
-  <b><span id="key" class=" text-success">{{i}},</span></b>
+  {% for j,i in data.items %}
+ {% if  i != ""  %}
+ {% if j == "payment_type"  %}
+            {% for item in i %}
+                <b><span id="key" class="text-success">{{ item }},</span></b>
+            {% endfor %}
+        {% else %}
+            <b><span id="key" class="text-success">{{ i }},</span></b>
+        {% endif %}
   {% endif %}
   {% endfor %}
 </p>
@@ -82,7 +88,7 @@
         <td>{{i.payment_date | date:"d M Y" }}</td>
         <td>{{i.payment_date | date:"H:i:s" }}</td>
         <td>{{i.payment_for}}</td>
-        <td>{{i.description}}</td>
+        <td >{{i.description}}</td>
         <td>{{i.created_at | date:"d M Y" }}</td>
         <td><a href={% url 'editEntry' i.id %}><i class="fa-solid text-warning fa-pen"></i></a></td>
         <td><a href={% url 'deleteentry' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
@@ -113,16 +119,19 @@
       </div>
       <div class="modal-body">
               <form action="/filter/" method="post">
-                  {% csrf_token %}         
-                  <select
-                    class="form-select text-center mb-2"
-                    name="payment_type"
-                    aria-label="Default select example"
-                  >
-                    <option {% if data.payment_type == "" %} selected {% endif %} value="">-- PAYMENT TYPE --</option>
-                    <option {% if data.payment_type == "Expense" %} selected {% endif %}value="Expense">Expense</option>
-                    <option {% if data.payment_type == "Income" %} selected {% endif %}value="Income">Income</option>
-                  </select>
+                  {% csrf_token %}  
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" name="payment_type"   {% if "Expense" in data.payment_type  %} checked {% endif %} type="checkbox" id="inlineCheckbox1" value="Expense">
+                    <label class="form-check-label" for="inlineCheckbox1">Expense</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" name="payment_type" {% if "Income" in data.payment_type  %} checked {% endif %} type="checkbox" id="inlineCheckbox2" value="Income">
+                    <label class="form-check-label" for="inlineCheckbox2">Income</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" name="payment_type" {% if "Loan" in data.payment_type  %} checked {% endif %} type="checkbox" id="inlineCheckbox2" value="Loan">
+                    <label class="form-check-label" for="inlineCheckbox2">Loan</label>
+                  </div>
 
                   <select
                   class="form-select text-center mb-2"
@@ -131,10 +140,11 @@
                  
                 >
                   <option {% if data.category == "" %} selected {% endif %} value="">-- CATEGORY --</option>
-                  <option {% if data.category == "Loan" %} selected {% endif %} value="Loan">Loan</option>
+                  <option {% if data.category == "Loan" %} selected {% endif %} value="M_Loan">Loan</option>
                   <option {% if data.category == "Personal" %} selected {% endif %} value="Personal">Personal</option>
                   <option {% if data.category == "Food" %} selected {% endif %} value="Food">Food</option>
                   <option {% if data.category == "Shopping" %} selected {% endif %} value="Shopping">Shopping</option>
+                  <option {% if data.category == "Salary" %} selected {% endif %} value="Salary">Salary</option>
                 </select>
                   <select
                     class="form-select text-center mb-2"
@@ -145,6 +155,7 @@
                     <option {% if data.payment_for == "" %} selected {% endif %} value="">-- BENEFICIARY --</option>
                     <option {% if data.payment_for == "Mom" %} selected {% endif %}value="Mom">Mom</option>
                     <option {% if data.payment_for == "Dad" %} selected {% endif %}value="Dad">Dad</option>
+                    <option {% if data.payment_for == "Home" %} selected {% endif %}value="Home">Home</option>
                     <option {% if data.payment_for == "Myself" %} selected {% endif %}value="Myself">Myself</option>
                     <option {% if data.payment_for == "Other" %} selected {% endif %}value="Other">Other</option>
                   </select>
@@ -167,6 +178,7 @@
 {% endblock body %}
 
 {% block script %}
+<script src="../static/js/report.js"></script>
 <script>
   function generateCSV() {
     var table = document.getElementById("myTable");
