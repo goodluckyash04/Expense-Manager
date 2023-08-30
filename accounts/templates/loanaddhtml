@@ -1,0 +1,45 @@
+
+<form action="/loan/" method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        name="title"
+        id="title"
+        placeholder="Loan Title"
+        aria-describedby="loan_title"
+      />
+    </div>
+    <div class="mb-3">
+      <input
+        type="datetime-local"
+        class="form-control"
+        name="started_on"
+        id="date"
+        aria-describedby="emailHelp"
+      />
+    </div>
+
+    <div class="mb-3">
+      <input
+        type="number"
+        class="form-control"
+        name="amount"
+        placeholder="Amount"
+        id="amount"
+        aria-describedby="emailHelp"
+        required
+      />
+    </div>
+
+    <button
+      type="submit"
+      style="background-color: #2b6b32; border: none"
+      class="btn btn-primary"
+    >
+      Create Loan
+    </button>
+  </form>
+

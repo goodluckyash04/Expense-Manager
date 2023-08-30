@@ -13,56 +13,51 @@ import calendar
 def addexpense(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-        paymentData =Payment.objects.filter(Q(payment_by =user) & Q(payment_date__month = datetime.today().month) ).order_by('-payment_date')
-        if request.method == "GET":
-            request.session["key"] = "dashboard"
-            return render(request,"addExpense.html",{"user":user,"paymentData":paymentData})
-        elif request.method == "POST":
-            if request.POST["category"] == "Loan":
-                no = int(request.POST['description'])
-                if no == 0:
-                    no = 1
-                date_object = datetime.strptime(request.POST["payment_date"], "%Y-%m-%dT%H:%M")
-                for i in range(1,no+1):
-                    desired_date = date_object.replace(day=4, hour=0, minute=1) + relativedelta(months=i)
-                    desired_date_str = desired_date.strftime('%Y-%m-%dT%H:%M')
-                    Payment.objects.create(
-                    payment_type = 'Expense',
-                    category = "M_Loan",
-                    payment_date = desired_date_str,
-                    amount = int(request.POST["amount"])/no,
-                    description = f"EMI {i}({request.POST['loan_name']})",
-                    payment_for = "Myself",
-                    payment_by = user
-                )
-                Loan.objects.create(
-                    title = request.POST['loan_name'],
-                    amount = request.POST['amount'],
-                    started_on =  request.POST['payment_date'],
-                    created_by =user
-                )
-            else:
-                if request.POST['category']:
-                    categoryData = request.POST['category']
-                else:
-                    categoryData = "Loan"
-                if request.POST["payment_for"] :
-                    paid_for = request.POST["payment_for"].title()
-                else:
-                    paid_for = "Myself"
+
+        if request.POST["category"] == "Loan":
+            no = int(request.POST['description'])
+            if no == 0:
+                no = 1
+            date_object = datetime.strptime(request.POST["payment_date"], "%Y-%m-%dT%H:%M")
+            for i in range(1,no+1):
+                desired_date = date_object.replace(day=4, hour=0, minute=1) + relativedelta(months=i)
+                desired_date_str = desired_date.strftime('%Y-%m-%dT%H:%M')
                 Payment.objects.create(
-                    payment_type = request.POST["payment_type"],
-                    category = categoryData,
-                    payment_date = request.POST["payment_date"],
-                    amount = request.POST["amount"],
-                    description = request.POST["description"],
-                    payment_for = paid_for,
-                    payment_by = user
-                )
-                
-            return render(request,"addExpense.html",{"msg":f'{request.POST["payment_type"]} added.',"user":user,"paymentData":paymentData})
+                payment_type = 'Expense',
+                category = "M_Loan",
+                payment_date = desired_date_str,
+                amount = int(request.POST["amount"])/no,
+                description = f"EMI {i}({request.POST['loan_name']})",
+                payment_for = "Myself",
+                payment_by = user
+            )
+            Loan.objects.create(
+                title = request.POST['loan_name'],
+                amount = request.POST['amount'],
+                started_on =  request.POST['payment_date'],
+                created_by =user
+            )
+        else:
+            if request.POST['category']:
+                categoryData = request.POST['category']
+            else:
+                categoryData = "Loan"
+            if request.POST["payment_for"] :
+                paid_for = request.POST["payment_for"].title()
+            else:
+                paid_for = "Myself"
+            Payment.objects.create(
+                payment_type = request.POST["payment_type"],
+                category = categoryData,
+                payment_date = request.POST["payment_date"],
+                amount = request.POST["amount"],
+                description = request.POST["description"],
+                payment_for = paid_for,
+                payment_by = user
+            )
+        return redirect('home')
     else:
-        return redirect("login")
+            return redirect("login")
 
 
 def editEntry(request,id):
@@ -73,7 +68,6 @@ def editEntry(request,id):
                 key = request.session['value']
             else:
                 key = None
-            print(entry.__dict__)
             return render(request,'editExpense.html',{'entry':entry,key:key})
         else:
             if request.POST['category']:
@@ -92,8 +86,8 @@ def editEntry(request,id):
             entry.description = request.POST["description"]
             entry.payment_for = paid_for
             entry.save()
-            if request.session["key"] == "dashboard":
-                return redirect('addexpense')
+            if request.session["key"] == "current":
+                return redirect('currentMonthreports')
             elif request.session["key"] == "report":
                 return redirect('reports')
             elif request.session["key"] == "search_report":
@@ -101,22 +95,22 @@ def editEntry(request,id):
             # next = request.POST.get('next', '/')
             # return HttpResponseRedirect(next)
     else:
-        return redirect('addexpense')
+        return redirect('login')
 
 
 def deleteentry(request,id):
     if 'username' in request.session:
         entry = Payment.objects.get(id = id)
         entry.delete()
-        if request.session["key"] == "dashboard":
-                return redirect('addexpense')
+        if request.session["key"] == "current":
+                return redirect('currentMonthreports')
         elif request.session["key"] == "report":
             return redirect('reports')
         elif request.session["key"] == "search_report":
                 return redirect('search_report')
        
     else:
-        return redirect('addexpense')
+        return redirect('login')
     
 
 def reports(request):
@@ -137,6 +131,7 @@ def reports(request):
 
 def currentMonthreports(request):
     if 'username' in request.session:
+        request.session["key"] = "current"
         user = User.objects.get(username = request.session["username"])
         current_year = datetime.now().year
         current_month = datetime.now().month
@@ -169,22 +164,23 @@ def search_report(request):
         else: 
             value = request.session['value']
         user = User.objects.get(username = request.session["username"])
-    try:
-        paymentData =Payment.objects.filter(payment_by = user ).filter(amount = value)
-    except:
-        paymentData1 =Payment.objects.filter(payment_by = user ).filter(payment_for = value.title())
-        paymentData2 =Payment.objects.filter(payment_by = user ).filter(description__icontains= value)
-        paymentData = list(chain(paymentData1,paymentData2))
-    total = 0
-    expenseTotal = 0
-    for i in paymentData:
-        if i.payment_type == "Expense":
-            total-=i.amount
-        else:
-            total+=i.amount
+        try:
+            paymentData =Payment.objects.filter(payment_by = user ).filter(amount = value)
+        except:
+            paymentData1 =Payment.objects.filter(payment_by = user ).filter(payment_for = value.title())
+            paymentData2 =Payment.objects.filter(payment_by = user ).filter(description__icontains= value)
+            paymentData = list(chain(paymentData1,paymentData2))
+        total = 0
+        expenseTotal = 0
+        for i in paymentData:
+            if i.payment_type == "Expense":
+                total-=i.amount
+            else:
+                total+=i.amount
 
-    return render(request,"reports.html",{"user":user,"paymentData":paymentData,"total":total,"key":value})
-
+        return render(request,"reports.html",{"user":user,"paymentData":paymentData,"total":total,"key":value})
+    else:
+        return redirect("login")
 
 def filter_report(request):
     if 'username' in request.session:
@@ -228,9 +224,7 @@ def filter_report(request):
                 if i.payment_type == "Expense":
                     expenseTotal-=i.amount
                 else:
-                    expenseTotal+=i.amount
-          
-                    
+                    expenseTotal+=i.amount   
         return render(request,"reports.html",{"user":user,"paymentData":paymentData.order_by("payment_date"),"total":total,"expenseTotal":expenseTotal,"data":key})
     else:
         return redirect("login")
@@ -241,10 +235,12 @@ def delete_records(request):
         del_list = request.POST.getlist('record_ids')
         for i in del_list:
             Payment.objects.get(id = i).delete()
-        if request.session['key'] == "search_report":
-             return redirect('search_report')
-        else:
+        if request.session["key"] == "current":
+                return redirect('currentMonthreports')
+        elif request.session["key"] == "report":
             return redirect('reports')
+        elif request.session["key"] == "search_report":
+                return redirect('search_report')
     else:
         return redirect('login')
 

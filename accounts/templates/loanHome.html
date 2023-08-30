@@ -1,0 +1,28 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+
+<div class="row m-3 ">
+{% for  i in loanData %}
+    <div class="col-12 col-md-3 mb-3">
+        <div class="card ">
+            <div class="card-body text-end ">
+                <h5 class="card-title text-success text-start ">{{i.title}}</h5>
+                <p class="card-text text-secondary text-start  ">{{i.started_on | date:"d M Y"}} | {{i.status}} </p>
+                <a href="/loanReport/{{i.id}}" class="btn btn-secondary" style="background-color:#4da868d9"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+                {% if i.status == "Open" %}
+                <a href="/updateLoanStatus/{{i.id}}" class="btn btn-secondary" style="background-color:#4da868d9;"><i class="fa-solid fa-square-check"></i></a>
+                {% else %}
+                <a href="/updateLoanStatus/{{i.id}}" class="btn btn-secondary" ><i class="fa-solid  text-white fa-square-xmark"></i></a>
+                {% endif %}
+                <a href="/deleteLoan/{{i.id}}" class="btn btn-danger" style="background-color:#dc3339d9;"><i class="fa-solid  text-white fa-trash"></i></a>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}                
+</div>
+
+{% endblock body %}
+
+{% block script%}
+<script></script>
+{% endblock script%}

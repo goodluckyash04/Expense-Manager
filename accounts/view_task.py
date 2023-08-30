@@ -9,23 +9,26 @@ from django.db.models import Q
 def addTask(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
+        Task.objects.create(
+            priority = request.POST["priority"],
+            task_title = request.POST["task_title"],
+            complete_by = request.POST["complete_by"],
+            task_detail = request.POST["task_detail"],
+            status = "Pending",
+            completed_on = request.POST["complete_by"],
+            created_by = user
+        )
+        return redirect('home')
+    else:
+        return redirect("login")
+    
+
+def currentMonthTaskReport(request):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
         taskData =Task.objects.filter(Q(created_by =user) & Q(complete_by__month= datetime.today().month) & Q(status = "Pending") ).order_by('-complete_by')
-        # taskData =Task.objects.filter(created_by =user)
-        print(taskData)
-        if request.method == "GET":
-            request.session["key"] = "dashboard"
-            return render(request,"tasks.html",{"user":user,"taskData":taskData})
-        elif request.method == "POST":
-            Task.objects.create(
-                priority = request.POST["priority"],
-                task_title = request.POST["task_title"],
-                complete_by = request.POST["complete_by"],
-                task_detail = request.POST["task_detail"],
-                status = "Pending",
-                completed_on = request.POST["complete_by"],
-                created_by = user
-            )
-            return render(request,"tasks.html",{"msg":"task added","user":user,"taskData":taskData})
+        request.session["key"] = "current_month"
+        return render(request,"tasks.html",{"user":user,"taskData":taskData})
     else:
         return redirect("login")
 
@@ -35,7 +38,11 @@ def updatetask(request,id):
     current_task.completed_on = datetime.today()
     current_task.status = "Completed"
     current_task.save()
-    return redirect('addTask')
+    if request.session['key'] == "current_month":
+        return redirect('currentMonthTaskReport')
+    else:
+        return redirect('taskReports')
+
 
 
 def incomplete(request,id):
@@ -51,7 +58,7 @@ def deletetask(request,id):
     current_task.completed_on = datetime.today()
     current_task.status = "Deleted"
     current_task.save()
-    return redirect('addTask')
+    return redirect('currentMonthTaskReport')
 
 
 def permdeletetask(request,id):
@@ -64,5 +71,8 @@ def permdeletetask(request,id):
 def taskReports(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-    taskData = Task.objects.filter(created_by = user)
-    return render(request,'taskReport.html',{'user':user,'taskData':taskData})
+        taskData = Task.objects.filter(created_by = user)
+        request.session["key"] = "taskReport"
+        return render(request,'taskReport.html',{'user':user,'taskData':taskData})
+    else:
+        return redirect('login')

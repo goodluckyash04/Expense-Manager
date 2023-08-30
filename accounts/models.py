@@ -48,6 +48,7 @@ class Loan(models.Model):
     title = models.CharField(max_length=50)
     amount = models.FloatField(default=0.0)
     started_on = models.DateTimeField(auto_now=False, auto_now_add=False)
+    status = models.CharField(max_length=20,default="Open")
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now=True, auto_now_add=False)
 
@@ -59,7 +60,8 @@ class EMI(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount = models.FloatField(default=0.0)
     note = models.CharField(max_length=100,default=None)
-    paid_on = models.DateTimeField(auto_now=True, auto_now_add=False)
+    paid_on = models.DateTimeField(auto_now=False, auto_now_add=False)
+    created_on = models.DateTimeField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
         return self.loan.title

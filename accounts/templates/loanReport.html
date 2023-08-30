@@ -1,37 +1,68 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 
-<div class="row mx-3 mt-3 mb-2 justify-content-end" >
-    
-  <div class="col-9 col-md-3 text-end mb-3 ">
-    <form action="/loanReport/" method="post">
-    {% csrf_token %}
-    <select
-    class="form-select mb-3"
-    name="loan"
-    id = "loan"
-    onchange= "if(this.value != 0) { this.form.submit(); }"
-    aria-label="Default select example"
-   
-    >
-    <option selected>-- Loans --</option>
-    {% for i in loanData  %}
-    <option value='{{i.title}}'>{{i.title}}</option>
-    {% endfor %}
-   
-    </select>
-</form>
-  </div>
-  <div class="col-3 col-md-1">
-    <button type="button" onclick="generateCSV()" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
+    <h5 class="text-center text-success mt-3" id = "key">{{loanData.title}}- ₹{{loanData.amount}}</h5>
 
-  </div>
+
+
+  <form class="row g-3 justify-content-center m-3" action="/addEMI/{{loanData.id}}" method="post">
+    {% csrf_token %}
+    <div class="col-md-3 col-10">
+      <input
+      type="datetime-local"
+      class="form-control"
+      name="paid_on"
+      placeholder="paid_on"
+      id="paid_on"
+      required
+    />    
 </div>
-<div><h5 class="text-center text-success" id = "key">{{loan_amount}}- ₹{{loan_amount.amount}}</h5></div>
+    <div class="col-md-3 col-10">
+      <input
+      type="number"
+      class="form-control"
+      name="amount"
+      placeholder="Amount"
+      id="amount"
+      value = {% widthratio emiData.0.amount 1 -1 %}
+      aria-describedby="emailHelp"
+      required
+    />    
+</div>
+    <div class="col-md-3 col-10">
+        <input
+        type="text"
+        class="form-control"
+        name="note"
+        placeholder="Note"
+        id="note"
+        value = "{{emiData.0.note}}"
+        aria-describedby="emailHelp"
+      />
+    </div>
+    <div class="col-md-2 col-5">
+        <button
+        type="submit"
+        {% comment %} style="background-color: #2b6b32; border: none" {% endcomment %}
+        class="btn btn-success"
+      >
+        Pay EMI
+      </button>    
+    
+    </div>
+    <div class="col-md-1 col-5">
+      <button type="button" onclick="generateCSV()" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
+    </div>
+  </form> 
+
+
+
+
 <div class="row mx-2 table-responsive">
   <table id ='myTable' class="table">
     <thead>
       <tr>
-        <th scope="col"></th>
+      <th scope="col"> <a href="/loanHome/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+        </th>
         <th scope="col">Loan</th>
         <th scope="col">Amount</th>
         <th scope="col">Paid_On</th>
@@ -42,21 +73,12 @@
       </tr>
     </thead>
     <tbody>
-      {% if loan_amount %}
-        <tr>
-            <td>-</td>
-            <td>{{loan_amount}}</td>
-        <td>{{loan_amount.amount}}</td>
-        <td>{{loan_amount.started_on}}</td>
-        <td>Loan Started</td>
-        <td><a href={% url 'deleteLoan' loan_amount.id %}><i class="fa-solid text-info fa-trash"></i></a></td>
-        </tr>
-        {% endif %}
+      
       {% if emiData %} {% for i in emiData %}
       <tr>
         <td scope="row">{{forloop.counter}}</td>
         <td>{{i.loan}}</td>
-        <td>-{{i.amount}}</td>
+        <td>{{i.amount}}</td>
         <td>{{i.paid_on}}</td>
         <td>{{i.note}}</td>
         <td><a href={% url 'deleteEmi' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
@@ -125,5 +147,12 @@
     link.click();
   }
 
+</script>
+<script>
+  // Get the current date and time in ISO format (YYYY-MM-DDTHH:MM)
+  var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  var currentDatetime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 16);
+  // Set the value of the input field to the current date and time
+  document.getElementById("paid_on").value = currentDatetime;
 </script>
 {% endblock script %}

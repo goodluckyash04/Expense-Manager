@@ -6,9 +6,9 @@
         <div class="card-body">
           <h5 class="card-title text-success">EXPENSE</h5>
           <p class="card-text text-secondary">Maintain Your Day to Day Expense</p>
-          <a href="/addexpense/" class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
-          <a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+          <a data-bs-toggle="modal" data-bs-target="#expensemodal"  class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
           <a href="/currentMonthreports/" class="btn btn-secondary" id="current-month" onload="getCurrentMonthName()" style="background-color:rgb(77, 168, 104);"></a>
+          <a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
         </div>
       </div>
     </div>
@@ -17,7 +17,8 @@
         <div class="card-body">
           <h5 class="card-title text-success">TASK</h5>
           <p class="card-text text-secondary">Don't Stress Your Brain Add Your ToDos Here </p>
-          <a href="/addTask/" class="btn btn-primary" style=" background-color:rgb(77, 168, 104);" ><i class="fa-solid fa-circle-plus"></i></a>
+          <a data-bs-toggle="modal" data-bs-target="#taskmodal" class="btn btn-primary" style=" background-color:rgb(77, 168, 104);" ><i class="fa-solid fa-circle-plus"></i></a>
+          <a href="/currentMonthTaskReport/" id="task" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
           <a href="/taskReports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
         </div>
       </div>
@@ -27,14 +28,316 @@
         <div class="card-body">
           <h5 class="card-title text-success">LOAN</h5>
           <p class="card-text text-secondary">Create Your Virtual Loan To keep track of EMIS</p>
-          <a href="/loan/" class="btn btn-secondary" style=" background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
-          <a href="/loanReport/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+          <a  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loanmodal" style=" background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
+          <a href="/loanHome/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
           
         </div>
       </div>
     </div>
   </div>
+
+
+
+<!--create loan Modal -->
+<div class="modal fade" id="loanmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Loan</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       
+      <form action="/addloan/" method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            name="title"
+            id="title"
+            placeholder="Loan Title"
+            aria-describedby="loan_title"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="datetime-local"
+            class="form-control"
+            name="started_on"
+            id="started_on"
+            aria-describedby="emailHelp"
+          />
+        </div>
+
+        <div class="mb-3">
+          <input
+            type="number"
+            class="form-control"
+            name="amount"
+            placeholder="Amount"
+            id="amount"
+            aria-describedby="emailHelp"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          style="background-color: #2b6b32; border: none"
+          class="btn btn-primary"
+        >
+          Create Loan
+        </button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--create task Modal -->
+<div class="modal fade" id="taskmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form  action="/addTask/" method="post">
+          {% csrf_token %}
+
+          <select
+          class="form-select mb-3"
+          name="priority"
+          aria-label="Default select example"
+          >
+          <option selected>-- Priority --</option>
+          <option value="High">High</option>
+          <option selected value="Moderate">Moderate</option>
+          <option value="Low">Low</option>
+          <option value="Urgent">Urgent</option>
+          </select>
+            
+          <div class="mb-3">
+          <input
+              type="datetime-local"
+              class="form-control"
+              name="complete_by"
+              id="complete_by"
+              onchange="dateCheck()"
+              aria-describedby="complete_by"
+          />
+          </div>
+
+          <div class="mb-3">
+          <input
+              type="text"
+              class="form-control"
+              name="task_title"
+              placeholder="Task Title"
+              id="title"
+              required
+          />
+          </div>
+
+          <div class="form-floating mb-3">
+              <textarea class="form-control" name="task_detail" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+              <label for="floatingTextarea">Task Detail</label>
+            </div>
+       
+         
+          <button
+          type="submit"
+          id = "submitbutton"
+          style="background-color: #2b6b32; border: none"
+          class="btn btn-primary"
+          >
+          Add Task
+          </button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--Add expense Modal -->
+<div class="modal fade" id="expensemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="wefef">Add Entry</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/addexpense/" method="post">
+          {% csrf_token %}
+          
+          {% comment %} <!--------------------------------- Payment Type --------------------------------------> {% endcomment %}
+          
+          <div class="form-check form-check-inline mb-3">
+              <input
+              class="form-check-input"
+              type="radio"
+              name="payment_type"
+              id="Expense"
+              value="Expense"
+              checked
+              onchange="payType()"
+              required
+          />
+          <label class="form-check-label" for="Expense">Expense</label>
+          </div>
+          
+          <div class="form-check form-check-inline">
+          <input
+              class="form-check-input"
+              type="radio"
+              name="payment_type"
+              id="Income"
+              onchange="payType()"
+              value="Income"
+          />
+          <label class="form-check-label" for="Income">Income</label>
+
+          </div>
+          <div class="form-check form-check-inline">
+          <input
+              class="form-check-input"
+              type="radio"
+              name="payment_type"
+              id="Loan"
+              onchange="payType()"
+              value="Loan"
+          />
+          <label class="form-check-label" for="Income">Loan</label>
+          </div>
+          
+          {% comment %} <!--------------------------------- Category --------------------------------------> {% endcomment %}
+
+          <select
+          class="form-select mb-3"
+          id="category"
+          name="category"
+          onchange="loanCategory()"
+          aria-label="Default select example"
+          >
+          <option selected value="">-- Category --</option>
+          <option value="M_Loan">Loan</option>
+          <option value="Personal">Personal</option>
+          <option value="Food">Food</option>
+          <option value="Shopping">Shopping</option>
+          </select>
+
+          {% comment %} <!--------------------------------- Payment Date--------------------------------------> {% endcomment %}
+
+          <div class="mb-3">
+          <input
+              type="datetime-local"
+              class="form-control"
+              name="payment_date"
+              id="payment_date"
+              aria-describedby="emailHelp"
+          />
+          </div> 
+
+          {% comment %} <!--------------------------------- Payment Amount --------------------------------------> {% endcomment %}
+
+          <div class="mb-3">
+          <input
+              type="number"
+              class="form-control"
+              name="amount"
+              placeholder="Amount"
+              id="amount"
+              aria-describedby="emailHelp"
+              required
+          />
+          </div>
+
+          {% comment %} <!--------------------------------- Payment For --------------------------------------> {% endcomment %}
+
+          <select
+          class="form-select mb-3"
+          name="payment_for"
+          id = "payment_for"
+          aria-label="Default select example"
+          onchange="paymentFor()"
+          >
+          <option selected>- Payment For -</option>
+          <option value="Mom">Mom</option>
+          <option value="Dad">Dad</option>
+          <option value="Myself">Myself</option>
+          <option value="Home">Home</option>
+          <option value="Other">Other</option>
+          </select>
+          
+          {% comment %} <!--------------------------------- If Selected Others --------------------------------------> {% endcomment %}
+          
+          <div class="mb-3">
+              <input
+                  type="text"
+                  class="form-control"
+                  name="payment_for"
+                  style="display: none;"
+                  id="payment_for_text"
+                  placeholder="payment_for"
+                  aria-describedby="emailHelp"
+              />
+              </div>
+
+          {% comment %} <!--------------------------------- Payment Description --------------------------------------> {% endcomment %}
+          <div class="mb-3">
+          <input
+              type="text"
+              class="form-control"
+              name="description"
+              placeholder="Expense Description"
+              id="description"
+              required
+          />
+          </div>
+          
+          {% comment %} <!--------------------------------- If Selected Loan --------------------------------------> {% endcomment %}
+          <div class="mb-3" >
+          <input
+              type="text"
+              class="form-control"
+              name="loan_name"
+              style="display:none"
+              placeholder="Loan Name"
+              id="loan_name"
+              value=""
+          />
+          </div>
+
+          {% comment %} <!--------------------------------- Submit --------------------------------------> {% endcomment %}
+
+          <button
+          id = "submitButton"
+          type="submit"
+          style="background-color: #2b6b32; border: none"
+          class="btn btn-primary"
+          >
+          Add Entry
+          </button>
+         
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     {% endblock body %}
+
+
+
 
 {% block script%}
 <script>
@@ -58,5 +361,17 @@ function getCurrentMonthName() {
 
 // Update the HTML content with the current month name
 document.getElementById("current-month").textContent = getCurrentMonthName();
+document.getElementById("task").textContent = getCurrentMonthName();
+</script>
+<script src="../static/js/addExpense.js"></script>
+<script>
+  // Get the current date and time in ISO format (YYYY-MM-DDTHH:MM)
+  var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+  var currentDatetime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 16);
+
+  // Set the value of the input field to the current date and time
+  document.getElementById("started_on").value = currentDatetime;
+  document.getElementById("payment_date").value = currentDatetime;
+  document.getElementById("complete_by").value = currentDatetime;
 </script>
 {% endblock script%}

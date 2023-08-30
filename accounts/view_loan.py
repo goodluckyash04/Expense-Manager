@@ -1,18 +1,16 @@
 from django.shortcuts import render,redirect
 from .models import *
-from django.db.models import Q
-
 
 
 # ...............................................Loan Management...................................
 
-def loan(request):
+def addloan(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
         loanData = Loan.objects.filter(created_by=user).order_by("title") 
 
         if request.method == "GET":
-            return render(request,'loan.html',{'user':user,"loanData":loanData})
+            return render(request,'addLoan.html',{'user':user,"loanData":loanData})
         else:
             Loan.objects.create(
                 title = request.POST['title'],
@@ -20,53 +18,78 @@ def loan(request):
                 started_on =  request.POST['started_on'],
                 created_by =user
             )
-            return render(request,'loan.html',{'user':user,"loanData":loanData})
+        return redirect('home')
     else:
         return redirect("login")
 
 
-def loanEMI(request):
+def loanHome(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-        loanData = Loan.objects.filter(created_by=user).order_by("title") 
-        loan = Loan.objects.get(title = request.POST['loan'])
-        EMI.objects.create(
-            loan = loan,
-            amount = request.POST['amount'],
-            note = request.POST['note'],
-        )
-    return render(request,'loan.html',{'user':user,"loanData":loanData})
+        loanData = Loan.objects.filter(created_by=user).order_by("-status","title") 
+        return render(request,'loanHome.html',{"loanData":loanData})
+    else:
+        return redirect('login')    
+    
 
-
-def loanReport(request):
+def updateLoanStatus(request,id):
     if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        loanData = Loan.objects.filter(created_by=user).order_by("title") 
+        loanData = Loan.objects.get(id=id)
 
-        if request.method == "GET":
-            return render(request,'loanReport.html',{'user':user,"loanData":loanData})
+        if loanData.status == "Open":
+            loanData.status = "Closed"
         else:
-            emiData = EMI.objects.filter(loan__title= request.POST['loan'])
-            loan = Loan.objects.get(title = request.POST['loan'])
-            loan_amount = loan
-            total = loan.amount
+            loanData.status = "Open"
+
+        loanData.save()
+        return redirect('loanHome')
+    else:
+        return redirect('login')    
+    
+
+def loanReport(request,id):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
+        
+        if request.method == "GET":
+            loanData = Loan.objects.get(id= id)
+            emiData = EMI.objects.filter(loan_id = id ).order_by('-paid_on')
+            
+            total = loanData.amount
             for i in emiData:
-                total-= i.amount
-            return render(request,'loanReport.html',{'user':user,"emiData":emiData,"loanData":loanData,"loan_amount":loan_amount,"total":total})
+                total += i.amount
+            return render(request,'loanReport.html',{'user':user,"loanData":loanData,'emiData':emiData,'total':total})
     else:
         return redirect('login')    
 
 
-def deleteEmi(request,id):
-    current_EMI = EMI.objects.get(id = id)
-    current_EMI.delete()
-    return redirect('loanReport')
 
+def addEMI(request,id):
+    if 'username' in request.session:
+        loanData = Loan.objects.get(id= id)
+        EMI.objects.create(
+            loan = loanData,
+            paid_on = request.POST['paid_on'],
+            amount = -int(request.POST['amount']),
+            note = request.POST['note'],
+        )
+        return redirect('loanReport',id=id)
+    else:
+        return redirect('login')
 
 def deleteLoan(request,id):
-    current_Loan = Loan.objects.get(id = id)
-    current_Loan.delete()
-    return redirect('loan')
+    if 'username' in request.session:
+        current_Loan = Loan.objects.get(id = id)
+        current_Loan.delete()
+        return redirect('loanHome')
+    else:
+        return redirect('login')
 
-
-
+def deleteEmi(request,id):
+    if 'username' in request.session:
+        current_EMI = EMI.objects.get(id = id)
+        loandata = Loan.objects.get(id=current_EMI.loan_id)
+        current_EMI.delete()
+        return redirect('loanReport',id=loandata.id)
+    else:
+        return redirect('login')

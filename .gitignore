@@ -1,4 +1,7 @@
 accounts/templates/example.html
+accounts/templates/addEMI.html
+accounts/templates/expense.html
+accounts/templates/loanadd.html
 backup/
 
 # Ignore database files

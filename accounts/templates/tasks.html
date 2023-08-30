@@ -1,70 +1,16 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 <div class="container-fluid">
-    <div class="row ">
-        <div class="col-12 col-md-4 pt-5 px-5">
-        <form  action="/addTask/" method="post">
-            {% csrf_token %}
-
-            <select
-            class="form-select mb-3"
-            name="priority"
-            aria-label="Default select example"
-            >
-            <option selected>-- Priority --</option>
-            <option value="High">High</option>
-            <option value="Moderate">Moderate</option>
-            <option value="Low">Low</option>
-            <option value="Urgent">Urgent</option>
-            </select>
-              
-            <div class="mb-3">
-            <input
-                type="datetime-local"
-                class="form-control"
-                name="complete_by"
-                id="complete_by"
-                onchange="dateCheck()"
-                aria-describedby="complete_by"
-            />
-            </div>
-
-            <div class="mb-3">
-            <input
-                type="text"
-                class="form-control"
-                name="task_title"
-                placeholder="Task Title"
-                id="title"
-                required
-            />
-            </div>
-
-            <div class="form-floating mb-3">
-                <textarea class="form-control" name="task_detail" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                <label for="floatingTextarea">Task Detail</label>
-              </div>
-         
-           
-            <button
-            type="submit"
-            id = "submitbutton"
-            style="background-color: #2b6b32; border: none"
-            class="btn btn-primary"
-            >
-            Add
-            </button>
-        </form>
-        </div>
-        <div class="col-12 col-md-8 pt-5 px-3 table-responsive">
+    <h5 class="text-center text-success mt-3">Current Month Task</h5>
+        <div class="col-12 px-3 table-responsive">
         <table class="table">
             <thead>
             <tr>
                 <th><a href="/taskReports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a> </th>
                 <th scope="col">Priority</th>
                 <th scope="col">Complete_by</th>
-                <th scope="col">Date</th>
                 <th scope="col">Title</th>
                 <th scope="col">Description</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -74,13 +20,17 @@
                 <th scope="row">{{forloop.counter}}</th>
                 <td>{{i.priority}}</td>
                 <td>{{i.complete_by | date:"d M, Y" }}</td>
-                <td>{{i.created_on | date:"d M, Y" }}</td>
                 <td>{{i.task_title}}</td>
                 <td>{{i.task_detail}}</td>
                 <td><a href={% url 'updatetask' i.id %}><i class="fa-solid text-success fa-check"></i></a></td>
                 <td><a href={% url 'deletetask' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
             </tr>
-            {% endfor %} {% endif %}
+            {% endfor %}
+            {% else %}
+            <tr>
+            <td colspan="8" class = "text-center">No pending task for this month</td>
+            </tr>
+            {% endif %}
             </tbody>
         </table>
         </div>
