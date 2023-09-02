@@ -100,7 +100,7 @@ def changePassword(request):
                 if request.POST['password'] == request.POST['c_password']:
                     user.password =  make_password(request.POST['password'])
                     user.save()
-                    return redirect('addexpense')
+                    return redirect('home')
                 else:
                     return render(request,"changePassword.html",{"user":user,"msg":"confirm Password Should Match"})
             else:
@@ -135,3 +135,12 @@ def hide_email(value):
 
 # hashed_pwd = make_password("plain_text")
 # check_password("plain_text",hashed_pwd)  # returns True
+
+
+
+
+
+
+
+def indexLogin(request):
+    return render(request,'newlogin.html')
