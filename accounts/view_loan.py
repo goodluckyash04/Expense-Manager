@@ -79,8 +79,10 @@ def addEMI(request,id):
 
 def deleteLoan(request,id):
     if 'username' in request.session:
-        current_Loan = Loan.objects.get(id = id)
-        current_Loan.delete()
+        emis = EMI.objects.filter(loan_id = id)
+        if not emis:
+            current_Loan = Loan.objects.get(id = id)
+            current_Loan.delete()
         return redirect('loanHome')
     else:
         return redirect('login')

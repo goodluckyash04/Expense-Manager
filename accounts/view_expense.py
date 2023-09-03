@@ -14,7 +14,7 @@ def addexpense(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
 
-        if request.POST["category"] == "Loan":
+        if request.POST["category"] == "M_Loan":
             no = int(request.POST['description'])
             if no == 0:
                 no = 1
@@ -71,13 +71,19 @@ def editEntry(request,id):
             return render(request,'editExpense.html',{'entry':entry,key:key})
         else:
             if request.POST['category']:
+                if request.POST['payment_type'] != 'Loan':
                     categoryData = request.POST['category']
-            else:
-                categoryData = "Loan"
-            if request.POST["payment_for"] :
-                paid_for = request.POST["payment_for"].title()
+                else:
+                    categoryData = "Loan"
+            if 'payment_for' in request.POST:
+                if request.POST["payment_for"] :
+                    if request.POST['payment_type'] != 'Income':
+                        paid_for = request.POST["payment_for"].title()
+                    else:
+                        paid_for = "Myself"
             else:
                 paid_for = "Myself"
+
                     
             entry.payment_type = request.POST["payment_type"]
             entry.category = categoryData
@@ -92,8 +98,7 @@ def editEntry(request,id):
                 return redirect('reports')
             elif request.session["key"] == "search_report":
                 return redirect('search_report')
-            # next = request.POST.get('next', '/')
-            # return HttpResponseRedirect(next)
+       
     else:
         return redirect('login')
 

@@ -69,7 +69,6 @@ if (Income.checked){
 
 } else if(Loan.checked){
     category.options[1].value = "Loan"
-
     category.style.display="none"
     Payment_for.options[3].removeAttribute('selected')
     Payment_for.removeAttribute('disabled')

@@ -26,7 +26,7 @@ def addTask(request):
 def currentMonthTaskReport(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-        taskData =Task.objects.filter(Q(created_by =user) & Q(complete_by__month= datetime.today().month) & Q(status = "Pending") ).order_by('-complete_by')
+        taskData =Task.objects.filter(Q(created_by =user) & Q(complete_by__month= datetime.today().month) & Q(status = "Pending") ).order_by('complete_by')
         request.session["key"] = "current_month"
         return render(request,"tasks.html",{"user":user,"taskData":taskData})
     else:
@@ -71,7 +71,7 @@ def permdeletetask(request,id):
 def taskReports(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-        taskData = Task.objects.filter(created_by = user)
+        taskData = Task.objects.filter(created_by = user).order_by("-status",'complete_by')
         request.session["key"] = "taskReport"
         return render(request,'taskReport.html',{'user':user,'taskData':taskData})
     else:

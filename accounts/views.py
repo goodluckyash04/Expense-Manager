@@ -7,6 +7,7 @@ from django.db.models import Q
 import random,string
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 
 # ...........................................Home Page..................................................
 
@@ -22,6 +23,7 @@ def home(request):
 # ...........................................User Management..................................................
 
 def login(request):
+    print(request)
     if 'username' in request.session:
         return redirect("home")
     else:
@@ -105,6 +107,8 @@ def changePassword(request):
                     return render(request,"changePassword.html",{"user":user,"msg":"confirm Password Should Match"})
             else:
                 return render(request,"changePassword.html",{"user":user,"msg":"Old Password Incorrect"})
+    else:
+        return redirect('login')
 
 
 
@@ -135,12 +139,3 @@ def hide_email(value):
 
 # hashed_pwd = make_password("plain_text")
 # check_password("plain_text",hashed_pwd)  # returns True
-
-
-
-
-
-
-
-def indexLogin(request):
-    return render(request,'newlogin.html')
