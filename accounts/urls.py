@@ -29,6 +29,7 @@ urlpatterns = [
     path("delete_records/",delete_records,name="delete_records"),
     path("undoDelEntries/<int:id>",undoDelEntries,name="undoDelEntries"),    
     path("getDeletedEntries/",getDeletedEntries,name="getDeletedEntries"),
+    path("undoMultipleDelEntries/",undoMultipleDelEntries,name="undoMultipleDelEntries"),
 
 # ..........................................Task Management..................................................
 

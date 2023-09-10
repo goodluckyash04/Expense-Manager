@@ -7,11 +7,13 @@
 
 
 <div class="row mx-2 table-responsive">
+  <form method="POST" action="{% url 'undoMultipleDelEntries' %}">
+    {% csrf_token %}
     <table id ='myTable' class="table">
         <thead>
           <tr>
             <th scope="col" ><input type="checkbox" id="select-all-checkbox"></th>
-            <th scope="col" ><button type="submit" class="border-0 bg-transparent"><i class="fa-solid text-info fa-trash"></button></th>
+            <th scope="col" ><button type="submit" class="border-0 bg-transparent"><i class="fa-solid text-info fa-rotate-left"></button></th>
             <th scope="col" class="text-success">Type</th>
             <th scope="col" class="text-success">Category</th>
             <th scope="col" class="text-success">Amount</th>
@@ -50,9 +52,20 @@
         </tbody>
         
       </table>
+    </form>
 </div>
 
 
 
 {% endblock body %}
 
+{% block script %}
+<script>
+  document.getElementById("select-all-checkbox").addEventListener("change", function() {
+    var checkboxes = document.getElementsByName("record_ids");
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = this.checked;
+    }
+  });
+</script>
+{% endblock script %}

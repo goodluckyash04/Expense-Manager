@@ -295,3 +295,25 @@ def undoDelEntries(request,id):
         return redirect('getDeletedEntries')
     else:
         return redirect('login')
+    
+
+def undoMultipleDelEntries(request):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
+        undo_list = request.POST.getlist('record_ids')
+        
+        for i in undo_list:
+            entry = DeletePayment.objects.get(id = i)
+            Payment.objects.create(
+                payment_type = entry.payment_type,
+                category = entry.category,
+                payment_date = entry.payment_date,
+                amount = entry.amount,
+                description = entry.description,
+                payment_for = entry.payment_for,
+                payment_by = user
+            )
+            entry.delete()
+        return redirect('getDeletedEntries')
+    else:
+        return redirect('login')
