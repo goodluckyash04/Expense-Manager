@@ -66,8 +66,10 @@
         <th scope="col" class="text-success">Payment_Time</th>
         <th scope="col" class="text-success">Paid_For</th>
         <th scope="col" class="text-success">Description</th>
-        <th scope="col" class="text-success">Date_Created</th>
-        <th scope="col"  colspan = 2></th>
+        {% comment %} <th scope="col" class="text-success">Date_Created</th> {% endcomment %}
+        <th scope="col" > <a href="/getDeletedEntries/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+        </th>
+        <th></th>
        
       </tr>
     </thead>
@@ -87,8 +89,9 @@
         <td>{{i.payment_date | date:"H:i:s" }}</td>
         <td>{{i.payment_for}}</td>
         <td >{{i.description}}</td>
-        <td>{{i.created_at | date:"d M Y" }}</td>
+        {% comment %} <td>{{i.created_at | date:"d M Y" }}</td> {% endcomment %}
         <td><a href={% url 'editEntry' i.id %}><i class="fa-solid text-warning fa-pen"></i></a></td>
+        <td></td>
         <td><a href={% url 'deleteentry' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
       </tr>
       {% endfor %}{% else %}

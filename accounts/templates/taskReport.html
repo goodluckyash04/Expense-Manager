@@ -36,8 +36,11 @@
         <td>{{i.complete_by | date:"d M Y"}}</td>
         {% comment %} <td>{{i.created_on | date:"d M Y"}}</td> {% endcomment %}
         <td>{{i.completed_on | date:"d M Y" }}</td>
+
         <td><a href={% url 'updatetask' i.id %}><i class="fa-solid text-success fa-check"></i></a></td>
-        <td><a href={% url 'incomplete' i.id %}><i class="fa-solid text-warning fa-xmark"></i></a></td>
+        <td><a href={% url 'incomplete' i.id %}><i class="fa-solid text-secondary fa-xmark"></i></a></td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#editTaskModal" onclick="openModalAndGetTask({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
+        <td></td>
         <td><a href={% url 'permdeletetask' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
       </tr>
       {% endfor %}{% else %}
@@ -46,4 +49,105 @@
     </tbody>
   </table>
 </div>
+
+
+
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        {% comment %} content here {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock body %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  function openModalAndGetTask(taskId) {
+    // Make an AJAX request to your Django server to fetch data
+    $.ajax({
+      url: `/editTask/${taskId}`,  // Replace with your Django URL
+      type: 'GET',
+      success: function(data) {
+        console.log(data)
+       var utcDate = new Date(data.complete_by);
+        var localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  
+        // Format local date as a string for the input field
+        var complete_Date = localDate.toISOString().slice(0, 16); 
+        var content = ` 
+        <form  action="/editTask/${data.id}" method="post">
+          {% csrf_token %}
+
+          <select
+          class="form-select mb-3"
+          name="priority"
+          aria-label="Default select example"
+          >
+          <option >-- Priority --</option>
+          <option ${data.priority == "High"?"selected":""} value="High">High</option>
+          <option ${data.priority == "Moderate"?"selected":""} value="Moderate">Moderate</option>
+          <option ${data.priority == "Low"?"selected":""} value="Low">Low</option>
+          <option ${data.priority == "Urgent"?"selected":""} value="Urgent">Urgent</option>
+          </select>
+            
+          <div class="mb-3">
+          <input
+              type="datetime-local"
+              class="form-control"
+              name="complete_by"
+              id="complete_by"
+              value='${complete_Date}'
+              onchange="dateCheck()"
+              aria-describedby="complete_by"
+          />
+          </div>
+
+          <div class="mb-3">
+          <input
+              type="text"
+              class="form-control"
+              name="task_title"
+              placeholder="Task Title"
+              id="title"
+              value='${data.task_title}'
+              required
+          />
+          </div>
+
+          <div class="form-floating mb-3">
+              <textarea class="form-control" name="task_detail"  placeholder="Leave a comment here" id="floatingTextarea">${data.task_detail}</textarea>
+              <label for="floatingTextarea">Task Detail</label>
+            </div>
+       
+         
+          <button
+          type="submit"
+          id = "submitbutton"
+          style="background-color: #2b6b32; border: none"
+          class="btn btn-primary"
+          >
+          Update Task
+          </button>
+      </form> `
+        // Update the modal content with the fetched data
+        $('#modalContent').html(content);
+        // Show the modal
+        $('#editTaskModal').modal('show');
+      },
+      error: function() {
+        alert('Failed to fetch data.');
+      }
+    });
+  }
+</script>
+{% endblock script %}

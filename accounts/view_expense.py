@@ -102,27 +102,13 @@ def editEntry(request,id):
     else:
         return redirect('login')
 
-
-def deleteentry(request,id):
-    if 'username' in request.session:
-        entry = Payment.objects.get(id = id)
-        entry.delete()
-        if request.session["key"] == "current":
-                return redirect('currentMonthreports')
-        elif request.session["key"] == "report":
-            return redirect('reports')
-        elif request.session["key"] == "search_report":
-                return redirect('search_report')
-       
-    else:
-        return redirect('login')
     
 
 def reports(request):
     if 'username' in request.session:
         request.session["key"] = "report"
         user = User.objects.get(username = request.session["username"])
-        paymentData =Payment.objects.filter(payment_by = user )
+        paymentData =Payment.objects.filter(payment_by = user ).order_by('payment_date')
         total = 0
         for i in paymentData:
             if i.payment_type == "Expense":
@@ -140,7 +126,7 @@ def currentMonthreports(request):
         user = User.objects.get(username = request.session["username"])
         current_year = datetime.now().year
         current_month = datetime.now().month
-        paymentData = Payment.objects.filter(Q(payment_by = user ) & Q(payment_date__month=current_month) & Q(payment_date__year=current_year))
+        paymentData = Payment.objects.filter(Q(payment_by = user ) & Q(payment_date__month=current_month) & Q(payment_date__year=current_year)).order_by('-payment_date')
         current_month_name = calendar.month_name[current_month]
         total = 0
         expenseTotal = 0
@@ -233,13 +219,47 @@ def filter_report(request):
         return render(request,"reports.html",{"user":user,"paymentData":paymentData.order_by("payment_date"),"total":total,"expenseTotal":expenseTotal,"data":key})
     else:
         return redirect("login")
-        
+
+
+def deleteentry(request,id):
+    if 'username' in request.session:
+        entry = Payment.objects.get(id = id)
+        DeletePayment.objects.create(
+                payment_type = entry.payment_type,
+                category = entry.category,
+                payment_date = entry.payment_date,
+                amount = entry.amount,
+                description = entry.description,
+                payment_for = entry.payment_for,
+                payment_by = entry.payment_by
+            )
+        entry.delete()
+        if request.session["key"] == "current":
+                return redirect('currentMonthreports')
+        elif request.session["key"] == "report":
+            return redirect('reports')
+        elif request.session["key"] == "search_report":
+                return redirect('search_report')
+       
+    else:
+        return redirect('login')
+
 
 def delete_records(request):
     if 'username' in request.session:
         del_list = request.POST.getlist('record_ids')
         for i in del_list:
-            Payment.objects.get(id = i).delete()
+            entry = Payment.objects.get(id = i)
+            DeletePayment.objects.create(
+                    payment_type = entry.payment_type,
+                    category = entry.category,
+                    payment_date = entry.payment_date,
+                    amount = entry.amount,
+                    description = entry.description,
+                    payment_for = entry.payment_for,
+                    payment_by = entry.payment_by
+                )
+            entry.delete()
         if request.session["key"] == "current":
                 return redirect('currentMonthreports')
         elif request.session["key"] == "report":
@@ -249,3 +269,29 @@ def delete_records(request):
     else:
         return redirect('login')
 
+def getDeletedEntries(request):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
+
+        deletePay = DeletePayment.objects.filter(payment_by =user.id)
+        return render(request,'deleteExpense.html',{"data":deletePay,"user":user})
+    else:
+        return redirect('login')
+    
+def undoDelEntries(request,id):
+    if 'username' in request.session:
+        user = User.objects.get(username = request.session["username"])
+        entry = DeletePayment.objects.get(id = id)
+        Payment.objects.create(
+            payment_type = entry.payment_type,
+            category = entry.category,
+            payment_date = entry.payment_date,
+            amount = entry.amount,
+            description = entry.description,
+            payment_for = entry.payment_for,
+            payment_by = user
+        )
+        entry.delete()
+        return redirect('getDeletedEntries')
+    else:
+        return redirect('login')

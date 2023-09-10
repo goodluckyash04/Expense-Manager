@@ -1,7 +1,9 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import *
 from datetime import datetime
 from django.db.models import Q
+from django.http import JsonResponse
+
 
 
 # ............................................Task Management...........................................
@@ -43,7 +45,33 @@ def updatetask(request,id):
     else:
         return redirect('taskReports')
 
+def editTask(request,id):
+    task_data = get_object_or_404(Task, id=id)  # Use get_object_or_404 to handle 404 if the object is not found        
+    if request.method=="GET":
+        # Serialize the model data into a dictionary
+        task_dict = {
+            
+            'id': task_data.id,
+            'priority':task_data.priority,
+            'task_title':task_data.task_title,
+            'complete_by':task_data.complete_by, 
+            'task_detail':task_data.task_detail  
+            
+        }
 
+        return JsonResponse(task_dict)
+    else:
+        task_data.priority = request.POST["priority"]
+        task_data.task_title = request.POST["task_title"]
+        task_data.complete_by = request.POST["complete_by"]
+        task_data.task_detail = request.POST["task_detail"]       
+       
+        task_data.save()
+        return redirect('taskReports')
+
+    #     return redirect('currentMonthTaskReport')
+    # else:
+    #     return redirect('taskReports')
 
 def incomplete(request,id):
     current_task = Task.objects.get(id = id)

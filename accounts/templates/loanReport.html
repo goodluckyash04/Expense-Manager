@@ -62,12 +62,12 @@
     <thead>
       <tr>
       <th scope="col"> <a href="/loanHome/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
-        </th>
-        <th scope="col">Loan</th>
-        <th scope="col">Amount</th>
+      </th>
+        {% comment %} <th scope="col">Loan</th> {% endcomment %}
         <th scope="col">Paid_On</th>
+        <th scope="col">Amount</th>
         <th scope="col">Detail</th>
-        <th scope="col"></th>
+        <th scope="col" colspan="2"></th>
         
        
       </tr>
@@ -77,10 +77,12 @@
       {% if emiData %} {% for i in emiData %}
       <tr>
         <td scope="row">{{forloop.counter}}</td>
-        <td>{{i.loan}}</td>
+        {% comment %} <td>{{i.loan}}</td> {% endcomment %}
+        <td>{{i.paid_on | date:"d-m-Y"}}</td>
         <td>{{i.amount}}</td>
-        <td>{{i.paid_on}}</td>
         <td>{{i.note}}</td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#editEMIModal" onclick="openModalAndGetData({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
+        <td></td>
         <td><a href={% url 'deleteEmi' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
         
       </tr>
@@ -90,8 +92,8 @@
     </tbody>
     <tfoot>
       <tr >
-        <td class="text-center border-0" colspan="2"><b>Total Remaining<b></td>
-        <td class=" border-0"><b>₹{{total}}</b></td>
+        <td class="text-center border-0"  colspan="2"><b>Total Remaining<b></td>
+        <td class=" border-0"><b>₹ {{total}}</b></td>
         <td class=" border-0" colspan="2"></td>
       </tr>
     </tfoot>
@@ -99,9 +101,27 @@
 </div>
 
 
+
+<div class="modal fade" id="editEMIModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{loanData.title}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        {% comment %} content here {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% endblock body %}
 
 {% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   function generateCSV() {
     var table = document.getElementById("myTable");
@@ -146,6 +166,79 @@
     // Trigger the link to start the download
     link.click();
   }
+
+
+  function openModalAndGetData(emiId) {
+  // Make an AJAX request to your Django server to fetch data
+  $.ajax({
+    url: `/editEmi/${emiId}`,  // Replace with your Django URL
+    type: 'GET',
+    success: function(data) {
+      console.log()
+      var utcDate = new Date(data.paid_on);
+      var localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+
+      // Format local date as a string for the input field
+      var paymentDate = localDate.toISOString().slice(0, 16);
+      var content = ` 
+      <form class="m-2" action="/editEmi/${data.id}" method="post">
+        {% csrf_token %}
+      <input
+      type="text"
+      class="form-control my-2"
+      name="loan"
+      placeholder="loan"
+      id="loan"
+      value = "${data.loan}"
+      
+    />    
+      <input
+      type="datetime-local"
+      class="form-control my-2"
+      name="paid_on"
+      placeholder="paid_on"
+      id="paid_on"
+      value = "${paymentDate}"
+      required
+    />    
+      <input
+      type="number"
+      class="form-control my-2"
+      name="amount"
+      placeholder="Amount"
+      id="amount"
+      value = "${data.amount}"
+
+      aria-describedby="emailHelp"
+      required
+    />    
+        <input
+        type="text"
+        class="form-control my-2"
+        name="note"
+        placeholder="Note"
+        id="note"
+        value = "${data.note}"
+
+        aria-describedby="emailHelp"
+      />
+      <button
+      type="submit"
+      class=" form-control btn btn-success my-2"
+    >
+      Update EMI
+    </button>  
+  </form>  `
+      // Update the modal content with the fetched data
+      $('#modalContent').html(content);
+      // Show the modal
+      $('#editEMIModal').modal('show');
+    },
+    error: function() {
+      alert('Failed to fetch data.');
+    }
+  });
+}
 
 </script>
 <script>

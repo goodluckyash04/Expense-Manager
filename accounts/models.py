@@ -65,4 +65,27 @@ class EMI(models.Model):
 
     def __str__(self):
         return self.loan.title
+    
+class DeletedEMI(models.Model):
+    loan = models.CharField(max_length=100,default=None)
+    amount = models.FloatField(default=0.0)
+    note = models.CharField(max_length=100,default=None)
+    paid_on = models.DateTimeField(auto_now=False, auto_now_add=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    deleted_on = models.DateTimeField(auto_now=True, auto_now_add=False)
 
+    def __str__(self):
+        return f'{self.loan}-{self.note}'
+
+class DeletePayment(models.Model):
+    payment_type = models.CharField(max_length=50)
+    category = models.CharField(max_length=50,default="Personal")
+    payment_date = models.DateTimeField(auto_now=False, auto_now_add=False)
+    amount = models.FloatField(default=0.0)
+    payment_for = models.CharField(max_length=50)
+    description = models.CharField(max_length=150)
+    payment_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    deleted_at = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return f"{self.payment_by.name } {self.payment_type} {self.amount}"
