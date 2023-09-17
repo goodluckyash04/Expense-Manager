@@ -13,18 +13,7 @@
     <title>Go-Expense</title>
     <link rel="stylesheet" href="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.css" />
     <script src="https://unpkg.com/simplebar@5.3.4/dist/simplebar.min.js"></script>
-    <style>
-        .simplebar-scrollbar:before {
-  background-color: #abf3b3 ;
-  border-radius: 5px;
-}
-
-/* On hover, style the SimpleBar scrollbar thumb */
-.simplebar-scrollbar:hover:before {
-  background-color:#2b8835;
-}
-    </style>
-      
+  
 </head>
 
 <body>
@@ -33,5 +22,7 @@
  {% block body %}
  {% endblock body  %}
 </body>
-{% block script %}{% endblock script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% block script %}
+{% endblock script %}
 </html>

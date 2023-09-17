@@ -1,6 +1,6 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 
-    <h5 class="text-center text-success mt-3" id = "key">{{loanData.title}}- ₹{{loanData.amount}}</h5>
+  <h5 class="text-center text-success mt-3" id = "key">{{loanData.title}}- ₹{{loanData.amount}}</h5>
 
 
 
@@ -120,7 +120,6 @@
 {% endblock body %}
 
 {% block script %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
   function generateCSV() {

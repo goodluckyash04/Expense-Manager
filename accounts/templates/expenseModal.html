@@ -1,0 +1,51 @@
+<!-- Add Expense Modal -->
+<div class="modal fade" id="expensemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="wefef">Add Entry</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/addexpense/" id="myExpenseForm" method="post">
+                    {% csrf_token %}
+                    <div class="form-check form-check-inline mb-3">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="payment_type"
+                            id="Expense"
+                            value="Expense"
+                            onchange="payType()"
+                            required
+                        />
+                        <label class="form-check-label" for="Expense">Expense</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="payment_type"
+                            id="Income"
+                            onchange="payType()"
+                            value="Income"
+                        />
+                        <label class="form-check-label" for="Income">Income</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="payment_type"
+                            id="Loan"
+                            onchange="payType()"
+                            value="Loan"
+                        />
+                        <label class="form-check-label" for="Income">Loan</label>
+                    </div>
+                    <div id="data"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

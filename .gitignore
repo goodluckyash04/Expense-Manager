@@ -7,6 +7,7 @@ backup/
 # Ignore database files
 *.sqlite3
 *.db
+*.bin
 
 # Ignore static and media files (served by Django during development)
 /staticfiles/
@@ -43,3 +44,6 @@ Pipfile.lock
 # Ignore system-specific files
 .DS_Store
 Thumbs.db
+
+commands/decrypt.py
+accounts/management/commands/decrypt.py

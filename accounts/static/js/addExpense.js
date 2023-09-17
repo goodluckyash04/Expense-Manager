@@ -13,28 +13,21 @@
         }
     }
 
-function loanCategory(){
-    var selectedValue = document.getElementById("category")
-    var btn = document.getElementById("submitButton")
-    var desc = document.getElementById("description")
-    var p_for = document.getElementById("payment_for")
-    var loan = document.getElementById("loan_name")
-    console.log(selectedValue.name)
-    if (selectedValue.value == "M_Loan"){
-        btn.textContent = "Convert To EMI"
-        desc.placeholder = "No. of EMIS"
-        desc.type = "number"
-        p_for.style.display = "none"
-        loan.removeAttribute("style")
-    }else{
-        btn.textContent = "Add Expense"
-        desc.placeholder = "Expense Description"
-        desc.type = "text"
-        p_for.removeAttribute('style')
-        loan.style.display = "none"
+    function loanCategory() {
+        var categoryValue = document.getElementById("category");
+        var btn = document.getElementById("submitButton");
+        var desc = document.getElementById("description");
+        var p_for = document.getElementById("payment_for");
+        var loan = document.getElementById("loan_name");
+    
+        var isLoanCategory = categoryValue.value === "Loan";
+        
+        btn.textContent = isLoanCategory ? "Convert To EMI" : "Add Expense";
+        desc.placeholder = isLoanCategory ? "No. of EMIs" : "Expense Description";
+        desc.type = isLoanCategory ? "number" : "text";
+        p_for.style.display = isLoanCategory ? "none" : "";
+        loan.style.display = isLoanCategory ? "" : "none";
     }
-}
-
 
   function payType(){
     var data = document.getElementById("data")
@@ -47,11 +40,20 @@ function loanCategory(){
         name="category"
         aria-label="Default select example"
         >
-        <option selected value="">-- Category --</option>
         <option value="Salary">Salary</option>
-        <option value="Personal">Personal</option>
+        <option value="Other">Other</option>
         </select>
 
+        <div class="mb-3">
+        <input
+            type="text"
+            class="form-control"
+            name="payment_for"
+            readonly
+            id="payment_for"
+            value = "Myself"
+        />
+        </div> 
 
         <div class="mb-3">
         <input
@@ -78,17 +80,7 @@ function loanCategory(){
         </div>
 
 
-        <select
-        class="form-select mb-3"
-        name="payment_for"
-        id = "payment_for"
-        aria-label="Default select example"
-        onchange="paymentFor()"
-        >      
-        <option value="Myself" selected>Myself</option>
-        
-        </select>
-        
+       
 
         <div class="mb-3">
         <input
@@ -120,13 +112,33 @@ function loanCategory(){
         onchange="loanCategory()"
         aria-label="Default select example"
         >
-        <option selected value="">-- Category --</option>
-        <option value="M_Loan">Loan</option>
-        <option value="Personal">Personal</option>
-        <option value="Food">Food</option>
         <option value="Shopping">Shopping</option>
+        <option value="Food">Food</option>
+        <option value="Other">Other</option>
+        <option value="Loan">Loan</option>
         </select>
 
+        <select
+        class="form-select mb-3"
+        name="payment_for"
+        id = "payment_for"
+        onchange="paymentFor()"
+        >
+        <option value="Myself" selected >Myself</option>
+        <option value="Home">Home</option>
+        <option value="Other">Other</option>
+        </select>
+           
+        <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                style="display: none;"
+                id="payment_for_text"
+                placeholder="Payment For"
+                aria-describedby="emailHelp"
+            />
+            </div>
 
         <div class="mb-3">
         <input
@@ -153,34 +165,7 @@ function loanCategory(){
         </div>
 
 
-        <select
-        class="form-select mb-3"
-        name="payment_for"
-        id = "payment_for"
-        aria-label="Default select example"
-        onchange="paymentFor()"
-        >
-        <option selected>- Payment For -</option>
-        <option value="Mom">Mom</option>
-        <option value="Dad">Dad</option>
-        <option value="Myself">Myself</option>
-        <option value="Home">Home</option>
-        <option value="Other">Other</option>
-        </select>
         
-        
-        <div class="mb-3">
-            <input
-                type="text"
-                class="form-control"
-                name="payment_for"
-                style="display: none;"
-                id="payment_for_text"
-                placeholder="payment_for"
-                aria-describedby="emailHelp"
-            />
-            </div>
-
         <div class="mb-3">
         <input
             type="text"
@@ -222,9 +207,11 @@ function loanCategory(){
         name="category"
         aria-label="Default select example"
         >
-        <option value="Loan" selected>Loan</option>
+        <option value="Debit" >Debit</option>
+        <option value="Credit" >Credit</option>
        
         </select>
+        
        <div class="mb-3">
        <input
            type="datetime-local"
@@ -234,7 +221,21 @@ function loanCategory(){
            value = ${currentDatetime}
            aria-describedby="emailHelp"
        />
+
        </div> 
+     
+
+       <div class="mb-3">
+       <input
+           type="text"
+           class="form-control"
+           name="payment_for"
+           placeholder="Paid For"
+           id="payment_for"
+           aria-describedby="emailHelp"
+           required
+       />
+       </div>
 
        <div class="mb-3">
        <input
@@ -248,32 +249,6 @@ function loanCategory(){
        />
        </div>
 
-
-       <select
-       class="form-select mb-3"
-       name="payment_for"
-       id = "payment_for"
-       aria-label="Default select example"
-       onchange="paymentFor()"
-       >
-       <option selected>- Payment For -</option>
-       <option value="Mom">Mom</option>
-       <option value="Dad">Dad</option>
-       <option value="Other">Other</option>
-       </select>
-       
-       
-       <div class="mb-3">
-           <input
-               type="text"
-               class="form-control"
-               name="payment_for"
-               style="display: none;"
-               id="payment_for_text"
-               placeholder="payment_for"
-               aria-describedby="emailHelp"
-           />
-           </div>
 
        <div class="mb-3">
        <input

@@ -1,268 +1,29 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
-<div class="row m-3 ">
-    <div class="col-12 col-md-4 mb-3 mb-sm-0">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-success">EXPENSE</h5>
-          <p class="card-text text-secondary">Maintain Your Day to Day Expense</p>
-          <a data-bs-toggle="modal" data-bs-target="#expensemodal"  class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
-          <a href="/currentMonthreports/" class="btn btn-secondary" id="current-month" onload="getCurrentMonthName()" style="background-color:rgb(77, 168, 104);"></a>
-          <a href="/reports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4 mb-3">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-success">TASK</h5>
-          <p class="card-text text-secondary">Don't Stress Your Brain Add Your ToDos Here </p>
-          <a data-bs-toggle="modal" data-bs-target="#taskmodal" class="btn btn-primary" style=" background-color:rgb(77, 168, 104);" ><i class="fa-solid fa-circle-plus"></i></a>
-          <a href="/currentMonthTaskReport/" id="task" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
-          <a href="/taskReports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-md-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title text-success">LOAN</h5>
-          <p class="card-text text-secondary">Create Your Virtual Loan To keep track of EMIS</p>
-          <a  class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loanmodal" style=" background-color:rgb(77, 168, 104);"><i class="fa-solid fa-circle-plus"></i></a>
-          <a href="/loanHome/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
-          <a href="/deletedEntries/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-trash-can"></i></a>
-
-        </div>
+<div class="row m-3">
+  {% for item in items %}
+  <div class="col-12 col-md-4 mb-3{{ item.class_suffix }}">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title text-success">{{ item.title }}</h5>
+        <p class="card-text text-secondary">{{ item.description }}</p>
+        <a data-bs-toggle="modal" data-bs-target="{{ item.modal_target }}" class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.modal_button_icon }}"></i></a>
+        {% if item.title == "LOAN" %}
+        <a href="{{ item.report_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.report_button_icon }}"></i></a>
+        {% else %}
+        <a href="{{ item.report_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);">{{ item.report_button_icon }}</a>
+        {% endif %}
+        <a href="{{ item.delete_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.delete_button_icon }}"></i></a>
       </div>
     </div>
   </div>
-
-
-
-
-
-
-  <!--create loan Modal -->
-<div class="modal fade" id="loanmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Create Loan</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-       
-      <form action="/addloan/" method="post">
-        {% csrf_token %}
-
-        <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            name="title"
-            id="title"
-            placeholder="Loan Title"
-            aria-describedby="loan_title"
-          />
-        </div>
-        <div class="mb-3">
-          <input
-            type="datetime-local"
-            class="form-control"
-            name="started_on"
-            id="started_on"
-            aria-describedby="emailHelp"
-          />
-        </div>
-
-        <div class="mb-3">
-          <input
-            type="number"
-            class="form-control"
-            name="amount"
-            placeholder="Amount"
-            id="amount"
-            aria-describedby="emailHelp"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          style="background-color: #2b6b32; border: none"
-          class="btn btn-primary"
-        >
-          Create Loan
-        </button>
-      </form>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
 </div>
+{% include 'expenseModal.html' %}
+{% include 'loanModal.html' %}
+{% include 'taskModal.html' %}
 
-
-
-<!--create task Modal -->
-<div class="modal fade" id="taskmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form  action="/addTask/" method="post">
-          {% csrf_token %}
-
-          <select
-          class="form-select mb-3"
-          name="priority"
-          aria-label="Default select example"
-          >
-          <option selected>-- Priority --</option>
-          <option value="High">High</option>
-          <option selected value="Moderate">Moderate</option>
-          <option value="Low">Low</option>
-          <option value="Urgent">Urgent</option>
-          </select>
-            
-          <div class="mb-3">
-          <input
-              type="datetime-local"
-              class="form-control"
-              name="complete_by"
-              id="complete_by"
-              onchange="dateCheck()"
-              aria-describedby="complete_by"
-          />
-          </div>
-
-          <div class="mb-3">
-          <input
-              type="text"
-              class="form-control"
-              name="task_title"
-              placeholder="Task Title"
-              id="title"
-              required
-          />
-          </div>
-
-          <div class="form-floating mb-3">
-              <textarea class="form-control" name="task_detail" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-              <label for="floatingTextarea">Task Detail</label>
-            </div>
-       
-         
-          <button
-          type="submit"
-          id = "submitbutton"
-          style="background-color: #2b6b32; border: none"
-          class="btn btn-primary"
-          >
-          Add Task
-          </button>
-      </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<!--Add expense Modal -->
-<div class="modal fade" id="expensemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="wefef">Add Entry</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="/addexpense/"  id="myExpenseForm" method="post">
-          {% csrf_token %}
-          
-          {% comment %} <!--------------------------------- Payment Type --------------------------------------> {% endcomment %}
-          
-          <div class="form-check form-check-inline mb-3">
-              <input
-              class="form-check-input"
-              type="radio"
-              name="payment_type"
-              id="Expense"
-              value="Expense"
-              onchange="payType()"
-              required
-          />
-          <label class="form-check-label" for="Expense">Expense</label>
-          </div>
-          
-          <div class="form-check form-check-inline">
-          <input
-              class="form-check-input"
-              type="radio"
-              name="payment_type"
-              id="Income"
-              onchange="payType()"
-              value="Income"
-          />
-          <label class="form-check-label" for="Income">Income</label>
-          </div>
-
-          <div class="form-check form-check-inline">
-          <input
-              class="form-check-input"
-              type="radio"
-              name="payment_type"
-              id="Loan"
-              onchange="payType()"
-              value="Loan"
-          />
-          <label class="form-check-label" for="Income">Loan</label>
-          </div>
-          
-          <div id="data"></div>
-         
-         
-      </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-    {% endblock body %}
-
-
-
+{% endblock body %}
 
 {% block script%}
-<script>
-function getCurrentMonthName() {
-  const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-  ];
-
-  const currentDate = new Date();
-  const currentMonthNumber = currentDate.getMonth();
-  const currentYearNumber = currentDate.getFullYear();
-  console.log(currentYearNumber)
-  //const currentDate = new Date();
-  //const currentMonthNumber = currentDate.getMonth() + 1; // Months are 0-indexed
-  //return currentMonthNumber.toString().padStart(2, '0');
-    //    }
-
-  return months[currentMonthNumber].substr(0, 3).toUpperCase()+"'" + currentYearNumber.toString().slice(-2);
-}
-
-// Update the HTML content with the current month name
-document.getElementById("current-month").textContent = getCurrentMonthName();
-document.getElementById("task").textContent = getCurrentMonthName();
-</script>
-
 <script src='{% static "js/addExpense.js" %}'></script>
-
-<script>
-  
-</script>
 {% endblock script%}

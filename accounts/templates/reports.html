@@ -20,7 +20,7 @@
       <a href= "/reports/" class="btn btn btn-outline-danger form-control">Clear</a>
     </div>
     <div class="col-3 col-md-1">
-      <button type="button" onclick="generateCSV()" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
+      <button type="button" onclick="generateCSV()" id ="export-csv-button" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
     </div>
  
 </div>
@@ -80,17 +80,15 @@
         <td scope="row">{{forloop.counter}}</td>
         <td>{{i.payment_type}}</td>
         <td>{{i.category}}</td>
-        {% if i.payment_type == 'Expense' %}
-        <td>-{{i.amount | floatformat:2}}</td>
-        {% else %}
-        <td>{{i.amount | floatformat:2}}</td>
-        {% endif %}
+        <td class="{% if i.payment_type == 'Expense' or i.category == 'Debit' %}text-danger{% else %}text-success{% endif %}">
+        {{i.amount | floatformat:2}}</td>
         <td>{{i.payment_date | date:"d M Y" }}</td>
         <td>{{i.payment_date | date:"H:i:s" }}</td>
         <td>{{i.payment_for}}</td>
         <td >{{i.description}}</td>
         {% comment %} <td>{{i.created_at | date:"d M Y" }}</td> {% endcomment %}
-        <td><a href={% url 'editEntry' i.id %}><i class="fa-solid text-warning fa-pen"></i></a></td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick="openModalAndGetExpense({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
+
         <td></td>
         <td><a href={% url 'deleteentry' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
       </tr>
@@ -102,15 +100,17 @@
       <tr >
         <td class="text-center border-0"  colspan="4"><b>Total<b></td>
         <td class=" border-0" id="total">{{total | floatformat:2}}</td>
-        <td class=" border-0" colspan="7">{{expenseTotal | floatformat:2}}</td>
+        <td  class="  border-0 {% if expenseTotal < 0 %}text-danger{% else %}text-success{% endif %}"" colspan="7" ">{{expenseTotal | floatformat:2}}</td>
       </tr>
     </tfoot>
   </table>
 </form>
 </div>
 
-<!-- Modal -->
 
+
+
+<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -141,25 +141,22 @@
                  
                 >
                   <option {% if data.category == "" %} selected {% endif %} value="">-- CATEGORY --</option>
-                  <option {% if data.category == "Loan" %} selected {% endif %} value="M_Loan">Loan</option>
-                  <option {% if data.category == "Personal" %} selected {% endif %} value="Personal">Personal</option>
-                  <option {% if data.category == "Food" %} selected {% endif %} value="Food">Food</option>
                   <option {% if data.category == "Shopping" %} selected {% endif %} value="Shopping">Shopping</option>
+                  <option {% if data.category == "Food" %} selected {% endif %} value="Food">Food</option>
+                  <option {% if data.category == "EMI" %} selected {% endif %} value="EMI">EMI</option>
+                  <option {% if data.category == "Other" %} selected {% endif %} value="Personal">Other</option>
                   <option {% if data.category == "Salary" %} selected {% endif %} value="Salary">Salary</option>
                 </select>
-                  <select
-                    class="form-select text-center mb-2"
-                    name="payment_for"
-                    aria-label="Default select example"
-                   
+                <div class="mb-2">
+                  <input
+                      type="text"
+                      class="form-control text-center"
+                      id="payment_for"
+                      name ="payment_for"
+                      placeholder="Payment For"
+                      value = {{data.payment_for}}
                   >
-                    <option {% if data.payment_for == "" %} selected {% endif %} value="">-- BENEFICIARY --</option>
-                    <option {% if data.payment_for == "Mom" %} selected {% endif %}value="Mom">Mom</option>
-                    <option {% if data.payment_for == "Dad" %} selected {% endif %}value="Dad">Dad</option>
-                    <option {% if data.payment_for == "Home" %} selected {% endif %}value="Home">Home</option>
-                    <option {% if data.payment_for == "Myself" %} selected {% endif %}value="Myself">Myself</option>
-                    <option {% if data.payment_for == "Other" %} selected {% endif %}value="Other">Other</option>
-                  </select>
+                  </div>
                 <div class="d-flex mb-2">
                   <div class="col-6 col-md-6">
                     <input type="date"  class="form-control" value="{{data.startdate}}" id="startdate" name="startdate">
@@ -176,54 +173,70 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Entry</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+          {% comment %} content here {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock body %}
 
 {% block script %}
 <script src="../static/js/report.js"></script>
 <script>
-  function generateCSV() {
-    var table = document.getElementById("myTable");
-    var csvContent = "data:text/csv;charset=utf-8,";
-    var cont = document.getElementById("key").textContent;
-    console.log(cont)
-    // Extract the table headers
-    var headers = table.getElementsByTagName("th");
-    var headerValues = [];
-    for (var i = 0; i < headers.length; i++) {
-      headerValues.push(headers[i].textContent);
-    }
-    csvContent += '"' + headerValues.join('","') + '"\r\n';
+    document.getElementById("export-csv-button").addEventListener("click", function () {
+      // Get the table element by its ID
+      var table = document.getElementById("myTable");
+      var cont = document.getElementById("key").textContent;
+
   
-    // Extract the table data
-    var rows = table.getElementsByTagName("tr");
-    for (var i = 0; i < rows.length; i++) {
-      var cells = rows[i].getElementsByTagName("td");
-      var rowValues = [];
+      // Initialize an empty CSV content
+      var csvContent = "";
   
-      // Extract cell values
-      for (var j = 0; j < cells.length; j++) {
-        // Wrap date values in double quotes
-        if (j === 2) {
-          rowValues.push('"' + cells[j].textContent + '"');
-        } else {
-          rowValues.push(cells[j].textContent);
+      // Loop through each row in the table
+      for (var i = 0; i < table.rows.length; i++) {
+        var row = table.rows[i];
+  
+        // Loop through each cell in the row
+        for (var j = 0; j < row.cells.length; j++) {
+          var cell = row.cells[j];
+  
+          // Append the cell's text content to the CSV, enclosed in double quotes
+          csvContent += '"' + cell.textContent.trim().replace(/"/g, '""') + '"';
+  
+          // Add a comma separator, except for the last cell in the row
+          if (j < row.cells.length - 1) {
+            csvContent += ",";
+          }
         }
+  
+        // Add a newline character to separate rows
+        csvContent += "\n";
       }
-      
-      // Format the row as CSV and add to the content
-      csvContent += rowValues.join(",") + "\r\n";
-    }
   
-    // Create a download link for the CSV file
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${cont}.csv`);
-    document.body.appendChild(link);
+      // Create a Blob with the CSV content
+      var blob = new Blob([csvContent], { type: "text/csv" });
   
-    // Trigger the link to start the download
-    link.click();
-  }
+      // Create a temporary download link for the CSV file
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${cont}.csv`;
+  
+      // Trigger a click event on the link to initiate the download
+      a.click();
+    });
+  
+  
+  
 
   document.getElementById("select-all-checkbox").addEventListener("change", function() {
     var checkboxes = document.getElementsByName("record_ids");
@@ -242,4 +255,259 @@
   }
 
 </script>
+<!-- Edit Function-->
+<script>
+  function openModalAndGetExpense(Id) {
+    // Make an AJAX request to your Django server to fetch data
+    $.ajax({
+      url: `/editEntry/${Id}`,  // Replace with your Django URL
+      type: 'GET',
+      success: function(data) {
+      console.log(data)
+       var utcDate = new Date(data.payment_date);
+  
+        // Format local date as a string for the input field
+        var payment_date = utcDate.toISOString().slice(0, 16); 
+        var content = "" 
+        if (data.payment_type == "Income"){
+            content = `
+            <form action=/editEntry/${Id} id="myExpenseForm" method="post">
+              {% csrf_token %}
+            <select
+            class="form-select mb-3"
+            id="category"
+            name="category"
+            aria-label="Default select example"
+            >
+            <option ${data.category == "Salary"?"selected":""}value="Salary">Salary</option>
+            <option ${data.category == "Other"?"selected":""} value="Other">Other</option>
+            </select>
+
+            <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                name="payment_for"
+                readonly
+                id="payment_for"
+                value = ${data.payment_for}
+            />
+            </div> 
+    
+            <div class="mb-3">
+            <input
+                type="datetime-local"
+                class="form-control"
+                name="payment_date"
+                id="payment_date"
+                value = ${payment_date}
+                aria-describedby="emailHelp"
+            />
+            </div> 
+    
+            <div class="mb-3">
+            <input
+                type="number"
+                class="form-control"
+                name="amount"
+                placeholder="Amount"
+                id="amount"
+                value = ${data.amount}
+                aria-describedby="emailHelp"
+                required
+            />
+            </div>
+    
+            <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                name="description"
+                placeholder="Income Description"
+                id="description"
+                value = ${data.description}
+                required
+            />
+            </div>
+
+            <button
+            id = "submitButton"
+            type="submit"
+            style="background-color: #2b6b32; border: none"
+            class="btn btn-primary"
+            >
+            Update Income
+            </button>
+          </form>
+            `
+        }else if(data.payment_type == "Loan"){
+            content =  `
+            <form action=/editEntry/${Id} id="myExpenseForm" method="post">
+              {% csrf_token %}
+              <select
+            class="form-select mb-3"
+            id="category"
+            name="category"
+            aria-label="Default select example"
+            >
+            <option ${data.category == "Debit"?"selected":""} value="Debit" >Debit</option>
+            <option ${data.category == "Credit"?"selected":""} value="Credit" >Credit</option>
+           
+            </select>
+            
+           <div class="mb-3">
+           <input
+               type="datetime-local"
+               class="form-control"
+               name="payment_date"
+               id="payment_date"
+               value = ${payment_date}
+               aria-describedby="emailHelp"
+           />
+    
+           </div> 
+         
+    
+           <div class="mb-3">
+           <input
+               type="text"
+               class="form-control"
+               name="payment_for"
+               placeholder="Paid For"
+               id="payment_for"
+               value = ${data.payment_for}
+               aria-describedby="emailHelp"
+               required
+           />
+           </div>
+    
+           <div class="mb-3">
+           <input
+               type="number"
+               class="form-control"
+               name="amount"
+               placeholder="Amount"
+               id="amount"
+               value = ${data.amount}
+               aria-describedby="emailHelp"
+               required
+           />
+           </div>
+    
+    
+           <div class="mb-3">
+           <input
+               type="text"
+               class="form-control"
+               name="description"
+               placeholder="Loan Description"
+               id="description"
+               value = ${data.description}
+               required
+           />
+           </div>
+    
+    
+           <button
+           id = "submitButton"
+           type="submit"
+           style="background-color: #2b6b32; border: none"
+           class="btn btn-primary"
+           >
+           Update Loan
+           </button>
+          </form>`
+        }else{
+          content = `<form action=/editEntry/${Id} id="myExpenseForm" method="post">
+            {% csrf_token %}
+            <select
+            class="form-select mb-3"
+            id="category"
+            name="category"
+            aria-label="Default select example"
+            >
+            <option ${data.category == "Shopping"?"selected":""} value="Shopping">Shopping</option>
+            <option ${data.category == "Food"?"selected":""} value="Food">Food</option>
+            <option ${data.category == "Other"?"selected":""} value="Other">Other</option>
+            <option ${data.category == "EMI"?"selected":""} value="EMI">EMI</option>
+            </select>
+               
+            <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                id="payment_for"
+                name ="payment_for"
+                placeholder="Payment For"
+                value = ${data.payment_for}
+                aria-describedby="emailHelp"
+            />
+            </div>
+    
+            <div class="mb-3">
+            <input
+                type="datetime-local"
+                class="form-control"
+                name="payment_date"
+                id="payment_date"
+                value = ${payment_date}
+                aria-describedby="emailHelp"
+            />
+            </div> 
+    
+    
+            <div class="mb-3">
+            <input
+                type="number"
+                class="form-control"
+                name="amount"
+                placeholder="Amount"
+                id="amount"
+                value = ${data.amount}
+                aria-describedby="emailHelp"
+                required
+            />
+            </div>
+    
+    
+            
+            <div class="mb-3">
+            <input
+                type="text"
+                class="form-control"
+                name="description"
+                placeholder="Expense Description"
+                id="description"
+                value = ${data.description}
+                required
+            />
+            </div>
+    
+    
+            <button
+            id = "submitButton"
+            type="submit"
+            style="background-color: #2b6b32; border: none"
+            class="btn btn-primary"
+            >
+            Edit Expense
+            </button>
+
+          </form>`
+        }
+
+        // Update the modal content with the fetched data
+        $('#modalContent').html(content);
+        // Show the modal
+        $('#editExpenseModal').modal('show');
+      },
+      error: function() {
+        alert('Failed to fetch data.');
+      }
+    });
+  }
+</script>
 {% endblock script %}
+
+
+
