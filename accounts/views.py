@@ -15,7 +15,45 @@ from django.contrib import messages
 def home(request):
     if 'username' in request.session:
         user = User.objects.get(username = request.session["username"])
-        return render(request,"home.html",{"user":user})
+        print("wewef",datetime.today().strftime("%b'%y"))
+        items = [
+            {
+                "title": "EXPENSE",
+                "description": "Maintain Your Day to Day Expense",
+                "modal_target": "#expensemodal",
+                "modal_button_icon": 'fa-circle-plus',
+                "report_url": "/currentMonthreports/",
+                "report_button_icon":  datetime.today().strftime("%b'%y").upper(),
+                "delete_url": "/reports/",
+                "delete_button_icon": 'fa-solid fa-square-poll-horizontal',
+                "class_suffix": " mb-3 mb-sm-0"
+                
+            },
+            {
+                "title": "TASK",
+                "description": "Don't Stress Your Brain Add Your ToDos Here",
+                "modal_target": "#taskmodal",
+                "modal_button_icon": 'fa-circle-plus',
+                "report_url": "/currentMonthTaskReport/",
+                "report_button_icon": datetime.today().strftime("%b'%y").upper(),
+                "delete_url": "/taskReports/",
+                "delete_button_icon": 'fa-square-poll-horizontal',
+                "class_suffix": " mb-3"
+            },
+            {
+                "title": "LOAN",
+                "description": "Create Your Virtual Loan To keep track of EMIS",
+                "modal_target": "#loanmodal",
+                "modal_button_icon": 'fa-circle-plus',
+                "report_url": "/loanHome/",
+                "report_button_icon": 'fa-square-poll-horizontal',
+                "delete_url": "/deletedEntries/",
+                "delete_button_icon": 'fa-trash-can',
+                "class_suffix": ""
+            },
+        ]
+
+        return render(request,"home.html",{"user":user,'items': items})
     else:
         return redirect('login')
 
@@ -135,7 +173,13 @@ def hide_email(value):
     username = username[:2] + '*' * 8 + username[-1:]  # Hide all characters except the first two and last
     return f"{username}@{domain}"
 
-
+def get_current_month_name():
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    current_date = datetime.now()
+    current_month = months[current_date.month - 1]  # Python months are 1-based
+    current_year = str(current_date.year)[-2:]  # Get the last two digits of the year
+    return f"{current_month}'{current_year}"
 
 # hashed_pwd = make_password("plain_text")
 # check_password("plain_text",hashed_pwd)  # returns True
+

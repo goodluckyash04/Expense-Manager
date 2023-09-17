@@ -1,0 +1,53 @@
+<!-- Create Loan Modal -->
+<div class="modal fade" id="loanmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create Loan</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/addloan/" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="title"
+                            id="title"
+                            placeholder="Loan Title"
+                            aria-describedby="loan_title"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <input
+                            type="datetime-local"
+                            class="form-control"
+                            name="started_on"
+                            id="started_on"
+                            aria-describedby="emailHelp"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <input
+                            type="number"
+                            class="form-control"
+                            name="amount"
+                            placeholder="Amount"
+                            id="amount"
+                            aria-describedby="emailHelp"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        style="background-color: #2b6b32; border: none"
+                        class="btn btn-primary"
+                    >
+                        Create Loan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,104 +1,111 @@
 from django.shortcuts import render,redirect
 from .models import *
-from dateutil.relativedelta import relativedelta
 from datetime import datetime,timedelta
 from itertools import chain
 from django.db.models import Q
 import calendar
+from dateutil.relativedelta import relativedelta
+from django.contrib import messages
+from django.http import JsonResponse
 
 
 
 # ..........................................Expense Management.............................................
 
 def addexpense(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
+    print(request.POST)
+    if 'username' not in request.session:
+        return redirect("login")
 
-        if request.POST["category"] == "M_Loan":
-            no = int(request.POST['description'])
-            if no == 0:
-                no = 1
-            date_object = datetime.strptime(request.POST["payment_date"], "%Y-%m-%dT%H:%M")
-            for i in range(1,no+1):
-                desired_date = date_object.replace(day=4, hour=0, minute=1) + relativedelta(months=i)
+    user = User.objects.get(username=request.session["username"])
+    category = request.POST.get("category", "Other")
+    payment_type = request.POST.get("payment_type", "Expense")
+
+    payment_date_str = request.POST.get("payment_date", "")
+
+    try:
+        payment_date = datetime.strptime(payment_date_str, "%Y-%m-%dT%H:%M")
+    except ValueError:
+        messages.error(request, "Invalid payment date format.")
+        return redirect('home')
+
+    if category == "Loan":
+        loan_name = request.POST.get('loan_name', '')
+        amount = int(request.POST.get('amount', 0))
+        no = int(request.POST.get('description', 1))
+        loan_exist = Loan.objects.filter(title__iexact= loan_name,created_by=user)
+        if not loan_exist:
+            Loan.objects.create(
+                title=loan_name,
+                amount=amount,
+                started_on=payment_date_str,
+                created_by=user
+            )
+            loanData = Loan.objects.get(title = loan_name,created_by=user)
+            for i in range(1, no + 1):
+                # Calculate the desired date manually
+                desired_date = payment_date.replace(day=4, hour=0, minute=1) + relativedelta(months=i)
                 desired_date_str = desired_date.strftime('%Y-%m-%dT%H:%M')
                 Payment.objects.create(
-                payment_type = 'Expense',
-                category = "M_Loan",
-                payment_date = desired_date_str,
-                amount = int(request.POST["amount"])/no,
-                description = f"EMI {i}({request.POST['loan_name']})",
-                payment_for = "Myself",
-                payment_by = user
-            )
-            Loan.objects.create(
-                title = request.POST['loan_name'],
-                amount = request.POST['amount'],
-                started_on =  request.POST['payment_date'],
-                created_by =user
-            )
-        else:
-            if request.POST['category']:
-                categoryData = request.POST['category']
-            else:
-                categoryData = "Loan"
-            if request.POST["payment_for"] :
-                paid_for = request.POST["payment_for"].title()
-            else:
-                paid_for = "Myself"
-            Payment.objects.create(
-                payment_type = request.POST["payment_type"],
-                category = categoryData,
-                payment_date = request.POST["payment_date"],
-                amount = request.POST["amount"],
-                description = request.POST["description"],
-                payment_for = paid_for,
-                payment_by = user
-            )
-        return redirect('home')
+                    payment_type='Expense',
+                    category="EMI",
+                    payment_date=desired_date_str,
+                    amount=amount / no,
+                    description=f"EMI {i}({loan_name})",
+                    payment_for="Myself",
+                    payment_by=user
+                )
+                EMI.objects.create(
+                    loan = loanData,
+                    paid_on = desired_date_str,
+                    amount = -(amount / no),
+                    note = f"EMI {i}",
+                )
+       
     else:
-            return redirect("login")
+        payment_for = request.POST.get("payment_for", "Myself").title()
+        amount = int(request.POST.get("amount", 0))
+        description = request.POST.get("description", "")
+
+        Payment.objects.create(
+            payment_type=payment_type,
+            category=category,
+            payment_date=payment_date_str,
+            amount=amount,
+            description=description,
+            payment_for=payment_for,
+            payment_by=user
+        )
+    return redirect('home')
 
 
 def editEntry(request,id):
     if 'username' in request.session:
         entry = Payment.objects.get(id = id)
         if request.method == "GET":
-            if 'value' in request.session:
-                key = request.session['value']
-            else:
-                key = None
-            return render(request,'editExpense.html',{'entry':entry,key:key})
+            data = {
+            "payment_type":entry.payment_type,
+            "category":entry.category,
+            "payment_date":entry.payment_date,
+            "amount":entry.amount,
+            "description":entry.description,
+            "payment_for":entry.payment_for,
+            }
+            return JsonResponse(data)
         else:
-            if request.POST['category']:
-                if request.POST['payment_type'] != 'Loan':
-                    categoryData = request.POST['category']
-                else:
-                    categoryData = "Loan"
-            if 'payment_for' in request.POST:
-                if request.POST["payment_for"] :
-                    if request.POST['payment_type'] != 'Income':
-                        paid_for = request.POST["payment_for"].title()
-                    else:
-                        paid_for = "Myself"
-            else:
-                paid_for = "Myself"
-
-                    
-            entry.payment_type = request.POST["payment_type"]
-            entry.category = categoryData
-            entry.payment_date = request.POST["payment_date"]
-            entry.amount = request.POST["amount"]
-            entry.description = request.POST["description"]
-            entry.payment_for = paid_for
+            entry.category=request.POST["category"]
+            entry.payment_date=request.POST["payment_date"]
+            entry.amount=request.POST["amount"]
+            entry.description=request.POST["description"]
+            entry.payment_for=request.POST["payment_for"].title()
             entry.save()
+            print(request.POST)
             if request.session["key"] == "current":
                 return redirect('currentMonthreports')
             elif request.session["key"] == "report":
                 return redirect('reports')
             elif request.session["key"] == "search_report":
                 return redirect('search_report')
-       
     else:
         return redirect('login')
 
@@ -158,7 +165,7 @@ def search_report(request):
         try:
             paymentData =Payment.objects.filter(payment_by = user ).filter(amount = value)
         except:
-            paymentData1 =Payment.objects.filter(payment_by = user ).filter(payment_for = value.title())
+            paymentData1 =Payment.objects.filter(payment_by = user ).filter(payment_for__icontains = value.title())
             paymentData2 =Payment.objects.filter(payment_by = user ).filter(description__icontains= value)
             paymentData = list(chain(paymentData1,paymentData2))
         total = 0
@@ -182,28 +189,19 @@ def filter_report(request):
                'startdate': request.POST['startdate'], 'enddate': request.POST['enddate']}
 
         filterData = Q(payment_by=user)
-        if request.POST['payment_for'] != "Other":
-            if request.POST["payment_for"]:
-                filterData &= Q(payment_for=request.POST["payment_for"])
-            if request.POST.getlist('payment_type'):
-                filterData &= Q(payment_type__in=request.POST.getlist('payment_type'))
-            if request.POST["category"]:
-                filterData &= Q(category=request.POST["category"])
-            if request.POST["startdate"] and request.POST["enddate"]:
-                endDate = datetime.strptime(request.POST['enddate'],("%Y-%m-%d"))
-                toDate = endDate + timedelta(days=1)
-                filterData &= Q(payment_date__range=[request.POST["startdate"], toDate.strftime("%Y-%m-%d")])
-            paymentData = Payment.objects.filter(filterData)
-        else:
-            if request.POST.getlist('payment_type'):
-                filterData &= Q(payment_type__in=request.POST.getlist('payment_type'))
-            if request.POST["category"]:
-                filterData &= Q(category=request.POST["category"])
-            if request.POST["startdate"] and request.POST["enddate"]:
-                filterData &= Q(payment_date__range=[request.POST["startdate"], request.POST['enddate']])
-
-            paymentData =Payment.objects.filter(filterData).exclude(payment_for__in = ["Mom","Dad","Myself","Home"] )
-
+       
+        if request.POST["payment_for"]:
+            filterData &= Q(payment_for__iexact=request.POST["payment_for"].title())
+        if request.POST.getlist('payment_type'):
+            filterData &= Q(payment_type__in=request.POST.getlist('payment_type'))
+        if request.POST["category"]:
+            filterData &= Q(category=request.POST["category"])
+        if request.POST["startdate"] and request.POST["enddate"]:
+            endDate = datetime.strptime(request.POST['enddate'],("%Y-%m-%d"))
+            toDate = endDate + timedelta(days=1)
+            filterData &= Q(payment_date__range=[request.POST["startdate"], toDate.strftime("%Y-%m-%d")])
+        paymentData = Payment.objects.filter(filterData)
+    
         total = 0
         expenseTotal = 0    
         for i in paymentData:
