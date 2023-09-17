@@ -118,7 +118,7 @@ def reports(request):
         paymentData =Payment.objects.filter(payment_by = user ).order_by('payment_date')
         total = 0
         for i in paymentData:
-            if i.payment_type == "Expense":
+            if i.payment_type == "Expense" or i.category == "Debit":
                 total-=i.amount
             else:
                 total+=i.amount
@@ -138,7 +138,7 @@ def currentMonthreports(request):
         total = 0
         expenseTotal = 0
         for i in paymentData:
-            if i.payment_type == "Expense":
+            if i.payment_type == "Expense" or i.category == "Debit":
                 total-=i.amount
             else:
                 total+=i.amount
@@ -171,7 +171,7 @@ def search_report(request):
         total = 0
         expenseTotal = 0
         for i in paymentData:
-            if i.payment_type == "Expense":
+            if i.payment_type == "Expense" or i.category == "Debit":
                 total-=i.amount
             else:
                 total+=i.amount
@@ -205,7 +205,7 @@ def filter_report(request):
         total = 0
         expenseTotal = 0    
         for i in paymentData:
-            if i.payment_type == "Expense":
+            if i.payment_type == "Expense" or i.category == "Debit":
                 total-=i.amount
             else:
                 total+=i.amount
