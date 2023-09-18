@@ -1,21 +1,21 @@
+from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password, check_password
-from .models import *
-from datetime import datetime
-from itertools import chain
-from django.db.models import Q
-import random,string
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponseServerError
+from django.utils.crypto import get_random_string
+from .models import User
+from .decorators import auth_user
+
+
 
 # ...........................................Home Page..................................................
 
-
-def home(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        print("wewef",datetime.today().strftime("%b'%y"))
+@auth_user
+def home(request,user):
+    try:
         items = [
             {
                 "title": "EXPENSE",
@@ -52,111 +52,141 @@ def home(request):
                 "class_suffix": ""
             },
         ]
-
         return render(request,"home.html",{"user":user,'items': items})
-    else:
-        return redirect('login')
+    except Exception as e:
+        messages.error(request, "An unexpected error occurred.")
+        # Log the error for debugging purposes
+        print(str(e))
+        return HttpResponseServerError()
 
 
 # ...........................................User Management..................................................
 
 def login(request):
-    print(request)
+
     if 'username' in request.session:
         return redirect("home")
-    else:
-        if request.method == "GET":
-            msg = ""
-            if 'forgot_password_msg' in request.session:
-                msg = request.session.get('forgot_password_msg', None)
-                del request.session['forgot_password_msg']
-            return render(request,"login.html",{"msg":msg})
-        else:
-            if User.objects.filter(username=request.POST['username'].lower()).exists():
-                user = User.objects.get(username=request.POST['username'].lower())
-                if check_password(request.POST['password'],user.password):
-                    request.session["username"] = user.username
-                    return redirect("home")
-                else:
-                    return render(request,"login.html",{"msg":"Invalid Credential"})
+    
+    if request.method == "GET":
+        msg = request.session.pop('forgot_password_msg', '')
+        return render(request, "login.html", {"msg": msg})
+    
+    if not User.objects.filter(username=request.POST['username'].lower()).exists():
+        return render(request,"login.html",{"msg":"user Does not exist"})
+    
 
-            else:
-                return render(request,"login.html",{"msg":"user Does not exist"})
+    user = User.objects.get(username=request.POST['username'].lower())
+    if not check_password(request.POST['password'],user.password):
+        return render(request,"login.html",{"msg":"Invalid Credential"})
+
+    request.session["username"] = user.username
+    return redirect("home")
 
 
 def signup(request):
     if request.method == "GET":
-        return render(request,"signup.html")
-    else:
-        if User.objects.filter(username=request.POST['username'].lower()).exists():
-            return render(request,"signup.html",{"msg":"User Exist"})
-        else:
-            if request.POST['password'] == request.POST["rpassword"]:
-                User.objects.create(
-                    name = request.POST['name'],
-                    username = request.POST['username'].lower(),
-                    email = request.POST['email'],
-                    password = make_password(request.POST['password'])
-                )
-                return render(request,"login.html",{"msg":"User Created.Login to Continue"})
-            else:
-                return render(request,"signup.html",{"msg":"Both Password Should be Same"})
+        return render(request, "signup.html")
+
+    if request.method == "POST":
+        username = request.POST.get('username', '').lower()
+        password = request.POST.get('password', '')
+        rpassword = request.POST.get('rpassword', '')
+        name = request.POST.get('name', '')
+        email = request.POST.get('email', '')
+
+        if not username or not password or not rpassword:
+            return render(request, "signup.html", {"msg": "All fields are required."})
+
+        if User.objects.filter(username=username).exists():
+            return render(request, "signup.html", {"msg": "Username already exists."})
+
+        if password != rpassword:
+            return render(request, "signup.html", {"msg": "Passwords do not match."})
+
+        try:
+            User.objects.create(
+                username=username,
+                password=make_password(password),
+                name=name,
+                email=email,
+            )
+            return render(request, "login.html", {"msg": "User Created. Login to Continue"})
+        except Exception as e:
+            messages.error(request, "An unexpected error occurred.")
+            # Log the error for debugging purposes
+            print(str(e))
+            return HttpResponseServerError()
+
+    return render(request, "signup.html")
+
 
 
 def logout(request):
-    del request.session['username']
+    try:
+        del request.session['username']
+    except KeyError:
+        pass  # 'username' key may not be present in the session
+
     return redirect('login')
 
 
 def forgotPassword(request):
     if request.method == "GET":
-        return render(request,"forgotPassword.html")
-    else:
+        return render(request, "forgotPassword.html")
+
+    if request.method == "POST":
         try:
-            user = User.objects.get(username = request.POST["username"].lower())
-            newPassword = get_random_string(8)
+            username = request.POST.get("username", "").lower()
+            user = User.objects.get(username=username)
+
+            new_password = get_random_string(8)
             sub = "Change in Account"
-            message = f"Use This Password to Login to ypur account:\n{newPassword}\n\n Do Not Share With anyone"
+            message = f"Use This Password to Login to your account:\n{new_password}\n\n Do Not Share With anyone"
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [user.email]
+            
             send_mail(sub, message, from_email, recipient_list)
-            user.password =  make_password(newPassword)
+            
+            user.password = make_password(new_password)
             user.save()
-            maskedEmail =hide_email(user.email)
-            msg = f"Password sent to {maskedEmail}"
+            
+            masked_email = hide_email(user.email)
+            msg = f"Password sent to {masked_email}"
             request.session['forgot_password_msg'] = msg
+            
             return redirect('login')
-        except:
-            return render(request,"forgotPassword.html",{"msg":"User Does not exist"})
+        except User.DoesNotExist:
+            return render(request, "forgotPassword.html", {"msg": "User does not exist"})
+        except Exception as e:
+            # Handle other exceptions if necessary
+            return render(request, "forgotPassword.html", {"msg": "An error occurred. Please try again."})
+
+    return render(request, "forgotPassword.html")
 
 
-def changePassword(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        if request.method == "GET":
-            return render(request,"changePassword.html",{"user":user})
-        else:
-            if check_password(request.POST['old_password'],user.password):
-                if request.POST['password'] == request.POST['c_password']:
-                    user.password =  make_password(request.POST['password'])
-                    user.save()
-                    return redirect('home')
-                else:
-                    return render(request,"changePassword.html",{"user":user,"msg":"confirm Password Should Match"})
-            else:
-                return render(request,"changePassword.html",{"user":user,"msg":"Old Password Incorrect"})
-    else:
-        return redirect('login')
+@auth_user
+def changePassword(request, user):
+    if request.method == "GET":
+        return render(request, "changePassword.html", {"user": user})
+
+    old_password = request.POST.get('old_password', '')
+    new_password = request.POST.get('password', '')
+    confirm_password = request.POST.get('c_password', '')
+
+    if not check_password(old_password, user.password):
+        return render(request, "changePassword.html", {"user": user, "msg": "Old Password Incorrect"})
+
+    if new_password != confirm_password:
+        return render(request, "changePassword.html", {"user": user, "msg": "Confirm Password Should Match"})
+
+    user.password = make_password(new_password)
+    user.save()
+
+    return redirect('home')
 
 
 
 # .............................................EXTRAS................................................
-
-def get_random_string(length):
-    # choose from all lowercase letter
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(length))
-    return result_str
 
     
 def dateConvert(date_value):
@@ -173,12 +203,7 @@ def hide_email(value):
     username = username[:2] + '*' * 8 + username[-1:]  # Hide all characters except the first two and last
     return f"{username}@{domain}"
 
-def get_current_month_name():
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    current_date = datetime.now()
-    current_month = months[current_date.month - 1]  # Python months are 1-based
-    current_year = str(current_date.year)[-2:]  # Get the last two digits of the year
-    return f"{current_month}'{current_year}"
+
 
 # hashed_pwd = make_password("plain_text")
 # check_password("plain_text",hashed_pwd)  # returns True

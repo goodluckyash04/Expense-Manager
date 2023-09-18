@@ -1,164 +1,144 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from .models import *
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponseRedirect
+from django.db.models import F, Sum
+from .models import Loan, EMI, DeletedEMI
+from .decorators import auth_user
 
+
+def get_loan_data(user):
+    return Loan.objects.filter(created_by=user).order_by(F('status').desc(), 'title')
+
+
+def get_loan_by_id(id):
+    return get_object_or_404(Loan, id=id)
+
+
+def get_emi_data_by_loan_id(id):
+    return EMI.objects.filter(loan_id=id).order_by(F('paid_on').desc())
 
 # ...............................................Loan Management...................................
 
-def addloan(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        loanData = Loan.objects.filter(created_by=user).order_by("title") 
+@auth_user
+def addloan(request, user):
+    if request.method == "GET":
+        loanData = get_loan_data(user)
+        return render(request, 'addLoan.html', {'user': user, "loanData": loanData})
 
-        if request.method == "GET":
-            return render(request,'addLoan.html',{'user':user,"loanData":loanData})
-        else:
-            Loan.objects.create(
-                title = request.POST['title'],
-                amount = request.POST['amount'],
-                started_on =  request.POST['started_on'],
-                created_by =user
-            )
-        return redirect('home')
-    else:
-        return redirect("login")
+    Loan.objects.create(
+        title=request.POST['title'],
+        amount=request.POST['amount'],
+        started_on=request.POST['started_on'],
+        created_by=user
+    )
 
+    return redirect('home')
 
-def loanHome(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        loanData = Loan.objects.filter(created_by=user).order_by("-status","title") 
-        return render(request,'loanHome.html',{"loanData":loanData})
-    else:
-        return redirect('login')    
+@auth_user
+def loanHome(request, user):
+    loanData = get_loan_data(user)
+    return render(request, 'loanHome.html', {'loanData': loanData, 'user': user})
+
+@auth_user
+def loanReport(request, id, user):
+    loanData = get_loan_by_id(id)
+    emiData = get_emi_data_by_loan_id(id)
     
-
-def updateLoanStatus(request,id):
-    if 'username' in request.session:
-        loanData = Loan.objects.get(id=id)
-
-        if loanData.status == "Open":
-            loanData.status = "Closed"
-        else:
-            loanData.status = "Open"
-
-        loanData.save()
-        return redirect('loanHome')
-    else:
-        return redirect('login')    
+    total = emiData.aggregate(Sum('amount'))['amount__sum'] or 0
+    total += loanData.amount
     
+    return render(request, 'loanReport.html', {'user': user, 'loanData': loanData, 'emiData': emiData, 'total': total})
 
-def loanReport(request,id):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        
-        if request.method == "GET":
-            loanData = Loan.objects.get(id= id)
-            emiData = EMI.objects.filter(loan_id = id ).order_by('-paid_on')
-            
-            total = loanData.amount
-            for i in emiData:
-                total += i.amount
-        
-            return render(request,'loanReport.html',{'user':user,"loanData":loanData,'emiData':emiData,'total':total})
-    else:
-        return redirect('login')    
+@auth_user
+def searchLoan(request, user):
+    search_query = request.GET.get('search', '')
+    loanData = Loan.objects.filter(title__icontains=search_query).order_by(F("status").desc())
+    return render(request, 'loanHome.html', {'user': user, "loanData": loanData})
 
+@auth_user
+def updateLoanStatus(request, id):
+    loanData = get_loan_by_id(id)
+    loanData.status = "Closed" if loanData.status == "Open" else "Open"
+    loanData.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
-def addEMI(request,id):
-    if 'username' in request.session:
-        loanData = Loan.objects.get(id= id)
+@auth_user
+def addEMI(request, id):
+    loanData = get_loan_by_id(id)
+    if request.method == 'POST':
         EMI.objects.create(
-            loan = loanData,
-            paid_on = request.POST['paid_on'],
-            amount = -int(request.POST['amount']),
-            note = request.POST['note'],
+            loan=loanData,
+            paid_on=request.POST['paid_on'],
+            amount=-int(request.POST['amount']),
+            note=request.POST['note'],
         )
-        return redirect(f'/loanReport/{id}')
-    else:
-        return redirect('login')
     
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@auth_user
 def editEmi(request, id):
-    if 'username' in request.session:
-        emi_data = get_object_or_404(EMI, id=id)  # Use get_object_or_404 to handle 404 if the object is not found        
-        loan = Loan.objects.get(id=emi_data.loan_id).title
-        if request.method=="GET":
-            # Serialize the model data into a dictionary
-            emi_dict = {
-                'id': emi_data.id,
-                'loan':loan,
-                'paid_on': emi_data.paid_on,  # Replace with your actual field names
-                'amount': emi_data.amount,
-                'note': emi_data.note,
-                # Add more fields as needed
-            }
+    emi_data = get_object_or_404(EMI, id=id)
+    
+    if request.method == "GET":
+        return JsonResponse({
+            'id': emi_data.id,
+            'loan': Loan.objects.get(id=emi_data.loan_id).title,
+            'paid_on': emi_data.paid_on,
+            'amount': emi_data.amount,
+            'note': emi_data.note,
+        })
+    
+    loan = request.POST.get('loan')
+    if loan:
+        Loan.objects.filter(id=emi_data.loan_id).update(title=loan)
 
-            return JsonResponse(emi_dict)
-        else:
-            Loan.objects.filter(id=emi_data.loan_id).update(title=request.POST["loan"])
+    emi_data.paid_on = request.POST['paid_on']
+    emi_data.amount = request.POST['amount']
+    emi_data.note = request.POST['note']
+    emi_data.save()
+        
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-            emi_data.paid_on= request.POST['paid_on']  # Replace with your actual field names
-            emi_data.amount = request.POST['amount']
-            emi_data.note= request.POST['note']
-            emi_data.save()
-            print("ok")
-            return redirect(f'/loanReport/{emi_data.loan_id}')
+@auth_user
+def deleteLoan(request, id):
+    if not EMI.objects.filter(loan_id=id).exists():
+        current_loan = get_loan_by_id(id)
+        current_loan.delete()
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    else:
-        return redirect('login')
+@auth_user
+def deleteEmi(request, id, user):
+    emi_data = get_object_or_404(EMI, id=id)
+    
+    DeletedEMI.objects.create(
+        loan=emi_data.loan.title,
+        paid_on=emi_data.paid_on,
+        amount=emi_data.amount,
+        note=emi_data.note,
+        created_by=user
+    )
+    
+    emi_data.delete()
+    
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-def deleteLoan(request,id):
-    if 'username' in request.session:
-        emis = EMI.objects.filter(loan_id = id)
-        if not emis:
-            current_Loan = Loan.objects.get(id = id)
-            current_Loan.delete()
-        return redirect('loanHome')
-    else:
-        return redirect('login')
-
-def deleteEmi(request,id):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-
-        current_EMI = EMI.objects.get(id = id)
-        loandata = Loan.objects.get(id=current_EMI.loan_id)
-        DeletedEMI.objects.create(
-            loan = loandata.title,
-            paid_on =current_EMI.paid_on,
-            amount = current_EMI.amount,
-            note =current_EMI.note,
-            created_by = user
+@auth_user
+def undoEntries(request, id, user):
+    delete_emi = get_object_or_404(DeletedEMI, id=id)
+    loan_data = get_object_or_404(Loan, title=delete_emi.loan, created_by=user)
+    
+    if loan_data:
+        EMI.objects.create(
+            loan=loan_data,
+            paid_on=delete_emi.paid_on,
+            amount=delete_emi.amount,
+            note=delete_emi.note
         )
-        current_EMI.delete()
-        return redirect('loanReport',id=loandata.id)
-    else:
-        return redirect('login')
     
+    delete_emi.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-def deletedEntries(request):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-
-        deleteEmi = DeletedEMI.objects.filter(created_by =user.id)
-        return render(request,'deletedEntries.html',{"data":deleteEmi,"user":user})
-    else:
-        return redirect('login')
-    
-def undoEntries(request,id):
-    if 'username' in request.session:
-        user = User.objects.get(username = request.session["username"])
-        deleteEmi = DeletedEMI.objects.get(id = id)
-        loanData = Loan.objects.get(title = deleteEmi.loan ,created_by = user.id)
-        if loanData:
-            EMI.objects.create(
-                loan = loanData,
-                paid_on = deleteEmi.paid_on,
-                amount = deleteEmi.amount,
-                note = deleteEmi.note
-            )
-        deleteEmi.delete()
-        return redirect('deletedEntries')
-    else:
-        return redirect('login')
+@auth_user
+def deletedEntries(request, user):
+    deleteEmi = DeletedEMI.objects.filter(created_by=user.id)
+    return render(request, 'deletedEntries.html', {"data": deleteEmi, "user": user})

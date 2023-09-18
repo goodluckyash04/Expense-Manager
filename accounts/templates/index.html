@@ -23,6 +23,22 @@
  {% endblock body  %}
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to close the alert after a specified time (in milliseconds)
+    function autoCloseAlert() {
+        window.setTimeout(function () {
+            $("#autoCloseAlert").fadeTo(500, 0).slideUp(500, function () {
+                $(this).remove();
+            });
+        }, 3000); // 5000 milliseconds = 5 seconds
+    }
+
+    // Call the autoCloseAlert function when the page loads
+    $(document).ready(function () {
+        autoCloseAlert();
+    });
+</script>
 {% block script %}
+
 {% endblock script %}
 </html>

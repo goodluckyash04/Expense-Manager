@@ -35,24 +35,24 @@ urlpatterns = [
 
     path("addTask/",addTask,name="addTask"),
     path("currentMonthTaskReport/",currentMonthTaskReport,name="currentMonthTaskReport"),
-    path("updatetask/<int:id>",updatetask,name="updatetask"),
-    path("editTask/<int:id>",editTask,name="editTask"),
-    path("incomplete/<int:id>",incomplete,name="incomplete"),
-    path("deletetask/<int:id>",deletetask,name="deletetask"),
-    path("permdeletetask/<int:id>",permdeletetask,name="permdeletetask"),
     path("taskReports/",taskReports,name="taskReports"),
+    path("editTask/<int:id>",editTask,name="editTask"),
+    path("task/action/<int:id>/<str:action>/",taskAction,name="taskAction"),
+
+    
 
 # ..........................................Loan Management..................................................
 
-    path("loanHome/",loanHome,name="loanHome"),
     path("addloan/",addloan,name="addloan"),
-    path("updateLoanStatus/<int:id>",updateLoanStatus,name="updateLoanStatus"),
-    path("deleteLoan/<int:id>",deleteLoan,name="deleteLoan"),
-    path("editEmi/<int:id>",editEmi,name="editEmi"),
+    path("loanHome/",loanHome,name="loanHome"),
     path("loanReport/<int:id>",loanReport,name="loanReport"),
+    path("searchLoan/",searchLoan,name="searchLoan"),
+    path("updateLoanStatus/<int:id>",updateLoanStatus,name="updateLoanStatus"),
     path("addEMI/<int:id>",addEMI,name="addEMI"),
+    path("editEmi/<int:id>",editEmi,name="editEmi"),
+    path("deleteLoan/<int:id>",deleteLoan,name="deleteLoan"),
     path("deleteEmi/<int:id>",deleteEmi,name="deleteEmi"),
-    path("deletedEntries/",deletedEntries,name="deletedEntries"),
     path("undoEntries/<int:id>",undoEntries,name="undoEntries"),
+    path("deletedEntries/",deletedEntries,name="deletedEntries"),
 
 ]
