@@ -197,45 +197,45 @@
       var table = document.getElementById("myTable");
       var cont = document.getElementById("key").textContent;
 
-  
+
       // Initialize an empty CSV content
       var csvContent = "";
-  
+
       // Loop through each row in the table
       for (var i = 0; i < table.rows.length; i++) {
         var row = table.rows[i];
-  
+
         // Loop through each cell in the row
         for (var j = 0; j < row.cells.length; j++) {
           var cell = row.cells[j];
-  
+
           // Append the cell's text content to the CSV, enclosed in double quotes
           csvContent += '"' + cell.textContent.trim().replace(/"/g, '""') + '"';
-  
+
           // Add a comma separator, except for the last cell in the row
           if (j < row.cells.length - 1) {
             csvContent += ",";
           }
         }
-  
+
         // Add a newline character to separate rows
         csvContent += "\n";
       }
-  
+
       // Create a Blob with the CSV content
       var blob = new Blob([csvContent], { type: "text/csv" });
-  
+
       // Create a temporary download link for the CSV file
       var a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = `${cont}.csv`;
-  
+
       // Trigger a click event on the link to initiate the download
       a.click();
     });
-  
-  
-  
+
+
+
 
   document.getElementById("select-all-checkbox").addEventListener("change", function() {
     var checkboxes = document.getElementsByName("record_ids");
@@ -248,7 +248,7 @@
     actualTotal = document.getElementById("total")
     console.log(actualTotal.textContent)
     newValue = document.getElementById("select")
-    
+
     console.log(newValue.parentElement.parentElement.children[4])
 
   }
@@ -264,10 +264,10 @@
       success: function(data) {
       console.log(data)
        var utcDate = new Date(data.payment_date);
-  
+
         // Format local date as a string for the input field
-        var payment_date = utcDate.toISOString().slice(0, 16); 
-        var content = "" 
+        var payment_date = utcDate.toISOString().slice(0, 16);
+        var content = ""
         if (data.payment_type == "Income"){
             content = `
             <form action=/editEntry/${Id} id="myExpenseForm" method="post">
@@ -291,8 +291,8 @@
                 id="payment_for"
                 value = ${data.payment_for}
             />
-            </div> 
-    
+            </div>
+
             <div class="mb-3">
             <input
                 type="datetime-local"
@@ -302,8 +302,8 @@
                 value = ${payment_date}
                 aria-describedby="emailHelp"
             />
-            </div> 
-    
+            </div>
+
             <div class="mb-3">
             <input
                 type="number"
@@ -316,7 +316,7 @@
                 required
             />
             </div>
-    
+
             <div class="mb-3">
             <input
                 type="text"
@@ -351,9 +351,9 @@
             >
             <option ${data.category == "Debit"?"selected":""} value="Debit" >Debit</option>
             <option ${data.category == "Credit"?"selected":""} value="Credit" >Credit</option>
-           
+
             </select>
-            
+
            <div class="mb-3">
            <input
                type="datetime-local"
@@ -363,10 +363,10 @@
                value = ${payment_date}
                aria-describedby="emailHelp"
            />
-    
-           </div> 
-         
-    
+
+           </div>
+
+
            <div class="mb-3">
            <input
                type="text"
@@ -379,7 +379,7 @@
                required
            />
            </div>
-    
+
            <div class="mb-3">
            <input
                type="number"
@@ -392,8 +392,8 @@
                required
            />
            </div>
-    
-    
+
+
            <div class="mb-3">
            <input
                type="text"
@@ -405,8 +405,8 @@
                required
            />
            </div>
-    
-    
+
+
            <button
            id = "submitButton"
            type="submit"
@@ -430,7 +430,7 @@
             <option ${data.category == "Other"?"selected":""} value="Other">Other</option>
             <option ${data.category == "EMI"?"selected":""} value="EMI">EMI</option>
             </select>
-               
+
             <div class="mb-3">
             <input
                 type="text"
@@ -442,7 +442,7 @@
                 aria-describedby="emailHelp"
             />
             </div>
-    
+
             <div class="mb-3">
             <input
                 type="datetime-local"
@@ -452,9 +452,9 @@
                 value = ${payment_date}
                 aria-describedby="emailHelp"
             />
-            </div> 
-    
-    
+            </div>
+
+
             <div class="mb-3">
             <input
                 type="number"
@@ -467,9 +467,9 @@
                 required
             />
             </div>
-    
-    
-            
+
+
+
             <div class="mb-3">
             <input
                 type="text"
