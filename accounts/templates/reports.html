@@ -143,7 +143,7 @@
                   <option {% if data.category == "Shopping" %} selected {% endif %} value="Shopping">Shopping</option>
                   <option {% if data.category == "Food" %} selected {% endif %} value="Food">Food</option>
                   <option {% if data.category == "EMI" %} selected {% endif %} value="EMI">EMI</option>
-                  <option {% if data.category == "Other" %} selected {% endif %} value="Personal">Other</option>
+                  <option {% if data.category == "Other" %} selected {% endif %} value="Other">Other</option>
                   <option {% if data.category == "Salary" %} selected {% endif %} value="Salary">Salary</option>
                 </select>
                 <div class="mb-2">
@@ -153,7 +153,7 @@
                       id="payment_for"
                       name ="payment_for"
                       placeholder="Payment For"
-                      value = {{data.payment_for}}
+                      value = '{{data.payment_for}}'
                   >
                   </div>
                 <div class="d-flex mb-2">
@@ -324,7 +324,7 @@
                 name="description"
                 placeholder="Income Description"
                 id="description"
-                value = ${data.description}
+                value = "${data.description}"
                 required
             />
             </div>
@@ -374,7 +374,7 @@
                name="payment_for"
                placeholder="Paid For"
                id="payment_for"
-               value = ${data.payment_for}
+               value = "${data.payment_for}"
                aria-describedby="emailHelp"
                required
            />
@@ -401,7 +401,7 @@
                name="description"
                placeholder="Loan Description"
                id="description"
-               value = ${data.description}
+               value = "${data.description}"
                required
            />
            </div>
@@ -438,7 +438,7 @@
                 id="payment_for"
                 name ="payment_for"
                 placeholder="Payment For"
-                value = ${data.payment_for}
+                value = "${data.payment_for}"
                 aria-describedby="emailHelp"
             />
             </div>
@@ -477,7 +477,7 @@
                 name="description"
                 placeholder="Expense Description"
                 id="description"
-                value = ${data.description}
+                value = "${data.description}"
                 required
             />
             </div>

@@ -36,7 +36,7 @@ def addexpense(request, user):
                 raise ValueError("Loan amount must be greater than zero.")
 
             loan_data, created = Loan.objects.get_or_create(
-                title=loan_name,
+                title__icontains=loan_name,
                 created_by=user,
                 defaults={
                     'amount': amount,
