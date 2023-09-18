@@ -37,11 +37,11 @@
         {% comment %} <td>{{i.created_on | date:"d M Y"}}</td> {% endcomment %}
         <td>{{i.completed_on | date:"d M Y" }}</td>
 
-        <td><a href={% url 'updatetask' i.id %}><i class="fa-solid text-success fa-check"></i></a></td>
-        <td><a href={% url 'incomplete' i.id %}><i class="fa-solid text-secondary fa-xmark"></i></a></td>
+        <td><a href={% url 'taskAction' i.id 'complete' %}><i class="fa-solid text-success fa-check"></i></a></td>
+        <td><a href={% url 'taskAction' i.id 'incomplete' %}><i class="fa-solid text-secondary fa-xmark"></i></a></td>
         <td><a href="" data-bs-toggle="modal" data-bs-target="#editTaskModal" onclick="openModalAndGetTask({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
         <td></td>
-        <td><a href={% url 'permdeletetask' i.id %}><i class="fa-solid text-danger fa-trash"></i></a></td>
+        <td><a href={% url 'taskAction' i.id 'permdeletetask' %}><i class="fa-solid text-danger fa-trash"></i></a></td>
       </tr>
       {% endfor %}{% else %}
       <td colspan="8" class="text-center">No Records found</td>
