@@ -35,6 +35,7 @@ def addexpense(request, user):
             if amount <= 0:
                 raise ValueError("Loan amount must be greater than zero.")
 
+
             existing_loan = Loan.objects.filter(title__iexact=loan_name, created_by=user).first()
 
             if existing_loan:
@@ -51,6 +52,7 @@ def addexpense(request, user):
                         'started_on': payment_date_str
                     }
                 )
+
 
             if created:
                 loanData = loan_data
