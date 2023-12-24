@@ -35,7 +35,6 @@ def addexpense(request, user):
             if amount <= 0:
                 raise ValueError("Loan amount must be greater than zero.")
 
-
             existing_loan = Loan.objects.filter(title__iexact=loan_name, created_by=user).first()
 
             if existing_loan:
@@ -52,7 +51,6 @@ def addexpense(request, user):
                         'started_on': payment_date_str
                     }
                 )
-
 
             if created:
                 loanData = loan_data
@@ -81,7 +79,7 @@ def addexpense(request, user):
                     EMI.objects.create(
                         loan=loanData,
                         paid_on=desired_date_str,
-                        amount=-(amount / no),
+                        amount=round(-(amount / no),2),
                         note=f"EMI {i}",
                     )
             else:

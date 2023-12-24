@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.db.models import F, Sum
 from .models import Loan, EMI, DeletedEMI
 from .decorators import auth_user
-
+import math
 
 def get_loan_data(user):
     return Loan.objects.filter(created_by=user).order_by(F('status').desc(), 'title')
@@ -46,8 +46,7 @@ def loanReport(request, id, user):
     total = emiData.aggregate(Sum('amount'))['amount__sum'] or 0
     total += loanData.amount
     
-    return render(request, 'loanReport.html', {'user': user, 'loanData': loanData, 'emiData': emiData, 'total': total})
-
+    return render(request, 'loanReport.html', {'user': user, 'loanData': loanData, 'emiData': emiData, 'total': math.ceil(total)})
 @auth_user
 def searchLoan(request, user):
     search_query = request.GET.get('search', '')

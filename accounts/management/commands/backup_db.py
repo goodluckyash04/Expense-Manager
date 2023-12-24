@@ -4,6 +4,10 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 import base64
 import datetime
+import os
+from accounts.models import Task
+
+# from decouple import config
 
 class Command(BaseCommand):
     help = 'Backup and send the encrypted database via email'
@@ -11,7 +15,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             print("Starting the backup and encryption process...")
-
+            today = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
+            due_tasks = Task.objects.filter(complete_by__date=today.date(),status = 'Pending')
+            task_list = []
+            for task in due_tasks:
+                task_list.append(task.task_title+'-'+task.task_detail)
+            list_string = "\n".join(task_list)
+            task_email = EmailMessage(
+                'Task Reminder',
+                f'Reminder for task:\n {list_string}',
+                settings.EMAIL_HOST_USER,
+                [settings.RECIEPINT_EMAIL]
+            )
+            print(today.date())
+            if task_list:
+                task_email.send()
             # Perform a database backup
             db_file_path = settings.DATABASES['default']['NAME']  # Assuming the default database settings
             with open(db_file_path, 'rb') as f:
