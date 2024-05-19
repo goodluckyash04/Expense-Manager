@@ -1,0 +1,78 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+<div class = 'row justify-content-between mt-3 mx-3'>
+    <div class="d-flex  col-md-6 col-sm-6">
+    <button class="btn btn-primary my-2 bg-success border-0" type="button" data-bs-toggle="collapse" data-bs-target="#openloan" aria-expanded="true" aria-controls="collapseExample">
+       Currently Open      
+    </button>
+            <button class="btn btn-primary my-2 ms-2 bg-secondary border-0" type="button" data-bs-toggle="collapse" data-bs-target="#closedloan" aria-expanded="false" aria-controls="collapseExample">
+        Closed    </button>
+    </div>
+<form action="/searchLoan/" method="get"  class="d-flex my-2 col-md-4 col-sm-6" role="search">
+    <input class="form-control me-2"name = "search" type="search" placeholder="Search" aria-label="Search">
+    <a class="btn btn-outline-success" type="submit"><i class="fa-solid fa-magnifying-glass"></i></a>
+  </form>
+</div>
+
+<div class="collapse show" id="openloan">
+<div class="row m-3 ">
+{% for  i in loanData %}
+{% if i.status == "Open" %}
+
+    <div class="col-12 col-md-3 mb-3">
+        <a class="text-decoration-none" href="/loanReport/{{i.id}}">
+        <div class="card " >
+                        <div class="card-body  text-end " {% if i.status == "Open" %} style="background-color:#e0f8e3;"
+                {% else %}
+   style="background-color:#eceeed;"
+                {% endif %}>
+
+                <h5 class="card-title {% if i.status == "Open" %} text-success {% else %} text-secondary {% endif %}> text-start ">{{i.title}} </h5>
+             
+            <p class="card-text text-secondary text-start  ">{{i.started_on | date:"d M Y"}} | {{i.status}} </p>
+
+            <a href="/updateLoanStatus/{{i.id}}" class="btn btn-secondary" style="background-color:#4da868d9;"><i class="fa-solid fa-square-check"></i></a>
+
+            <a href="/deleteLoan/{{i.id}}"  class="btn btn-danger" ><i class="fa-solid  text-white fa-trash"></i></a>
+            </div>
+        </div>
+    </a>
+    </div>
+    {% endif %}
+
+    {% endfor %}                
+</div>
+</div>
+
+<div class="collapse" id="closedloan">
+<div class="row m-3 ">
+    {% for  i in loanData %}
+    {% if i.status == "Closed" %}
+        <div class="col-12 col-md-3 mb-3">
+            <a class="text-decoration-none" href="/loanReport/{{i.id}}">
+            <div class="card " >
+                            <div class="card-body  text-end " {% if i.status == "Open" %} style="background-color:#e0f8e3;"
+                    {% else %}
+       style="background-color:#eceeed;"
+                    {% endif %}>
+    
+                    <h5 class="card-title {% if i.status == "Open" %} text-success {% else %} text-secondary {% endif %} text-start ">{{i.title | truncatechars:30}} </h5>
+
+                <p class="card-text text-secondary text-start  ">{{i.started_on | date:"d M Y"}} | {{i.status}} </p>
+
+                <a href="/updateLoanStatus/{{i.id}}" class="btn btn-secondary" ><i class="fa-solid  text-white fa-square-xmark"></i></a>
+
+                <a href="/deleteLoan/{{i.id}}"  class="btn btn-danger" ><i class="fa-solid  text-white fa-trash"></i></a>
+                </div>
+            </div>
+        </a>
+        </div>
+        {% endif %}
+        {% endfor %}                
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block script%}
+<script></script>
+{% endblock script%}

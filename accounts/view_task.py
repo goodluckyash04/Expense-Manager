@@ -39,12 +39,12 @@ def currentMonthTaskReport(request, user):
         status="Pending"
     ).order_by('complete_by')
 
-    return render(request, "tasks.html", {"user": user, "taskData": taskData})
+    return render(request, "task/tasks.html", {"user": user, "taskData": taskData})
 
 @auth_user
 def taskReports(request, user):
     taskData = get_task_data_by_user(user)
-    return render(request, 'taskReport.html', {'user': user, 'taskData': taskData})
+    return render(request, 'task/taskReport.html', {'user': user, 'taskData': taskData})
 
 @auth_user
 def editTask(request, id):
