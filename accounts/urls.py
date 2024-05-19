@@ -1,10 +1,9 @@
 from django.urls import path
 
+from .views import *
 from .view_transaction import create_transaction, transaction_detail, update_transaction, delete_transaction, \
     fetch_deleted_transaction, undo_transaction, update_transaction_status
-from .views import *
-from .view_expense import *
-from .view_loan import *
+from .view_financial_instrument import create_finance
 from .view_task import *
 urlpatterns = [
 
@@ -42,7 +41,7 @@ urlpatterns = [
 
 # ..........................................Loan Management..................................................
 #
-#     path("addloan/",addloan,name="addloan"),
+    path("create-finance/",create_finance,name="create-finance"),
 #     path("loanHome/",loanHome,name="loanHome"),
 #     path("loanReport/<int:id>",loanReport,name="loanReport"),
 #     path("searchLoan/",searchLoan,name="searchLoan"),

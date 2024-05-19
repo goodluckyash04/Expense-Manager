@@ -1,4 +1,4 @@
-CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment', 'Other'];
+CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment','EMI', 'Other'];
 MODE = ['CreditCard' , 'Online', 'Cash']
 STATUS = ['Pendiing','Completed']
 
@@ -51,21 +51,6 @@ STATUS = ['Pendiing','Completed']
         };
 
 
-//  document.getElementById("select-all-checkbox").addEventListener("change", function() {
-//    var checkboxes = document.getElementsByName("record_ids");
-//    for (var i = 0; i < checkboxes.length; i++) {
-//      checkboxes[i].checked = this.checked;
-//    }
-//  });
-//
-//  function reviseTotal(){
-//    actualTotal = document.getElementById("total")
-//    console.log(actualTotal.textContent)
-//    newValue = document.getElementById("select")
-//
-//    console.log(newValue.parentElement.parentElement.children[4])
-//
-//  }
 
 
 

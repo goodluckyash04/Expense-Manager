@@ -44,7 +44,7 @@ def home(request,user):
             {
                 "title": "LOAN",
                 "description": "Create Your Virtual Loan To keep track of EMIS",
-                "modal_target": "#loanmodal",
+                "modal_target": "#financeModal",
                 "modal_button_icon": 'fa-circle-plus',
                 "report_url": "/loanHome/",
                 "report_button_icon": 'fa-square-poll-horizontal',

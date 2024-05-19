@@ -20,6 +20,7 @@ class User(models.Model):
 
 class FinancialProduct(models.Model):
     name = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.0)
     no_of_installments = models.IntegerField(default=0)
     started_on = models.DateField()

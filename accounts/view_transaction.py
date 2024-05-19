@@ -36,19 +36,34 @@ def create_transaction(request, user):
         if amount <= 0:
             raise ValueError("Expense amount must be greater than zero.")
 
-        Transaction.objects.create(
-            type = type,
-            category = category,
-            date = date,
-            amount = amount,
-            beneficiary = beneficiary,
-            description = description,
-            status = status,
-            mode = mode,
-            mode_detail = mode_detail,
-            created_by = user,
-        )
-        messages.success(request, f'{type} Transaction Added')
+        try:
+            existing_transaction = Transaction.objects.get(type = type,
+                category = category,
+                date = date,
+                amount = amount,
+                beneficiary = beneficiary,
+                description = description,
+                status = status,
+                mode = mode,
+                mode_detail = mode_detail,
+                created_by = user,
+                is_deleted = False)
+            if existing_transaction:
+                raise ValueError("Transaction Already Exist")
+        except ObjectDoesNotExist:
+            Transaction.objects.create(
+                type = type,
+                category = category,
+                date = date,
+                amount = amount,
+                beneficiary = beneficiary,
+                description = description,
+                status = status,
+                mode = mode,
+                mode_detail = mode_detail,
+                created_by = user,
+            )
+            messages.success(request, f'{type} Transaction Added')
         return redirect('home')
     except ValidationError as e:
         messages.error(request, str(e))
@@ -59,7 +74,7 @@ def create_transaction(request, user):
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes
-        print(str(e))
+        print(traceback.print_exc())
         return HttpResponseServerError()
 
 @auth_user
@@ -174,6 +189,8 @@ def transaction_detail(request, user):
             "paid_amount": paid_amount,
             "total": income - expense
         }
+        CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment', 'EMI', 'Salary','Other']
+
         return render(request, "transaction/transactionDetails.html", {
             "user": user,
             "transaction_data": transaction_data,
@@ -185,17 +202,27 @@ def transaction_detail(request, user):
                 "daterange": daterange,
                 "mode":mode,
                 "status":status,
-                "key": search_query
-            }
+                "key": search_query,
+            },
+            "categories": CATEGORIES
         })
     except Exception as e:
         print(traceback.print_exc())
         messages.error(request, f"An error occurred: try again after some time")
         return render(request, "transaction/transactionDetails.html", {
-            "user": user,
-            "transaction_data": [],
-            "total": 0,
-            "expenseTotal": 0
+             "user": user,
+            "transaction_data": transaction_data,
+            "transaction_calculation": transaction_calculation,
+            "categories": CATEGORIES,
+            "data":{
+                "type": type,
+                "category": category,
+                "beneficiary": beneficiary,
+                "daterange": daterange,
+                "mode":mode,
+                "status":status,
+                "key": search_query
+            }
         })
 
 @auth_user
