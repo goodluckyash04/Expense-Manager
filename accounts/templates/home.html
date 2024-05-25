@@ -7,15 +7,16 @@
         <h5 class="card-title text-success">{{ item.title }}</h5>
         <p class="card-text text-secondary">{{ item.description }}</p>
         <!-- Add Button -->
-        <a data-bs-toggle="modal" data-bs-target="{{ item.modal_target }}" class="btn btn-primary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.modal_button_icon }}"></i></a>
+        <a data-bs-toggle="modal" data-bs-target="{{ item.modal_target }}" class="btn btn-success" ><i class="fa-solid {{ item.modal_button_icon }}"></i></a>
         <!-- Report Button -->
-        {% if item.title == "LOAN" or item.title == "RECEIVABLES" %}
-        <a href="{{ item.report_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.report_button_icon }}"></i></a>
+        {% if item.title == "FINANCE" or item.title == "RECEIVABLES" %}
+        <a href="{{ item.report_url }}" class="btn btn-success" ><i class="fa-solid {{ item.report_button_icon }}"></i></a>
         {% else %}
-        <a href="{{ item.report_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);">{{ item.report_button_icon }}</a>
-        {% endif %}
+        <a href="{{ item.report_url }}" class="btn btn-success" >{{ item.report_button_icon }}</a>
         <!-- Delete Button -->
-        <a href="{{ item.delete_url }}" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid {{ item.delete_button_icon }}"></i></a>
+        <a href="{{ item.delete_url }}" class="btn btn-success" ><i class="fa-solid {{ item.delete_button_icon }}"></i></a>
+        {% endif %}
+
       </div>
     </div>
   </div>

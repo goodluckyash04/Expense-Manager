@@ -47,7 +47,7 @@
 <div class="container-fluid mt-4 px-5">
   <div class="row">
     <!-- First Section -->
-    <div class="col-12 col-md-6 mb-3">
+    <div class="col-12 col-md-5 mb-3">
       <div class="d-flex flex-wrap">
         <p class="fs-6 me-3 text-secondary">Income: <b><span class="text-success">{{transaction_calculation.income}}</span></b></p>
         <p class="fs-6 me-3 text-secondary">Expense: <b><span class="text-danger">{{transaction_calculation.expense}}</span></b></p>
@@ -57,8 +57,9 @@
     </div>
 
     <!-- Second Section -->
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-md-7">
       <div class="d-flex flex-wrap justify-content-md-end">
+        <p class="text-secondary fs-6 me-3">Previous Pending: <b><span class="text-warning">{{transaction_calculation.previous_pending}}</span></b></p>
         <p class="text-secondary fs-6 me-3">Pending Amount: <b><span class="text-warning">{{transaction_calculation.pending_amount}}</span></b></p>
         <p class="text-secondary fs-6 me-3">Paid Amount: <b><span class="text-success">{{transaction_calculation.paid_amount}}</span></b></p>
         <p class="text-secondary fs-6">Remaining: <b><span class="{% if transaction_calculation.total < 0 %}text-danger{% else %}text-success{% endif %}">{{transaction_calculation.total}}</span></b></p>
@@ -97,7 +98,7 @@
         <td>{{i.date}}</td>
         <td>{{i.type}}</td>
         <td>{{i.category}}</td>
-        <td class="{% if i.type == 'Expense' or i.category == 'Debit' %}text-danger{% else %}text-success{% endif %}">
+        <td class="{% if i.type == 'Expense' %}text-danger{% else %}text-success{% endif %}">
         {{i.amount | floatformat:2}}</td>
         <td>{{i.beneficiary}}</td>
         <td class="td-desc" hidden="true">{{i.description}}</td>

@@ -3,7 +3,8 @@ from django.urls import path
 from .views import *
 from .view_transaction import create_transaction, transaction_detail, update_transaction, delete_transaction, \
     fetch_deleted_transaction, undo_transaction, update_transaction_status
-from .view_financial_instrument import create_finance
+from .view_financial_instrument import create_finance, finance_details, fetch_financial_transaction, \
+    update_instrument_status, update_finance_detail, remove_instrument
 from .view_task import *
 urlpatterns = [
 
@@ -42,16 +43,12 @@ urlpatterns = [
 # ..........................................Loan Management..................................................
 #
     path("create-finance/",create_finance,name="create-finance"),
-#     path("loanHome/",loanHome,name="loanHome"),
-#     path("loanReport/<int:id>",loanReport,name="loanReport"),
-#     path("searchLoan/",searchLoan,name="searchLoan"),
-#     path("updateLoanStatus/<int:id>",updateLoanStatus,name="updateLoanStatus"),
-#     path("addEMI/<int:id>",addEMI,name="addEMI"),
-#     path("editEmi/<int:id>",editEmi,name="editEmi"),
-#     path("deleteLoan/<int:id>",deleteLoan,name="deleteLoan"),
-#     path("deleteEmi/<int:id>",deleteEmi,name="deleteEmi"),
-#     path("undoEntries/<int:id>",undoEntries,name="undoEntries"),
-#     path("deletedEntries/",deletedEntries,name="deletedEntries"),
+    path("finance-details/",finance_details,name="finance-details"),
+    path("update-finance-detail/<int:id>",update_finance_detail,name="update-finance-detail"),
+    path("fetch-financial-transaction/<int:id>",fetch_financial_transaction,name="fetch-financial-transaction"),
+    path("update-instrument-status/<int:id>",update_instrument_status,name="update-instrument-status"),
+    path("remove-instrument/<int:id>",remove_instrument,name="remove-instrument"),
+
 
 ]
 

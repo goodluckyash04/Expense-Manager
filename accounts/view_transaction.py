@@ -7,8 +7,10 @@ from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponseServerError, JsonResponse
+from django.utils import timezone
+
 from .decorators import auth_user
-from .models import Transaction
+from .models import Transaction, FinancialProduct
 
 
 # ..........................................Transaction Management.............................................
@@ -123,6 +125,8 @@ def transaction_detail(request, user):
         search_query = request.GET.get("search", '').strip()
 
         filterData = flag1 = Q(created_by=user,is_deleted = False)
+        filter_remaining_amount = Q(created_by=user, is_deleted=False, status="Pending")
+        start_date = timezone.now().date().replace(day=1)
 
         if search_query:
             if search_query.isdigit():
@@ -145,6 +149,7 @@ def transaction_detail(request, user):
             filterData &= Q(mode=mode)
         if status:
             filterData &= Q(status=status)
+
         if daterange:
             date = daterange.split(" - ")
             startdate = date[0].strip()
@@ -179,6 +184,10 @@ def transaction_detail(request, user):
                 paid_amount += i.amount
             elif i.status == "Pending":
                 pending_amount += i.amount
+        print(start_date)
+        filter_remaining_amount &= Q(date__lt=start_date)
+
+        previous_pending = sum(trn.amount for trn in Transaction.objects.filter(filter_remaining_amount))
 
         transaction_calculation = {
             "income": income,
@@ -187,6 +196,7 @@ def transaction_detail(request, user):
             "investment": investment,
             "pending_amount": pending_amount,
             "paid_amount": paid_amount,
+            "previous_pending":previous_pending,
             "total": income - expense
         }
         CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment', 'EMI', 'Salary','Other']
@@ -235,6 +245,7 @@ def fetch_deleted_transaction(request, user):
         messages.error(request, f"An error occurred: will get back soon")
         return redirect('home')
 
+
 @auth_user
 def delete_transaction(request, id = None):
     try:
@@ -248,6 +259,10 @@ def delete_transaction(request, id = None):
             entry.is_deleted = True
             entry.deleted_at = datetime.now()
             entry.save()
+
+    # in case of emi source is not null
+
+
 
         messages.success(request, f'Transaction deleted')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -265,6 +280,12 @@ def undo_transaction(request, id=None):
 
         for id in undo_list:
             entry = Transaction.objects.get(id=id)
+            if entry.source_id is not None:
+                product = FinancialProduct.objects.get(id = entry.source_id)
+                if product.is_deleted:
+                    product.is_deleted = False
+                    product.save()
+
             entry.is_deleted = False
             entry.deleted_at = None
             entry.save()

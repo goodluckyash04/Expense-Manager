@@ -20,11 +20,10 @@ def addTask(request, user):
     
     Task.objects.create(
         priority=task_data["priority"],
-        task_title=task_data["task_title"],
-        complete_by=task_data["complete_by"],
-        task_detail=task_data["task_detail"],
+        name=task_data["name"],
+        complete_by_date=task_data["complete_by_date"],
+        description=task_data["description"],
         status="Pending",
-        completed_on=task_data["complete_by"],
         created_by=user
     )
     
@@ -35,27 +34,28 @@ def currentMonthTaskReport(request, user):
     current_month = timezone.now().month
     taskData = Task.objects.filter(
         created_by=user,
-        complete_by__month=current_month,
-        status="Pending"
-    ).order_by('complete_by')
+        complete_by_date__month=current_month,
+        status="Pending",
+        is_deleted=False
+    ).order_by('complete_by_date')
 
     return render(request, "task/tasks.html", {"user": user, "taskData": taskData})
 
 @auth_user
 def taskReports(request, user):
-    taskData = get_task_data_by_user(user)
+    taskData = Task.objects.filter(created_by=user).order_by(F('status').desc(), 'complete_by_date')
     return render(request, 'task/taskReport.html', {'user': user, 'taskData': taskData})
 
 @auth_user
 def editTask(request, id):
-    task_data = get_task_by_id(id)
+    task_data = get_object_or_404(Task, id=id)
     if request.method == "GET":
         task_dict = {
             'id': task_data.id,
             'priority': task_data.priority,
-            'task_title': task_data.task_title,
-            'complete_by': task_data.complete_by,
-            'task_detail': task_data.task_detail
+            'name': task_data.name,
+            'complete_by_date': task_data.complete_by_date,
+            'description': task_data.description
         }
         return JsonResponse(task_dict)
     else:
@@ -71,10 +71,13 @@ def taskAction(request, id, action):
         current_task.completed_on = timezone.now()
         current_task.status = "Completed"
     elif action == 'incomplete':
-        current_task.completed_on = timezone.now()
+        current_task.completed_on = None
         current_task.status = "Pending"
+        current_task.is_deleted = False
+        current_task.deleted_at = None
     elif action == 'delete':
-        current_task.status = "Deleted"
+        current_task.is_deleted = True
+        current_task.deleted_at = timezone.now()
 
     current_task.save()
 

@@ -12,7 +12,8 @@
         <th scope="col">Detail</th>
         <th scope="col">Complete_by</th>
         {% comment %} <th scope="col">Created_on</th> {% endcomment %}
-        <th scope="col">Updated_on</th>
+        <th scope="col">Completed_on</th>
+        <th scope="col">Updated_at</th>
         <th scope="col" colspan = 3></th>
        
       </tr>
@@ -22,24 +23,25 @@
       <tr>
         <td scope="row">{{forloop.counter}}</td>
         <td>{{i.priority}}</td>
-        {% with i.complete_by|date:"Y-m-d" as completed_date %}
+        {% with i.complete_by_date|date:"Y-m-d" as completed_date %}
         {% with "now"|date:"Y-m-d" as today %}
         <td >
-          <div class="mx-2  text-center text-white {% if i.status == 'Pending' %} {% if completed_date < today  %}bg-danger {% else %}bg-warning{% endif  %} {% elif i.status == "Deleted" %} bg-danger {% else %}bg-success {% endif %} rounded-pill">
+          <div class="mx-2  text-center text-white {% if i.is_deleted  %} bg-danger {% elif i.status == 'Pending' %} {% if completed_date < today  %}bg-danger {% else %}bg-warning{% endif  %}  {% else %}bg-success {% endif %} rounded-pill">
             {{i.status.0}}
           </div>
         </td>
         {% endwith %}
 {% endwith %}
-        <td>{{i.task_title}}</td>
-        <td>{{i.task_detail }}</td>
-        <td>{{i.complete_by | date:"d M Y"}}</td>
+        <td>{{i.name}}</td>
+        <td>{{i.description }}</td>
+        <td>{{i.complete_by_date | date:"d M Y"}}</td>
         {% comment %} <td>{{i.created_on | date:"d M Y"}}</td> {% endcomment %}
         <td>{{i.completed_on | date:"d M Y" }}</td>
+        <td>{{i.updated_at | date:"d M Y" }}</td>
 
         <td><a href={% url 'taskAction' i.id 'complete' %}><i class="fa-solid text-success fa-check"></i></a></td>
         <td><a href={% url 'taskAction' i.id 'incomplete' %}><i class="fa-solid text-secondary fa-xmark"></i></a></td>
-        <td><a href="" data-bs-toggle="modal" data-bs-target="#editTaskModal" onclick="openModalAndGetTask({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#taskmodal" onclick="openModalAndGetTask({{ i.id }})"><i class="fa-solid text-warning fa-pen"></i></a></td>
         <td></td>
         <td><a href={% url 'taskAction' i.id 'permdeletetask' %}><i class="fa-solid text-danger fa-trash"></i></a></td>
       </tr>
@@ -65,88 +67,11 @@
     </div>
   </div>
 </div>
+{% include 'task/taskModal.html' %}
 
 {% endblock body %}
 
 {% block script %}
+<script src="../static/js/updateTask.js"></script>
 
-<script>
-  function openModalAndGetTask(taskId) {
-    // Make an AJAX request to your Django server to fetch data
-    $.ajax({
-      url: `/editTask/${taskId}`,  // Replace with your Django URL
-      type: 'GET',
-      success: function(data) {
-        console.log(data)
-       var utcDate = new Date(data.complete_by);
-        var localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
-  
-        // Format local date as a string for the input field
-        var complete_Date = localDate.toISOString().slice(0, 16); 
-        var content = ` 
-        <form  action="/editTask/${data.id}" method="post">
-          {% csrf_token %}
-
-          <select
-          class="form-select mb-3"
-          name="priority"
-          aria-label="Default select example"
-          >
-          <option >-- Priority --</option>
-          <option ${data.priority == "High"?"selected":""} value="High">High</option>
-          <option ${data.priority == "Moderate"?"selected":""} value="Moderate">Moderate</option>
-          <option ${data.priority == "Low"?"selected":""} value="Low">Low</option>
-          <option ${data.priority == "Urgent"?"selected":""} value="Urgent">Urgent</option>
-          </select>
-            
-          <div class="mb-3">
-          <input
-              type="datetime-local"
-              class="form-control"
-              name="complete_by"
-              id="complete_by"
-              value='${complete_Date}'
-              onchange="dateCheck()"
-              aria-describedby="complete_by"
-          />
-          </div>
-
-          <div class="mb-3">
-          <input
-              type="text"
-              class="form-control"
-              name="task_title"
-              placeholder="Task Title"
-              id="title"
-              value='${data.task_title}'
-              required
-          />
-          </div>
-
-          <div class="form-floating mb-3">
-              <textarea class="form-control" name="task_detail"  placeholder="Leave a comment here" id="floatingTextarea">${data.task_detail}</textarea>
-              <label for="floatingTextarea">Task Detail</label>
-            </div>
-       
-         
-          <button
-          type="submit"
-          id = "submitbutton"
-          style="background-color: #2b6b32; border: none"
-          class="btn btn-primary"
-          >
-          Update Task
-          </button>
-      </form> `
-        // Update the modal content with the fetched data
-        $('#modalContent').html(content);
-        // Show the modal
-        $('#editTaskModal').modal('show');
-      },
-      error: function() {
-        alert('Failed to fetch data.');
-      }
-    });
-  }
-</script>
 {% endblock script %}

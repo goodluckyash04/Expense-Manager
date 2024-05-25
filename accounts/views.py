@@ -1,5 +1,7 @@
 import traceback
 from datetime import datetime
+
+from django.db.models import Q
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.mail import send_mail
@@ -30,27 +32,27 @@ def home(request,user):
                 "class_suffix": " mb-3 mb-sm-0"
                 
             },
-            # {
-            #     "title": "TASK",
-            #     "description": "Don't Stress Your Brain Add Your Todos",
-            #     "modal_target": "#taskmodal",
-            #     "modal_button_icon": 'fa-circle-plus',
-            #     "report_url": "/currentMonthTaskReport/",
-            #     "report_button_icon": datetime.today().strftime("%b'%y").upper(),
-            #     "delete_url": "/taskReports/",
-            #     "delete_button_icon": 'fa-square-poll-horizontal',
-            #     "class_suffix": " mb-3"
-            # },
             {
-                "title": "LOAN",
-                "description": "Create Your Virtual Loan To keep track of EMIS",
+                "title": "TASK",
+                "description": "Don't Stress Your Brain Add Your Todos",
+                "modal_target": "#taskmodal",
+                "modal_button_icon": 'fa-circle-plus',
+                "report_url": "/currentMonthTaskReport/",
+                "report_button_icon": datetime.today().strftime("%b'%y").upper(),
+                "delete_url": "/taskReports/",
+                "delete_button_icon": 'fa-square-poll-horizontal',
+                "class_suffix": " mb-3"
+            },
+            {
+                "title": "FINANCE",
+                "description": "Keep track of Your Virtual Loan/Sip ",
                 "modal_target": "#financeModal",
                 "modal_button_icon": 'fa-circle-plus',
-                "report_url": "/loanHome/",
+                "report_url": "/finance-details/",
                 "report_button_icon": 'fa-square-poll-horizontal',
-                "delete_url": "/deletedEntries/",
-                "delete_button_icon": 'fa-trash-can',
-                "class_suffix": ""
+                # "delete_url": "/deletedEntries/",
+                # "delete_button_icon": 'fa-trash-can',
+                # "class_suffix": ""
             },
             # {
             #     "title": "RECEIVABLES",
@@ -150,7 +152,7 @@ def forgotPassword(request):
     if request.method == "POST":
         try:
             username = request.POST.get("username", "").lower()
-            user = User.objects.get(username=username)
+            user = User.objects.get(Q(username=username) | Q(email=username))
 
             new_password = get_random_string(8)
             sub = "Change in Account"
