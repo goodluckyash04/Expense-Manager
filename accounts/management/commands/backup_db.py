@@ -16,7 +16,7 @@ class Command(BaseCommand):
         try:
             print("Starting the backup and encryption process...")
             today = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
-            due_tasks = Task.objects.filter(complete_by__date=today.date(),status = 'Pending')
+            due_tasks = Task.objects.filter(complete_by_date__date=today.date(),status = 'Pending')
             task_list = []
             for task in due_tasks:
                 task_list.append(task.task_title+'-'+task.task_detail)

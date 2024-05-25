@@ -44,7 +44,7 @@ function payType() {
 
     if (Expense.checked) {
         submit_button.textContent = "Add Expense";
-        categories = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment', 'Other'];
+        categories = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries','Medical', 'General', 'Gifts', 'Entertainment', 'Other'];
         beneficiary.style.display = '';
         mode.style.display = '';
         mode_detail.style.display = '';

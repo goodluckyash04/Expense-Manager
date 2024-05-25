@@ -165,7 +165,7 @@ def transaction_detail(request, user):
             current_month = now.month
             filterData &= Q(date__year=current_year, date__month=current_month)
 
-        transaction_data = Transaction.objects.filter(filterData).order_by('date')
+        transaction_data = Transaction.objects.filter(filterData).order_by('-date')
 
         income = expense = emi = investment = pending_amount = paid_amount = total = 0
 
@@ -180,9 +180,9 @@ def transaction_detail(request, user):
             elif i.category == "EMI":
                 emi += i.amount
 
-            if i.status == "Completed":
+            if i.status == "Completed" and i.type == 'Expense':
                 paid_amount += i.amount
-            elif i.status == "Pending":
+            elif i.status == "Pending" and i.type == 'Expense':
                 pending_amount += i.amount
         print(start_date)
         filter_remaining_amount &= Q(date__lt=start_date)
@@ -199,7 +199,7 @@ def transaction_detail(request, user):
             "previous_pending":previous_pending,
             "total": income - expense
         }
-        CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment', 'EMI', 'Salary','Other']
+        CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries','Medical', 'General', 'Gifts', 'Entertainment', 'EMI', 'Salary','Other']
 
         return render(request, "transaction/transactionDetails.html", {
             "user": user,

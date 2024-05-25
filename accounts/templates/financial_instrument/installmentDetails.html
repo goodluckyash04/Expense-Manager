@@ -9,14 +9,14 @@
       <div class="d-flex flex-wrap">
         <p class="fs-6 me-3 text-secondary">Type: <b><span class="text-success">{{product_details.type}}</span></b></p>
         <p class="fs-6 me-3 text-secondary">Started: <b><span class="text-info">{{product_details.started_on}}</span></b></p>
-        <p class="fs-6 text-secondary">Status: <b><span class="text-info">{{product_details.status}}</span></b></p>
+        <p class="fs-6 text-secondary me-3">Status: <b><span class="text-info">{{product_details.status}}</span></b></p>
+        <p class="fs-6 text-secondary ">Total Amount: <b><span class="text-info">₹ {{product_details.amount}}</span></b></p>
       </div>
     </div>
 
     <!-- Second Section -->
     <div class="col-12 col-md-6">
       <div class="d-flex flex-wrap justify-content-md-end">
-        <p class="fs-6 text-secondary me-3">Total Amount: <b><span class="text-info">₹ {{product_details.amount}}</span></b></p>
         <p class="text-secondary fs-6 me-3">Installments: <b><span class="text-info"><span class="text-success">{{product_details.paid_installment}}</span> / {{product_details.no_of_installments}}</span></b></p>
         <p class="text-secondary fs-6 me-3">Paid Amount: <b><span class="text-success">₹ {{product_details.paid_amount}}</span></b></p>
         <p class="text-secondary fs-6">Remaining: <b><span class="text-danger">₹ {{product_details.remaining_amount}}</span></b></p>

@@ -1,4 +1,4 @@
-CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries', 'Entertainment','EMI', 'Other'];
+CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries','Medical', 'General', 'Gifts', 'Entertainment','EMI', 'Other'];
 MODE = ['CreditCard' , 'Online', 'Cash']
 STATUS = ['Pendiing','Completed']
 
