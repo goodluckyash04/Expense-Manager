@@ -1,7 +1,7 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 <div class="row m-3">
   {% for item in items %}
-  <div class="col-12 col-md-4 mb-3{{ item.class_suffix }}">
+  <div class="col-12 col-md-6 mb-3 {{ item.class_suffix }}">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title text-success">{{ item.title }}</h5>
@@ -9,11 +9,13 @@
         <!-- Add Button -->
         <a data-bs-toggle="modal" data-bs-target="{{ item.modal_target }}" class="btn btn-success" ><i class="fa-solid {{ item.modal_button_icon }}"></i></a>
         <!-- Report Button -->
-        {% if item.title == "FINANCE" or item.title == "RECEIVABLES" %}
+        {% if item.title == "FINANCE" or item.title == "LEDGER" %}
         <a href="{{ item.report_url }}" class="btn btn-success" ><i class="fa-solid {{ item.report_button_icon }}"></i></a>
         {% else %}
         <a href="{{ item.report_url }}" class="btn btn-success" >{{ item.report_button_icon }}</a>
+        {% endif %}
         <!-- Delete Button -->
+        {% if item.title != "FINANCE"  %}
         <a href="{{ item.delete_url }}" class="btn btn-success" ><i class="fa-solid {{ item.delete_button_icon }}"></i></a>
         {% endif %}
 
@@ -25,6 +27,7 @@
 {% include 'transaction/transactionModal.html' %}
 {% include 'financial_instrument/addFinanceModal.html' %}
 {% include 'task/taskModal.html' %}
+{% include 'ledger_transaction/ledgertransactionModal.html' with counterparties=counterparties %}
 
 {% endblock body %}
 

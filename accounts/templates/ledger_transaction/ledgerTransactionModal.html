@@ -1,0 +1,190 @@
+<!-- Add Ledger Transaction Modal -->
+<div
+  class="modal fade"
+  id="ledgerModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="tname">Add Ledger Transaction</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="/create-ledger-transaction/" id="myLedgerForm" method="post">
+          {% csrf_token %}
+
+      <!--   Type    -->
+        <div id="legerTransactionType" >
+        <!-- Receivable -->
+          <div class="form-check form-check-inline mb-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="transaction_type"
+              id="receivable"
+              value="Receivable"
+              required
+            />
+            <label class="form-check-label" for="Receivable">Receivable</label>
+          </div>
+
+        <!-- Payable -->
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="transaction_type"
+              id="payable"
+              value="Payable"
+            />
+            <label class="form-check-label" for="Payable">Payable</label>
+          </div>
+
+            <!-- Received -->
+          <div class="form-check form-check-inline mb-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="transaction_type"
+              id="received"
+              value="Received"
+              required
+            />
+            <label class="form-check-label" for="Received">Received</label>
+          </div>
+
+        <!-- Paid -->
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="transaction_type"
+              id="paid"
+              value="Paid"
+            />
+            <label class="form-check-label" for="Paid">Paid</label>
+          </div>
+      </div>
+
+
+
+
+      <div id="ledgerBody">
+
+        <!--  Counterparty    -->
+        <select
+          class="form-select mb-3"
+          name="counterparty"
+          id="counterparty"
+          aria-label="Default select example"
+          onchange= "counterpartyChange()"
+          required
+        >
+            <option  value=""> - Select Counterparty -</option>
+            {% for counterparty in counterparties %}
+            <option value="{{ counterparty }}">{{ counterparty }}</option>
+            {% endfor %}
+            <option  value="other">Other</option>
+
+         </select>
+                  <!--  Counterparty Text-->
+
+        <div class="mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="counterparty_txt"
+                    style="display:none;"
+                    aria-describedby="transaction_date"
+                  />
+            </div>
+        <!--  transaction_date    -->
+            <div class="mb-3">
+              <input
+                type="date"
+                class="form-control"
+                name="transaction_date"
+                id="transaction_date"
+                aria-describedby="transaction_date"
+              />
+            </div>
+
+          <!--  Instrument Amount    -->
+            <div class="mb-3">
+              <input
+                type="number"
+                class="form-control"
+                name="amount"
+                placeholder="Amount"
+                id="amount"
+                aria-describedby="emailHelp"
+                required
+              />
+            </div>
+
+          <!--  No of Installments    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="no_of_installments"
+                placeholder="No of Installments"
+                id="no_of_installments"
+                value=1
+              />
+            </div>
+
+        <!--  Description    -->
+            <div class="mb-3">
+              <textarea
+                class="form-control"
+                name="description"
+                placeholder="Description"
+                id="description"
+              ></textarea>
+            </div>
+
+          <!--  Submit Button    -->
+            <button
+              id="submitButton"
+              type="submit"
+              style="background-color: #2b6b32; border: none"
+              class="btn btn-primary"
+            >
+              Add Transaction
+            </button>
+        </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    document.getElementById('transaction_date').value = new Date().toISOString().split('T')[0]
+    function counterpartyChange(){
+        cParty = document.getElementById('counterparty')
+        cParty_txt = document.getElementById('counterparty_txt')
+
+        if (cParty.value == 'other'){
+            cParty.removeAttribute('name')
+            cParty_txt.setAttribute('name','counterparty')
+            cParty_txt.removeAttribute('style')
+        }else{
+            cParty_txt.removeAttribute('name')
+            cParty.setAttribute('name','counterparty')
+            cParty_txt.style.display = 'none'
+        }
+    }
+</script>

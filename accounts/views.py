@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseServerError
 from django.utils.crypto import get_random_string
-from .models import User
+from .models import User, LedgerTransaction
 from .decorators import auth_user
 
 
@@ -54,19 +54,21 @@ def home(request,user):
                 # "delete_button_icon": 'fa-trash-can',
                 # "class_suffix": ""
             },
-            # {
-            #     "title": "RECEIVABLES",
-            #     "description": "Keep track of your Receivables",
-            #     "modal_target": "#loanmodal",
-            #     "modal_button_icon": 'fa-circle-plus',
-            #     "report_url": "/loanHome/",
-            #     "report_button_icon": 'fa-square-poll-horizontal',
-            #     "delete_url": "/deletedEntries/",
-            #     "delete_button_icon": 'fa-trash-can',
-            #     "class_suffix": ""
-            # }
+            {
+                "title": "LEDGER",
+                "description": "Keep track of your Payable and Receivables",
+                "modal_target": "#ledgerModal",
+                "modal_button_icon": 'fa-circle-plus',
+                "report_url": "/ledger-transaction-details/",
+                "report_button_icon": 'fa-square-poll-horizontal',
+                "delete_url": "/deleted-ledger-transaction/",
+                "delete_button_icon": 'fa-trash-can',
+                "class_suffix": ""
+            }
         ]
-        return render(request,"home.html",{"user":user,'items': items})
+        counterparties = LedgerTransaction.objects.values_list('counterparty', flat=True).distinct()
+
+        return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes

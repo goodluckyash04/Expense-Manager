@@ -247,7 +247,7 @@ def fetch_deleted_transaction(request, user):
 
 
 @auth_user
-def delete_transaction(request, id = None):
+def delete_transaction(request,user, id = None):
     try:
         if request.method == "GET":
             del_list = [id]
@@ -255,7 +255,7 @@ def delete_transaction(request, id = None):
             del_list = request.POST.getlist('record_ids','')
         print(del_list)
         for id in del_list:
-            entry = Transaction.objects.get(id=id)
+            entry = Transaction.objects.get(id=id,created_by = user)
             entry.is_deleted = True
             entry.deleted_at = datetime.now()
             entry.save()
@@ -270,8 +270,8 @@ def delete_transaction(request, id = None):
         messages.error(request, f"An error occurred: will get back soon")
         return redirect('transaction-detail')
 
-
-def undo_transaction(request, id=None):
+@auth_user
+def undo_transaction(request, user,id=None):
     try:
         if request.method == "GET":
             undo_list = [id]
@@ -281,7 +281,7 @@ def undo_transaction(request, id=None):
         for id in undo_list:
             entry = Transaction.objects.get(id=id)
             if entry.source_id is not None:
-                product = FinancialProduct.objects.get(id = entry.source_id)
+                product = FinancialProduct.objects.get(id = entry.source_id,created_by = user)
                 if product.is_deleted:
                     product.is_deleted = False
                     product.save()
@@ -295,8 +295,8 @@ def undo_transaction(request, id=None):
         messages.error(request, f"An error occurred: will get back soon")
         return redirect('getDeletedEntries')
 
-
-def update_transaction_status(request, id):
+@auth_user
+def update_transaction_status(request, id,user):
     try:
         if request.method == "GET":
             trasaction_list = [id]
@@ -304,7 +304,7 @@ def update_transaction_status(request, id):
             trasaction_list = request.POST.getlist('record_ids', '')
 
         for id in trasaction_list:
-            entry = Transaction.objects.get(id=id)
+            entry = Transaction.objects.get(id=id,created_by = user)
             entry.status = "Completed" if entry.status == "Pending" else "Pending"
             entry.save()
         messages.success(request, f'Transaction Status Updated')

@@ -1,0 +1,76 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block body %}
+
+<h3 class="text-success text-center my-3">Ledger Details</h3>
+<div class="row mx-3 mt-3 table-responsive">
+  <table id="myTable" class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th scope="col" class="text-success">COUNTER PARTY</th>
+        <th scope="col" class="text-success">RECEIVABLES</th>
+        <th scope="col" class="text-success">RECEIVED</th>
+        <th scope="col" class="text-success">PAYABLE</th>
+        <th scope="col" class="text-success">PAID</th>
+        <th scope="col" class="text-success">TOTAL</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if receivables_payables %}
+      {% for i in receivables_payables %}
+      <tr>
+        <td scope="row">{{ forloop.counter }}</td>
+        <td><a href="/ledger-transaction/{{ i.counterparty }}" class="text-success text-decoration-none">{{ i.counterparty }}</a></td>
+        <td class="text-success">{{ i.total_receivable }}</td>
+        <td class="text-info">{{ i.total_received }}</td>
+        <td class="text-danger">{{ i.total_payable }}</td>
+        <td class="text-info">{{ i.total_paid }}</td>
+        <td class="text-success">{{ i.total }}</td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#counterParty" onclick="openModalAndGetCounterParty('{{ i.counterparty }}')"><i class="fa-solid text-warning fa-pen"></i></a></td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="8" class="text-center">No Records found</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="counterParty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form action="" method="post" id="updateCP">
+          {% csrf_token %}
+          <div class="row align-items-center">
+            <div class="col-9 col-md-8">
+              <input type="text" class="form-control" name="counterparty" placeholder="CounterParty Name" id="counterpartyName" required />
+            </div>
+            <div class="col-3 col-md-2">
+              <button type="submit" id="submitCP" class="btn text-success border-0">SAVE</button>
+            </div>
+            <div class="col-1 col-md-2">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+function openModalAndGetCounterParty(cp_name) {
+ document.getElementById("updateCP").action = `/update-counterparty-name/${cp_name}`
+  document.getElementById('counterpartyName').value = cp_name;
+}
+</script>
+{% endblock %}

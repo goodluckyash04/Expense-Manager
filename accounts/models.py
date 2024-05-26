@@ -108,3 +108,29 @@ class Task(models.Model):
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
+
+
+class LedgerTransaction(models.Model):
+    STATUS_CHOICES = [
+        ("Completed", _("Completed")),
+        ("Pending", _("Pending")),
+    ]
+    transaction_type = models.CharField(max_length=50)
+    transaction_date = models.DateField()
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0.0)
+    counterparty = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
+    completion_date = models.DateField(blank=True, null=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.counterparty
+
+    class Meta:
+        verbose_name = _("LedgerTransaction")
+        verbose_name_plural = _("LedgerTransactions")
