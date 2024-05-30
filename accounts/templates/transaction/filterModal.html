@@ -22,72 +22,63 @@
                       </div>
 
                     <!-- Category and Mode -->
-                    <div class="d-flex my-3 justify-content-between">
-                                              <div class="col-12 col-md-4">
-                      <select
-                      class="form-select text-center border-0"
-                      name="category"
-                      aria-label="Default select example"
-                    >
-                      <option {% if data.category == "" %} selected {% endif %} value="">-- Category --</option>
-  {% for category in categories %}
-    <option {% if data.category == category %} selected {% endif %} value="{{ category }}">{{ category }}</option>
-  {% endfor %}
-                     </select>
-                                              </div>
-                      <div class="col-12 col-md-4">
-                         <select
-                      class="form-select text-center border-0"
-                      name="mode"
-                      aria-label="Default select example"
+                    <div class="container my-3">
+  <div class="row justify-content-between">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
+      <select class="form-select text-center border-0" name="category" aria-label="Default select example">
+        <option {% if data.category == "" %} selected {% endif %} value="">-- Category --</option>
+        {% for category in categories %}
+          <option {% if data.category == category %} selected {% endif %} value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
+      <select class="form-select text-center border-0" name="mode" aria-label="Default select example">
+        <option {% if data.mode == "" %} selected {% endif %} value="">-- Mode --</option>
+        <option {% if data.mode == "CreditCard" %} selected {% endif %} value="CreditCard">CreditCard</option>
+        <option {% if data.mode == "Online" %} selected {% endif %} value="Online">Online</option>
+        <option {% if data.mode == "Cash" %} selected {% endif %} value="Cash">Cash</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-4">
+      <select class="form-select text-center border-0" name="status" aria-label="Default select example">
+        <option {% if data.status == "" %} selected {% endif %} value="">-- Status --</option>
+        <option {% if data.status == "Completed" %} selected {% endif %} value="Completed">Completed</option>
+        <option {% if data.status == "Pending" %} selected {% endif %} value="Pending">Pending</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-                    >
-                      <option {% if data.mode == "" %} selected {% endif %} value="">-- Mode --</option>
-                      <option {% if data.mode == "CreditCard" %} selected {% endif %} value="CreditCard">CreditCard</option>
-                      <option {% if data.mode == "Online" %} selected {% endif %} value="Online">Online</option>
-                      <option {% if data.mode == "Cash" %} selected {% endif %} value="Cash">Cash</option>
-                    </select>
-                                                                        </div>
-                                              <div class="col-12 col-md-4">
-
-                                                <select
-                      class="form-select text-center border-0"
-                      name="status"
-                      aria-label="Default select example"
-                    >
-                      <option {% if data.mode == ""  %} selected {% endif %} value="">-- Status --</option>
-                      <option {% if data.mode == "Completed"  %} selected {% endif %} value="Completed">Completed</option>
-                      <option {% if data.mode == "Pending" %} selected {% endif %} value="Pending">Pending</option>
-                    </select>
-                        </div>
-
-                        </div>
-
-                      <!-- Beneficiary -->
-                    <div class="mb-2">
-
-                      </div>
-
-                    <!-- Date and Status -->
-
-                    <div class="d-flex mb-2 justify-content-between">
-                         <div class="col-12 col-md-4">
-                                                   <input
-                          type="text"
-                          class="form-control text-center border-0"
-                          id="beneficiary"
-                          name ="beneficiary"
-                          placeholder="Beneficiary"
-                          value = '{{data.beneficiary}}'
-                      >
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <input type="text"  class="form-control border-0" onload=""  value="{{ data.daterange }}" id="daterange" name="daterange">
-                      </div>
+                      <div class="mb-2">
+  <!-- Date and Status -->
+  <div class="container">
+    <div class="row justify-content-between mb-2">
+      <div class="col-12 col-md-4 mb-3 mb-md-0">
+        <input
+          type="text"
+          class="form-control text-center border-0"
+          id="beneficiary"
+          name="beneficiary"
+          placeholder="Beneficiary"
+          value="{{ data.beneficiary }}"
+        >
+      </div>
+      <div class="col-12 col-md-6">
+        <input
+          type="text"
+          class="form-control border-0"
+          value="{{ data.daterange }}"
+          id="daterange"
+          name="daterange"
+        >
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
-                    </div>
                   <button type="submit" class="btn btn-outline-success col-12 mb-3">Filter<i class="ms-1 fa-solid fa-filter"></i></button>
               </form>
             </div>

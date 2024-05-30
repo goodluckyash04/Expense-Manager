@@ -23,59 +23,64 @@
           {% csrf_token %}
 
       <!--   Type    -->
-        <div id="legerTransactionType" >
-        <!-- Receivable -->
-          <div class="form-check form-check-inline mb-3">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="transaction_type"
-              id="receivable"
-              value="Receivable"
-              required
-            />
-            <label class="form-check-label" for="Receivable">Receivable</label>
-          </div>
-
-        <!-- Payable -->
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="transaction_type"
-              id="payable"
-              value="Payable"
-            />
-            <label class="form-check-label" for="Payable">Payable</label>
-          </div>
-
-            <!-- Received -->
-          <div class="form-check form-check-inline mb-3">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="transaction_type"
-              id="received"
-              value="Received"
-              required
-            />
-            <label class="form-check-label" for="Received">Received</label>
-          </div>
-
-        <!-- Paid -->
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="transaction_type"
-              id="paid"
-              value="Paid"
-            />
-            <label class="form-check-label" for="Paid">Paid</label>
-          </div>
+  <div class="container mb-3" id="legerTransactionType">
+  <div class="row">
+    <!-- Receivable -->
+    <div class="col-6 col-md-3">
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="transaction_type"
+          id="receivable"
+          value="Receivable"
+          required
+        />
+        <label class="form-check-label" for="receivable">Receivable</label>
       </div>
-
-
+    </div>
+    <!-- Payable -->
+    <div class="col-6 col-md-3">
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="transaction_type"
+          id="payable"
+          value="Payable"
+        />
+        <label class="form-check-label" for="payable">Payable</label>
+      </div>
+    </div>
+    <!-- Received -->
+    <div class="col-6 col-md-3">
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="transaction_type"
+          id="received"
+          value="Received"
+          required
+        />
+        <label class="form-check-label" for="received">Received</label>
+      </div>
+    </div>
+    <!-- Paid -->
+    <div class="col-6 col-md-3">
+      <div class="form-check form-check-inline">
+        <input
+          class="form-check-input"
+          type="radio"
+          name="transaction_type"
+          id="paid"
+          value="Paid"
+        />
+        <label class="form-check-label" for="paid">Paid</label>
+      </div>
+    </div>
+  </div>
+</div>
 
 
       <div id="ledgerBody">
