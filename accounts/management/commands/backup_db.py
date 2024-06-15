@@ -74,14 +74,14 @@ class Command(BaseCommand):
             email = EmailMessage(subject, message, from_email, recipient_list)
             today = datetime.datetime.today().strftime("%Y%m%d%H%M")
             email.attach(f'{today}.bin', encrypted_data, 'application/octet-stream')
-            if changes_detected:
-                email_sent = email.send()
-                if email_sent:
-                    print("Email sent successfully.")
-                else:
-                    print("Email sending failed.")
+            # if changes_detected:
+            email_sent = email.send()
+            if email_sent:
+                print("Email sent successfully.")
             else:
-                print("No changes Made Today")
+                print("Email sending failed.")
+            # else:
+                # print("No changes Made Today")
         except Exception as e:
             print(traceback.print_exc())
             print(f"An error occurred: {e}")

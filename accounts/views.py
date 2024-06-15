@@ -30,7 +30,7 @@ def home(request,user):
                 "delete_url": "/deleted-transaction-detail/",
                 "delete_button_icon": 'fa-trash-can',
                 "class_suffix": " mb-3 mb-sm-0"
-                
+
             },
             {
                 "title": "TASK",
@@ -66,8 +66,8 @@ def home(request,user):
                 "class_suffix": ""
             }
         ]
-        counterparties = LedgerTransaction.objects.values_list('counterparty', flat=True).distinct()
-
+        counterparties = LedgerTransaction.objects.filter(created_by=user).values_list('counterparty', flat=True).distinct()
+        print(counterparties)
         return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
@@ -82,17 +82,17 @@ def login(request):
 
     if 'username' in request.session:
         return redirect("home")
-    
+
     if request.method == "GET":
         msg = request.session.pop('forgot_password_msg', '')
         return render(request, "auth/login.html", {"msg": msg})
-    
+
     if not User.objects.filter(username=request.POST['username'].lower()).exists():
         return render(request,"auth/login.html",{"msg":"user Does not exist"})
-    
+
 
     user = User.objects.get(username=request.POST['username'].lower())
-    print(user.created_at)
+
     if not check_password(request.POST['password'],user.password):
         return render(request,"auth/login.html",{"msg":"Invalid Credential"})
 
@@ -129,13 +129,11 @@ def signup(request):
             )
             return render(request, "auth/login.html", {"msg": "User Created. Login to Continue"})
         except Exception as e:
-            messages.error(request, "An unexpected error occurred.")
+            traceback.print_exc()
+            messages.error(request, str(e))
             # Log the error for debugging purposes
-            print(str(e))
-            return HttpResponseServerError()
-
-    return render(request, "auth/signup.html")
-
+            print()
+            return render(request, "auth/signup.html",{"msg":str(e)})
 
 
 def logout(request):
@@ -163,14 +161,14 @@ def forgotPassword(request):
             recipient_list = [user.email]
             print(sub, message, from_email, recipient_list)
             send_mail(sub, message, from_email, recipient_list)
-            
+
             user.password = make_password(new_password)
             user.save()
-            
+
             masked_email = hide_email(user.email)
             msg = f"Password sent to {masked_email}"
             request.session['forgot_password_msg'] = msg
-            
+
             return redirect('login')
         except User.DoesNotExist:
             return render(request, "auth/forgotPassword.html", {"msg": "User does not exist"})
@@ -206,7 +204,7 @@ def changePassword(request, user):
 
 # .............................................EXTRAS................................................
 
-    
+
 def dateConvert(date_value):
     date_string = date_value
     date_object = datetime.strptime(date_string, "%Y-%m-%d")

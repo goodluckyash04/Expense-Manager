@@ -7,7 +7,6 @@
         action="/signup/"
         style="margin-top: 30%;"
       >
-      <p class="text-danger mb-0">{{msg}}</p>  
         {% csrf_token %}
         <h3 class="mb-4 text-secondary  text-center">Welcome to <span class="text-success">Go-Expense</span></h3>
         <p class="fs-4 text-success text-center">Sign-Up</p>
@@ -67,6 +66,7 @@
             id="rpassword"
           />
         </div>
+      <p class="text-danger mb-0">{{msg}}</p>
         <div class="mb-3">
          <button
             type="submit"

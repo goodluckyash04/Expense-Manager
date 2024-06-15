@@ -77,13 +77,15 @@ def ledger_transaction_details(request,user):
                                       Value(0, output_field=DecimalField())),
             total_payable=Coalesce(Sum('amount', filter=Q(transaction_type='Payable',status='Pending',created_by = user, is_deleted = False)),
                                    Value(0, output_field=DecimalField())),
-            total_received=Coalesce(Sum('amount', filter=Q(transaction_type='Received',created_by = user, is_deleted = False)),
+
+            total_received=Coalesce(Sum('amount', filter=Q(transaction_type='Received',status='Pending',created_by = user, is_deleted = False)),
                                    Value(0, output_field=DecimalField())),
-            total_paid=Coalesce(Sum('amount', filter=Q(transaction_type='Paid',created_by = user, is_deleted = False)),
+            total_paid=Coalesce(Sum('amount', filter=Q(transaction_type='Paid',status='Pending',created_by = user, is_deleted = False)),
                                    Value(0, output_field=DecimalField()))
         ).annotate(
     total=ExpressionWrapper(
-        F('total_receivable') - F('total_payable') - F('total_received') + F('total_paid'),
+        # F('total_receivable')- F('total_received') - F('total_payable') + F('total_paid'),
+        F('total_receivable')- F('total_payable'),
         output_field=DecimalField()
     )
         )
