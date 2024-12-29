@@ -72,7 +72,7 @@ def add_ledger_transaction(request,user):
 def ledger_transaction_details(request,user):
     try:
 
-        receivables_payables = LedgerTransaction.objects.values('counterparty').annotate(
+        receivables_payables = LedgerTransaction.objects.filter(created_by=user).values('counterparty').annotate(
             total_receivable=Coalesce(Sum('amount', filter=Q(transaction_type='Receivable',status='Pending',created_by = user, is_deleted = False)),
                                       Value(0, output_field=DecimalField())),
             total_payable=Coalesce(Sum('amount', filter=Q(transaction_type='Payable',status='Pending',created_by = user, is_deleted = False)),

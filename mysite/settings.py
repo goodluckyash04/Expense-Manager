@@ -12,9 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
-# from dotenv import load_dotenv
 
-# load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -135,4 +133,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 RECIEPINT_EMAIL = config('RECIEPINT_EMAIL')
+
 ENCRYPTION_KEY = config('ENCRYPTION_KEY')
+
+ADMIN_ACCESS = config('ADMIN_ACCESS',cast=bool)

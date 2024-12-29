@@ -13,6 +13,7 @@ urlpatterns = [
 
 # ..........................................Home Page..................................................
     path("home/",home,name="home"),
+    path("dashboard/",dashboard,name="dashboard"),
 
 # ..........................................User Management..................................................
     path("",login,name="login"),

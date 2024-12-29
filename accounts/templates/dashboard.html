@@ -1,0 +1,246 @@
+    {% extends 'header.html' %}
+
+    {% block body %}
+    <div class="text-center mt-2">
+        <h2 class="text-secondary">Welcome Back, <span class="user-name text-success">{{user.name}}</span></h2>
+      </div>
+          <div class="container mt-5">
+        <!-- Row 1: Progress Bar Charts (All in One Line) -->
+        <div class="row">
+            <!-- Financial Overview Progress Bar Chart (Income, Expense, Savings, Investment) -->
+            <div class="col-md-6 mb-4">
+                <canvas id="financialOverviewChart"></canvas>
+            </div>
+
+               <!-- Total Expense by Category Bar Chart -->
+        <div class="col-md-6 mb-4">
+            <canvas id="expenseCategoryChart" ></canvas>
+        </div>
+        </div>
+
+        <!-- Row 2: Main and Sub Graphs (All in Another Row) -->
+        <div class="row mt-4">
+            <!-- Main Chart -->
+               <!-- Month-wise Savings Chart -->
+        <div class="col-12 col-md-4 mb-4">
+            <canvas id="savingsChart" ></canvas>
+        </div>
+
+            <!-- Sub Chart 1 -->
+            <div class="col-12 col-md-4 mb-4">
+                <canvas id="subChart1"></canvas>
+            </div>
+
+            <!-- Sub Chart 2 -->
+            <div class="col-12 col-md-4 mb-4">
+                <canvas id="subChart2"></canvas>
+            </div>
+        </div>
+
+{% include 'floating_button.html' %}
+
+    {% endblock body %}
+
+    {% block script %}
+    <script type="text/javascript">
+        const data = JSON.parse('{{ data|escapejs }}')
+    </script>
+    <script>
+        const finance_view = data.finance_view
+        const category_wise_data = data.category_wise_data
+        const savings = data.savings
+        const year_wise_data = data.year_wise_data
+        const category_wise_month = data.category_wise_month
+        
+        // Data placeholders (replace with your dynamic data as needed)
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+        // Financial Overview Progress Bar Chart (Income, Expense, Savings, Investment)
+        new Chart(document.getElementById("financialOverviewChart").getContext("2d"), {
+            type: "bar",
+            data: {
+                labels: finance_view.labels,
+                datasets: [{
+                    label: "Finance",
+                    data: finance_view.data, // Example values
+                    backgroundColor:finance_view.labels.map(() => getRandomColor()) ,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,   
+                indexAxis: "y",  // Horizontal bars
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Financial Overview"
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: finance_view.max,  // Adjust based on your data range
+                        title: {
+                            display: true,
+                            text: 'Amount (₹)'
+                        }
+                    }
+                }
+            }
+        });
+
+         // Expense by Category Chart
+    new Chart(document.getElementById("expenseCategoryChart"), {
+        type: "bar",
+        data: {
+            labels: Object.keys(category_wise_data),
+            datasets: [{
+                label: "Category",
+                data: Object.values(category_wise_data),
+                backgroundColor:Object.keys(category_wise_data).map(() => getRandomColor()),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Category-wise Expense "
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Amount (₹)'
+                    }
+                }
+            }
+        }
+    });
+    
+        // Month-wise Savings Chart
+    new Chart(document.getElementById("savingsChart"), {
+        type: "line",
+        data: {
+            labels: months,
+            datasets: [{
+                label: "Savings (₹)",
+                data: savings,
+                borderColor: "#2ecc71",
+                backgroundColor: "rgba(46, 204, 113, 0.2)",
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Month-wise Savings"
+                }
+            }
+        }
+    });
+
+        // Sub Chart 1: Year-wise Income and Expense
+        new Chart(document.getElementById("subChart1").getContext("2d"), {
+            type: "bar",
+            data: {
+                labels: year_wise_data.label,
+                datasets: [
+                    {
+                        label: "Income (₹)",
+                        data:  year_wise_data.income,
+                        backgroundColor:  getRandomColor()
+                    },
+                    {
+                        label: "Expense (₹)",
+                        data:  year_wise_data.expense,
+                        backgroundColor: getRandomColor()
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Year-wise Income and Expense"
+                    }
+                }
+            }
+        });
+
+        // Sub Chart 2: Current Month Expense as Percentage of Total Income
+        new Chart(document.getElementById("subChart2").getContext("2d"), {
+            type: "doughnut",
+            data: {
+                labels: category_wise_month.labels,
+                datasets: [{
+                    data: category_wise_month.amount,
+                    backgroundColor:category_wise_month.labels.map(() => getRandomColor()),
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Current Month Expense Out of Total Income"
+                    }
+                }
+            }
+        });
+    </script>
+    {% endblock script %}
+
+    {% block style %}
+    <style>
+        .chart-canvas {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+        }
+
+        /* Styling for Task List */
+        .list-group-item {
+            border: none;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+        }
+
+        .list-group-item:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+        }
+
+        .form-check-label {
+            font-size: 16px;
+        }
+
+        h5 {
+            font-size: 20px;
+        }
+    </style>
+    {% endblock style %}

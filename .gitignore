@@ -3,6 +3,7 @@ accounts/templates/addEMI.html
 accounts/templates/expense.html
 accounts/templates/loanadd.html
 backup/
+home/
 
 # Ignore database files
 *.sqlite3
@@ -43,3 +44,5 @@ Pipfile.lock
 # Ignore system-specific files
 .DS_Store
 Thumbs.db
+
+Django.txt

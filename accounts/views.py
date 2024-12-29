@@ -1,7 +1,7 @@
 import traceback
 from datetime import datetime
 
-from django.db.models import Q
+from django.db.models import Q,Sum,Case, When, Value, CharField
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.mail import send_mail
@@ -9,10 +9,119 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseServerError
 from django.utils.crypto import get_random_string
-from .models import User, LedgerTransaction
+from .models import User, LedgerTransaction, Transaction
 from .decorators import auth_user
+from decimal import Decimal
+from django.utils import timezone
+
+# ...........................................Dashboard..................................................
+
+@auth_user
+def dashboard(request,user):
+    try:
+        transactions = Transaction.objects.filter(created_by=user,is_deleted = False)
+        income = sum(entry.amount for entry in transactions if entry.type.lower() == 'income'and not entry.is_deleted)
+        expense = sum(entry.amount for entry in transactions if entry.type.lower() == 'expense' and entry.date <= datetime.now().date())
+        investment = sum(entry.amount for entry in transactions if entry.category.lower() == 'investment' and entry.date <= datetime.now().date())
+        overdue = sum(entry.amount for entry in transactions if entry.category.lower() == 'emi'and entry.status.lower()=="pending")
+        
+        #---------------------- Financial Overview ----------------------------
+        context = {}
+        max_amount = max([income, expense, income-expense, investment, overdue])
+
+        context["finance_view"] =  {
+                "labels": ["Income", "Expense", "Savings", "Investments", "Overdue"],
+                "data": [income, expense, income-expense, investment, overdue],
+                "max": round(max_amount + max_amount/10) 
+            }
+        
+        #---------------------- Category wise Expense ----------------------------
+        category_wise_data = {}
+        for txn in [entry for entry in transactions if entry.type.lower() == 'expense' and entry.date <= datetime.now().date() ]:
+            if txn.category in category_wise_data:
+                category_wise_data[txn.category] += txn.amount 
+            else:
+                category_wise_data[txn.category] = txn.amount 
+        context['category_wise_data'] = category_wise_data
 
 
+        #--------------------- Monthly savings of current year ----------------------
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+
+        transactions = Transaction.objects.filter(
+            created_by=user,
+            is_deleted=False,
+            date__year=current_year,
+            date__month__lte=current_month,
+        ).values('date__month').annotate(
+            total_expense=Sum('amount', filter=Q(type='Expense')),
+            total_income=Sum('amount', filter=Q(type='Income'))
+        )
+        context["savings"] = [(month['total_income'] or 0) - (month['total_expense'] or 0) for month in transactions]
+        #---------------------------------- Year wise Income Expense -----------------------
+        transactions = Transaction.objects.filter(
+            created_by=user,
+            is_deleted=False,
+            date__month__lte=current_month,
+            date__year__lte=current_year,
+        ).values('date__year').annotate(
+            total_expense=Sum('amount', filter=Q(type='Expense')),
+            total_income=Sum('amount', filter=Q(type='Income'))
+        )
+        year_wise_data = {} 
+        year_wise_data['income'] = [i['total_income'] for i in transactions]
+        year_wise_data['expense'] = [i['total_expense'] for i in transactions]
+        year_wise_data['label'] = [i['date__year'] for i in transactions]
+
+        context['year_wise_data'] = year_wise_data
+
+        # -----------------------current month category wise expense---------------------
+        category_wise = {}
+
+        category_expenses = Transaction.objects.filter(
+            created_by=user,
+            is_deleted=False,
+            date__month=current_month,
+            date__year=current_year,
+            type='Expense'
+        ).values('category').annotate(
+            amount=Sum('amount')
+        )
+
+        total = Transaction.objects.filter(
+            created_by=user,
+            is_deleted=False,
+            date__month=current_month,
+            date__year=current_year,
+        ).values('type').annotate(
+            amount=Sum('amount')
+        )
+
+        category_wise['labels'] = [i['category'] for i in category_expenses]
+        category_wise['amount'] = [i['amount'] for i in category_expenses]
+
+        income_total = next((item['amount'] for item in total if item['type'] == 'Income'), 0)
+        expense_total = next((item['amount'] for item in total if item['type'] == 'Expense'), 0)
+
+        category_wise['labels'].append('Balance')
+        category_wise['amount'].append(income_total - expense_total)
+
+        context["category_wise_month"] = category_wise
+
+        import json
+        def convert_decimal(obj):
+            if isinstance(obj, Decimal):
+                return float(obj)  # Convert Decimal to float (or str(obj) for string)
+            return obj
+        context = {'data': json.dumps(context,default=convert_decimal),'user':user}
+
+        return render(request,'dashboard.html',context=context)
+    except Exception as e:
+        messages.error(request, "An unexpected error occurred.")
+        # Log the error for debugging purposes
+        print(str(e))
+        return HttpResponseServerError()
 
 # ...........................................Home Page..................................................
 
@@ -67,7 +176,6 @@ def home(request,user):
             }
         ]
         counterparties = LedgerTransaction.objects.filter(created_by=user).values_list('counterparty', flat=True).distinct()
-        print(counterparties)
         return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
@@ -81,7 +189,7 @@ def home(request,user):
 def login(request):
 
     if 'username' in request.session:
-        return redirect("home")
+        return redirect("dashboard")
 
     if request.method == "GET":
         msg = request.session.pop('forgot_password_msg', '')
@@ -97,7 +205,7 @@ def login(request):
         return render(request,"auth/login.html",{"msg":"Invalid Credential"})
 
     request.session["username"] = user.username
-    return redirect("home")
+    return redirect("dashboard")
 
 
 def signup(request):
@@ -198,7 +306,7 @@ def changePassword(request, user):
     user.password = make_password(new_password)
     user.save()
 
-    return redirect('home')
+    return redirect('dashboard')
 
 
 
