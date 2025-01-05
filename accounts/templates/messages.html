@@ -1,11 +1,12 @@
 {% if messages %}
-    <div class=" row  justify-content-center mx-2">
-    {% for message in messages %}
-    <div class="alert text-center {% if message.tags == "error" %} alert-danger {% else %} alert-{{ message.tags }}{% endif %} m-2 py-2  alert-dismissible fade show" id="autoCloseAlert" role="alert">
-      {{ message }}
-      <button type="button" class="btn-close p-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="alert-container" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999;">
+        {% for message in messages %}
+            <div class="alert alert-dismissible fade show m-2 py-3 text-center {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}" role="alert" id="autoCloseAlert"
+                 style="max-width: 500px; margin: 0 auto; font-size: 0.9rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); background-color: #ffffff; opacity: 1; transition: opacity 0.3s ease;">
+                <strong style="font-weight: 500; color:var(--primary-dark-secondary)">{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" 
+                        style="font-size: 0.8rem; color: rgba(0, 0, 0, 0.5);" onclick="this.parentElement.style.opacity = '0'; setTimeout(() => this.parentElement.classList.add('d-none'), 300);"></button>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-  </div>
-
 {% endif %}

@@ -1,0 +1,49 @@
+{% extends 'header.html' %}
+{% load static %}
+
+{% block body %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+<div class="about-section container ">
+    <div class="text-center">
+      <h1 class="display-4 mb-4">myHelperBuddy</h1>
+      <p class="lead text-muted">myHelperBuddy is a powerful tool to help you manage your daily financial activities, tasks, loans, and more, all in one place.</p>
+    </div>
+  
+    <div class="about-content d-flex justify-content-between mb-5">
+      <div class="feature card p-4 shadow-lg rounded">
+        <h4 class=" mb-3">Daily Transactions</h4>
+        <p>Easily track and categorize your daily expenses and income, giving you complete control over your finances.</p>
+      </div>
+      <div class="feature card p-4 shadow-lg rounded">
+        <h4 class="mb-3">Finance Management</h4>
+        <p>Keep track of any loans or borrowings or sip with repayment schedules, and ensure you never miss a payment.</p>
+      </div>
+      <div class="feature card p-4 shadow-lg rounded">
+        <h4 class=" mb-3">Task Management</h4>
+        <p>Stay on top of your daily tasks and activities with easy-to-manage task lists and reminders.</p>
+      </div>
+      <div class="feature card p-4 shadow-lg rounded">
+        <h4 class="mb-3">Ledger Management</h4>
+        <p>Manage all your financial records in a structured ledger system. Keep track of all credits and debits for proper accounting.</p>
+      </div>
+    </div>
+  
+    <div class="section-title mb-4">
+      <h3 >Why Choose Us?</h3>
+    </div>
+    <p class="text-muted">
+      myHelperBuddy helps individuals stay organized by providing a centralized platform for managing all daily activities. Whether you need to track finances, loans, or tasks, our solution is designed to streamline your workflow.
+    </p>
+  
+    <div class="section-title mb-4">
+      <h3 >Key Features:</h3>
+    </div>
+    <ul class="text-muted key-feature">
+        <li><i class="fas fa-check-circle"></i> Effortlessly track daily transactions and income.</li>
+        <li><i class="fas fa-check-circle"></i> Manage loans and repayment schedules with ease.</li>
+        <li><i class="fas fa-check-circle"></i> Organize and prioritize daily tasks.</li>
+        <li><i class="fas fa-check-circle"></i> Maintain and update your ledger entries for accurate records.</li>
+    </ul>
+  </div>
+  
+  {% endblock body %}

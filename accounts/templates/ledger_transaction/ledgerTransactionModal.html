@@ -6,10 +6,10 @@
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="tname">Add Ledger Transaction</h1>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-3 shadow-lg">
+      <div class="modal-header border-bottom-0">
+        <h1 class="modal-title fs-4" id="tname">Add Ledger Transaction</h1>
         <button
           type="button"
           class="btn-close"
@@ -22,174 +22,162 @@
         <form action="/create-ledger-transaction/" id="myLedgerForm" method="post">
           {% csrf_token %}
 
-      <!--   Type    -->
-  <div class="container mb-3" id="legerTransactionType">
-  <div class="row">
-    <!-- Receivable -->
-    <div class="col-6 col-md-3">
-      <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="transaction_type"
-          id="receivable"
-          value="Receivable"
-          required
-        />
-        <label class="form-check-label" for="receivable">Receivable</label>
-      </div>
-    </div>
-    <!-- Payable -->
-    <div class="col-6 col-md-3">
-      <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="transaction_type"
-          id="payable"
-          value="Payable"
-        />
-        <label class="form-check-label" for="payable">Payable</label>
-      </div>
-    </div>
-    <!-- Received -->
-    <div class="col-6 col-md-3">
-      <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="transaction_type"
-          id="received"
-          value="Received"
-          required
-        />
-        <label class="form-check-label" for="received">Received</label>
-      </div>
-    </div>
-    <!-- Paid -->
-    <div class="col-6 col-md-3">
-      <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="transaction_type"
-          id="paid"
-          value="Paid"
-        />
-        <label class="form-check-label" for="paid">Paid</label>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-      <div id="ledgerBody">
-
-        <!--  Counterparty    -->
-        <select
-          class="form-select mb-3"
-          name="counterparty"
-          id="counterparty"
-          aria-label="Default select example"
-          onchange= "counterpartyChange()"
-          required
-        >
-            <option  value=""> - Select Counterparty -</option>
-            {% for counterparty in counterparties %}
-            <option value="{{ counterparty }}">{{ counterparty }}</option>
-            {% endfor %}
-            <option  value="other">Other</option>
-
-         </select>
-                  <!--  Counterparty Text-->
-
-        <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="counterparty_txt"
-                    style="display:none;"
-                    aria-describedby="transaction_date"
-                  />
+          <!-- Type -->
+          <div class="mb-4" id="ledgerTransactionType">
+            <div class="d-flex justify-content-between">
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="transaction_type"
+                  id="receivable"
+                  value="Receivable"
+                  required
+                />
+                <label class="form-check-label" for="receivable">Receivable</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="transaction_type"
+                  id="payable"
+                  value="Payable"
+                />
+                <label class="form-check-label" for="payable">Payable</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="transaction_type"
+                  id="received"
+                  value="Received"
+                  required
+                />
+                <label class="form-check-label" for="received">Received</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="transaction_type"
+                  id="paid"
+                  value="Paid"
+                />
+                <label class="form-check-label" for="paid">Paid</label>
+              </div>
             </div>
-        <!--  transaction_date    -->
-            <div class="mb-3">
-              <input
-                type="date"
-                class="form-control"
-                name="transaction_date"
-                id="transaction_date"
-                aria-describedby="transaction_date"
-              />
-            </div>
+          </div>
 
-          <!--  Instrument Amount    -->
-            <div class="mb-3">
-              <input
-                type="number"
-                class="form-control"
-                name="amount"
-                placeholder="Amount"
-                id="amount"
-                aria-describedby="emailHelp"
-                required
-              />
-            </div>
+          <!-- Counterparty -->
+          <div class="mb-3">
+            <select
+              class="form-select"
+              name="counterparty"
+              id="counterparty"
+              aria-label="Counterparty"
+              onchange="counterpartyChange()"
+              required
+            >
+              <option value="">- Select Counterparty -</option>
+              {% for counterparty in counterparties %}
+              <option value="{{ counterparty }}">{{ counterparty }}</option>
+              {% endfor %}
+              <option value="other">Other</option>
+            </select>
+          </div>
 
-          <!--  No of Installments    -->
-            <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="no_of_installments"
-                placeholder="No of Installments"
-                id="no_of_installments"
-                value=1
-              />
-            </div>
+          <!-- Counterparty Text -->
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="counterparty_txt"
+              style="display:none;"
+              placeholder="Enter Counterparty"
+              aria-describedby="transaction_date"
+            />
+          </div>
 
-        <!--  Description    -->
-            <div class="mb-3">
-              <textarea
-                class="form-control"
-                name="description"
-                placeholder="Description"
-                id="description"
-              ></textarea>
-            </div>
+          <!-- Transaction Date -->
+          <div class="mb-3">
+            <input
+              type="date"
+              class="form-control"
+              name="transaction_date"
+              id="transaction_date"
+              aria-describedby="transaction_date"
+              required
+            />
+          </div>
 
-          <!--  Submit Button    -->
+          <!-- Instrument Amount -->
+          <div class="mb-3">
+            <input
+              type="number"
+              class="form-control"
+              name="amount"
+              placeholder="Amount"
+              id="amount"
+              required
+            />
+          </div>
+
+          <!-- Number of Installments -->
+          <div class="mb-3">
+            <input
+              type="number"
+              class="form-control"
+              name="no_of_installments"
+              placeholder="No of Installments"
+              id="no_of_installments"
+              value="1"
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="mb-3">
+            <textarea
+              class="form-control"
+              name="description"
+              placeholder="Description"
+              id="description"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid gap-2">
             <button
-              id="submitButton"
+            id="submitButton"
               type="submit"
-              style="background-color: #2b6b32; border: none"
-              class="btn btn-primary"
+              class="btn custom-btn-primary btn-lg"
             >
               Add Transaction
             </button>
-        </div>
-
+          </div>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
-    document.getElementById('transaction_date').value = new Date().toISOString().split('T')[0]
-    function counterpartyChange(){
-        cParty = document.getElementById('counterparty')
-        cParty_txt = document.getElementById('counterparty_txt')
+  document.getElementById('transaction_date').value = new Date().toISOString().split('T')[0]
 
-        if (cParty.value == 'other'){
-            cParty.removeAttribute('name')
-            cParty_txt.setAttribute('name','counterparty')
-            cParty_txt.removeAttribute('style')
-        }else{
-            cParty_txt.removeAttribute('name')
-            cParty.setAttribute('name','counterparty')
-            cParty_txt.style.display = 'none'
-        }
+  function counterpartyChange() {
+    const cParty = document.getElementById('counterparty');
+    const cParty_txt = document.getElementById('counterparty_txt');
+
+    if (cParty.value === 'other') {
+      cParty.removeAttribute('name');
+      cParty_txt.setAttribute('name', 'counterparty');
+      cParty_txt.style.display = 'block';
+    } else {
+      cParty_txt.removeAttribute('name');
+      cParty.setAttribute('name', 'counterparty');
+      cParty_txt.style.display = 'none';
     }
+  }
 </script>

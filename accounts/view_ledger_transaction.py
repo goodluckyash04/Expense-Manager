@@ -1,6 +1,8 @@
 import datetime
 import decimal
 import traceback
+import json
+
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -12,6 +14,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from accounts.decorators import auth_user
 from accounts.models import LedgerTransaction
 from accounts.view_financial_instrument import desired_date
+
+
 
 
 # ............................................Ledger Management...........................................
@@ -109,9 +113,7 @@ def ledger_transaction(request,id,user):
             data_filter &= Q(description__icontains=search)
         if start and end:
             data_filter &= Q(transaction_date__gte=start, transaction_date__lte=end)
-        print(data_filter)
         ledger_trn = LedgerTransaction.objects.filter(data_filter).order_by('-transaction_date')
-        print(ledger_trn)
         query = {
             "search":search,
             "start":start,
@@ -198,18 +200,36 @@ def update_ledger_transaction(request,id,user ):
 
 
 @auth_user
-def update_counterparty_name(request,id,user ):
-    try:
-        transactions = LedgerTransaction.objects.filter(counterparty=id, created_by=user)
-        for entry in transactions:
-            entry.counterparty = request.POST['counterparty']
-            entry.save()
-        messages.success(request, f'Updated Succesfully')
+def update_counterparty_name(request, id, user):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from request body
+            data = json.loads(request.body)
+            new_counterparty = data.get('newCounterparty')
+
+            if new_counterparty:
+                transactions = LedgerTransaction.objects.filter(counterparty=id, created_by=user)
+                for entry in transactions:
+                    entry.counterparty = new_counterparty
+                    entry.save()
+                messages.success(request, 'Counterparty Updated Successfully')
+            else:
+                messages.error(request, 'Counterparty name is required.')
+
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+        except json.JSONDecodeError:
+            messages.error(request, 'Invalid JSON data.')
+            return HttpResponseServerError()
+
+        except Exception as e:
+            messages.error(request, 'An unexpected error occurred.')
+            traceback.print_exc()
+            return HttpResponseServerError()
+    else:
+        messages.error(request, 'Invalid request method.')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    except Exception as e:
-        messages.error(request, "An unexpected error occurred.")
-        print(traceback.print_exc())
-        return HttpResponseServerError()
+
 
 
 @auth_user
@@ -230,8 +250,8 @@ def undo_ledger_transaction(request, user,id=None):
         if request.method == "GET":
             undo_list = [id]
         else:
-            undo_list = request.POST.getlist('record_ledger_ids', '')
-
+            undo_list = request.POST.getlist('record_ids', '')
+        print("FER",undo_list)
         for id in undo_list:
             entry = LedgerTransaction.objects.get(id=id,created_by = user,is_deleted = True)
             if entry:

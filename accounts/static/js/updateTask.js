@@ -1,6 +1,7 @@
 function openModalAndGetTask(Id) {
      document.getElementById("myTaskForm").action = `/editTask/${Id}`
-     document.getElementById("submitbutton").textContent = "Update"
+     document.getElementById("submitbutton").textContent = "Update Task"
+     document.getElementById("exampleModalLabel").textContent = "Edit Task"
 
      fetch(`/editTask/${Id}`)
                 .then(response => response.json())

@@ -1,60 +1,13 @@
 {% load static %}
     {% block body %}
     
-  <style>
-    /* Floating button styles */
-    .floating-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #198754; /* Customize button color */
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-
-    /* Activity list styles */
-    .activity-list {
-      position: fixed;
-      bottom: 90px; /* Adjust this to position the list above the button */
-      right: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      width: 200px;
-      padding: 10px;
-      display: none; /* Initially hidden */
-      z-index: 999;
-    }
-
-    .activity-list ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .activity-list li {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      cursor: pointer;
-    }
-
-    .activity-list li:hover {
-      background-color: #f1f1f1;
-    }
-  </style>
+    {% block style %}
+    <link rel="stylesheet" href="{% static 'css/floatingButton.css' %}">
+    {% endblock style %}
 
 
   <!-- Floating button -->
-  <button class="floating-button" id="floatingBtn" onclick="toggleActivityList()">+</button>
+  <button class="floating-button" id="floatingBtn" onclick="toggleActivityList()"><i class="fa-solid fa-plus" style="color:var(--secondary)"></i></button>
 
   <!-- Activity list -->
   <div class="activity-list" id="activityList">

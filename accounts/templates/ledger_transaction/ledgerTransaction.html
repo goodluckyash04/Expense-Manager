@@ -1,76 +1,117 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 
-<div class="d-flex row mt-3 mx-2">
-  <div class="col-12 col-md-6">
-    <p class="text-success fs-3 " id="key">{{counter_party}}</p>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12 col-md-5">
+      <h6 class="fs-3" id="key" style="color: var(--primary);">{{ counter_party }}</h6>
+    </div>
+    <div class="col-12 col-md-7">
+      <form class="d-flex flex-wrap align-items-center gap-3" action="/ledger-transaction/{{ counter_party }}" method="get">
+        
+        <!-- Date Range Filters -->
+        <div class="d-flex gap-2">
+          <div class="input-group">
+            <input type="date" class="form-control rounded-pill" value="{{ query.start }}" id="start_d" name="start_d" title="Start Date" placeholder="Start Date">
+          </div>
+          <div class="input-group">
+            <input type="date" class="form-control rounded-pill" value="{{ query.end }}" id="end_d" name="end_d" title="End Date" placeholder="End Date">
+          </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="d-flex">
+          <div class="input-group">
+            <input class="form-control rounded-pill" value="{{ query.search }}" type="search" name="search" placeholder="Search Transactions" aria-label="Search" title="Search Transactions">
+          </div>
+        </div>
+    
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <button class="btn custom-btn-primary rounded-pill" type="submit" title="Search">
+            <i class="fa-solid fa-magnifying-glass"></i> 
+          </button>
+          <a href="/ledger-transaction/{{ counter_party }}" class="btn custom-btn-danger rounded-pill" role="button" title="Clear Filters">
+            <i class="fa-solid fa-eraser"></i> 
+          </a>
+        </div>
+    
+      </form>
+    </div>
+    
+    
   </div>
-  <div class="col-12 col-md-6 ">
-    <form class="d-flex flex-column flex-md-row" action="/ledger-transaction/{{counter_party}}" method="get">
-      <input type="date"  class="form-control mx-2 mb-2 mb-md-0"  value="{{query.start}}"   id="start_d" name="start_d">
-      <input type="date"  class="form-control mx-2 mb-2 mb-md-0"  value="{{query.end}}"  id="end_d" name="end_d">
-      <input class="form-control mx-2 mb-2 mb-md-0" value="{{query.search}}" type="search" name="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success  ms-2 " type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-      <a href="/ledger-transaction/{{counter_party}}" class="btn text-danger  ms-2" type="submit">CLEAR</a>
+
+  <div class="row mt-3 mx-2" >
+    <div class="col-12 d-flex justify-content-between mb-2">
+      <a href="/ledger-transaction-details/" class="btn custom-btn-primary">
+         <i class="fa-solid fa-arrow-left"></i> Ledger Summary
+      </a>
+      <a href="/deleted-ledger-transaction/" class="btn custom-btn-primary">
+         Deleted Ledger Txn <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+    <form method="POST" action="/update-ledger-transaction-status/" class="p-0 ">
+      {% csrf_token %}
+      <div class="table-responsive" style="max-height: 70vh;">
+        <table id='myTable' class="table table-striped table-hover align-middle">
+          <thead class="sticky-top bg-light">
+            <tr>
+              <th scope="col"><input type="checkbox" id="select-all-checkbox"></th>
+              <th scope="col"></th>
+              <th scope="col">TYPE</th>
+              <th scope="col">STATUS<button type="submit" class="border-0 bg-transparent"><i title="Update Selected" class="fa-solid fa-check-circle" style="color: var(--primary);"></i></button></th>
+              <th scope="col">DATE</th>
+              <th scope="col">AMOUNT(₹)</th>
+              <th scope="col">COMPLETION DATE</th>
+              <th scope="col">DESCRIPTION</th>
+              <th scope="col"  class="text-center"><i class="fa-solid fa-trash"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if ledger_trn %}
+              {% for i in ledger_trn %}
+                <tr>
+                  <td><input type="checkbox" name="record_ledger_ids" value="{{ i.id }}"></td>
+                  <td scope="row">{{ forloop.counter }}</td>
+                  <td><a href="#" data-bs-toggle="modal"class="text-decoration-none" style="color: var(--primary-dark-secondary);"  data-bs-target="#ledgerModal" onclick="openModalAndGetLedger({{ i.id }})">{{ i.transaction_type }}</a></td>
+                  <td class="text-center">
+                    <a href="/update-ledger-transaction-status/{{ i.id }}">
+                      {% if i.status == 'Completed' %}
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                      {% else %}
+                        <i class="fa-solid fa-circle-exclamation text-warning"></i>
+                      {% endif %}
+                    </a>
+                  </td>
+                  <td>{{ i.transaction_date }}</td>
+                  <td style="color:{% if i.transaction_type == 'Receivable' or i.transaction_type == 'Received' %}#17a2b8{% else %}#fd7e14{% endif %}">{{ i.amount }}</td>
+                  <td>{% if i.status == 'Completed' %}{{ i.completion_date }}{% else %}-{% endif %}</td>
+                  <td>{{ i.description }}</td>
+                  <!-- <td class="text-center">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#ledgerModal" onclick="openModalAndGetLedger({{ i.id }})">
+                      <i class="fa-solid fa-pen text-info"></i>
+                    </a>
+                  </td> -->
+                    <td>  
+                    <a href="/delete-ledger-transaction/{{ i.id }}">
+                      <i class="fa-solid fa-trash text-danger"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="9" class="text-center">No Records found</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
     </form>
   </div>
+
+  {% include 'ledger_transaction/ledgerTransactionModal.html' %}
 </div>
-
-<div class="row mx-3 mt-3 table-responsive">
-    <form method="POST" action="/update-ledger-transaction-status/">
-    {% csrf_token %}
-
-  <table id ='myTable' class="table">
-    <thead>
-      <tr>
-                  <th scope="col" ><input type="checkbox" id="select-all-checkbox"></th>
-
-      <th scope="col"> <a href="/ledger-transaction-details/" class="btn" style=""><i class="fa-solid fa-arrow-left"></i></a>
-        <th scope="col" class="text-success">TRANSACTION_TYPE</th>
-        <th scope="col" class="text-success">STATUS</th>
-        <th scope="col" class="text-success">TRANSACTION_DATE</th>
-        <th scope="col" class="text-success">AMOUNT(₹.)</th>
-        <th scope="col" class="text-success">COMPLETION_DATE</th>
-        <th scope="col" class="text-success">DESCRIPTION</th>
-                   <th scope="col" class="text-center" ><button type="submit" class="border-0 text-success bg-transparent"><b>STATUS UPDATE</b></button></th>
-
-
-
-      </tr>
-    </thead>
-    <tbody>
-      {% if ledger_trn %}
-      {% for i in ledger_trn %}
-      <tr>
-        <td><input type="checkbox"  id="select" name="record_ledger_ids" value={{ i.id }}></td>
-
-        <td scope="row">{{forloop.counter}}</td>
-        <td>{{i.transaction_type}}</td>
-        <td class="text-center"><a href="/update-ledger-transaction-status/{{i.id}}">{% if i.status == 'Completed' %}<i class="fa-solid fa-circle-check" style="color: #107556"></i> {%else%} <i class="fa-solid fa-circle-exclamation" style="color: #ecd06a;"></i>{%endif%}</a></td>
-        <td >{{i.transaction_date}}</td>
-        <td  class = "{% if i.transaction_type == 'Receivable' or i.transaction_type == 'Received' %} text-success {% else %} text-warning {% endif %}" >{{i.amount }}</td>
-          {% if i.status == "Completed" %}
-        <td >{{i.completion_date}}</td>
-        {% else %}
-        <td>-</td>
-        {% endif %}
-        <td >{{i.description}}</td>
-        <td><a href="" data-bs-toggle="modal" data-bs-target="#ledgerModal" onclick="openModalAndGetLedger({{ i.id }})"><i class="fa-solid   text-warning fa-pen"></i></a></td>
-
-        <td><a href="/delete-ledger-transaction/{{i.id}}"><i class="fa-solid text-danger fa-trash"></i></a></td>
-
-      {% endfor %}
-          {% else %}
-      <td colspan="8" class="text-center">No Records found</td>
-      {% endif %}
-    </tbody>
-  </table>
-          </form>
-
-</div>
-
-
-
-{% include 'ledger_transaction/ledgerTransactionModal.html' %}
 
 {% endblock body %}
 
@@ -84,5 +125,4 @@
     }
   });
 </script>
-
 {% endblock script %}

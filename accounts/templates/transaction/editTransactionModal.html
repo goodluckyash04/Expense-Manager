@@ -1,123 +1,68 @@
-<div
-  class="modal fade"
-  id="editExpenseModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
+<!-- Edit Expense Modal -->
+
+<div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5 text-success"  id="title"></h1>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h1 class="modal-title fs-5 text-center" style="color: var(--primary-dark);" id="title">Edit Transaction</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body">
         <form action="" id="updateExpenseForm" method="post">
           {% csrf_token %}
 
-      <div id="transactionUpdateBody" >
+          <div id="transactionUpdateBody">
 
-        <!--  Transaction Category    -->
-            <select
-              class="form-select mb-3"
-              id="category"
-              name="category"
-              aria-label="Default select example"
-            >
-            </select>
-
-        <!--  Beneficiary if selected other    -->
+            <!-- Transaction Category -->
             <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="beneficiary"
-                id="beneficiary_data"
-                placeholder="Beneficiary Self/Home/Other"
-              />
+              <select class="form-select" id="category" name="category" aria-label="Select Category">
+                <option value="" disabled selected>-- Select Category --</option>
+                <!-- Categories will be populated dynamically -->
+              </select>
             </div>
 
-        <!--  Transaction Date    -->
+            <!-- Beneficiary (Self/Home/Other) -->
             <div class="mb-3">
-              <input
-                type="date"
-                class="form-control"
-                name="date"
-                id="date"
-
-                aria-describedby="emailHelp"
-              />
+              <input type="text" class="form-control" name="beneficiary" id="beneficiary_data" placeholder="Beneficiary (Self/Home/Other)" />
             </div>
 
-          <!--  Transaction Amount    -->
+            <!-- Transaction Date -->
             <div class="mb-3">
-              <input
-                type="number"
-                class="form-control"
-                step="any"
-                name="amount"
-                placeholder="Amount"
-                id="amount"
-                aria-describedby="emailHelp"
-                required
-              />
+              <input type="date" class="form-control" name="date" id="date" required />
             </div>
 
-          <!--  Transaction Description    -->
+            <!-- Transaction Amount -->
             <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="description"
-                placeholder="Description"
-                id="description"
-                required
-              />
+              <input type="number" class="form-control" step="any" name="amount" id="amount" placeholder="Amount" required />
             </div>
 
-        <!-- Transaction Mode  -->
-             <select
-              class="form-select mb-3"
-              name="mode"
-              id="mode"
-            >
-            </select>
-
-
-        <!--  Mode Details    -->
+            <!-- Transaction Description -->
             <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="mode_detail"
-                placeholder="Mode Description ex: bankDR, bankUPI, cash"
-                id="mode_detail"
-
-              />
+              <input type="text" class="form-control" name="description" id="description" placeholder="Description" required />
             </div>
 
+            <!-- Transaction Mode -->
+            <div class="mb-3">
+              <select class="form-select" name="mode" id="mode">
+                <option value="" disabled selected>-- Select Mode --</option>
+                <!-- Mode options will be populated dynamically -->
+              </select>
+            </div>
 
+            <!-- Mode Details -->
+            <div class="mb-3">
+              <input type="text" class="form-control" name="mode_detail" id="mode_detail" placeholder="Mode Description (e.g., bankDR, bankUPI, cash)" />
+            </div>
 
-          <!--  Submit Button    -->
-            <button
-              id="submitButton"
-              type="submit"
-              style="background-color: #2b6b32; border: none"
-              class="btn btn-primary"
-            >
-              Update
+            <!-- Submit Button -->
+            <button type="submit" class="btn custom-btn-primary w-100 mt-4">
+              Update Transaction
             </button>
-        </div>
+          </div>
 
         </form>
       </div>
     </div>
   </div>
 </div>
-

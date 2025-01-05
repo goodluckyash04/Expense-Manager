@@ -1,122 +1,72 @@
 <!-- Add Finance Modal -->
-<div
-  class="modal fade"
-  id="financeModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
+<div class="modal fade" id="financeModal" tabindex="-1" aria-labelledby="financeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="fi">Add Finance</h1>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+      <div class="modal-header" >
+        <h5 class="modal-title fs-5" id="financeModalLabel">Add Finance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-
       <div class="modal-body">
+
+        <!-- Finance Form -->
         <form action="/create-finance/" id="myFinanceForm" method="post">
           {% csrf_token %}
 
-      <!--   Type    -->
-        <div id="transactionType" >
-        <!-- Loan -->
-          <div class="form-check form-check-inline mb-3">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="type"
-              id="loan"
-              value="Loan"
-              required
-            />
-            <label class="form-check-label" for="Loan">Loan</label>
+          <!-- Finance Type Selection -->
+          <div class="row mb-4">
+            <label class="col-form-label col-12">Select Type</label>
+            <div class="col-6">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="type" id="loan" value="Loan" required />
+                <label class="form-check-label" for="loan">Loan</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="type" id="sip" value="SIP" />
+                <label class="form-check-label" for="sip">SIP</label>
+              </div>
+            </div>
           </div>
 
-        <!-- SIP -->
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="type"
-              id="sip"
-              value="SIP"
-            />
-            <label class="form-check-label" for="SIP">SIP</label>
+          <!-- Instrument Name -->
+          <div class="mb-3">
+            <label for="name" class="form-label">Instrument Name</label>
+            <input type="text" class="form-control shadow-sm" id="name" name="name" placeholder="Enter Instrument Name" required />
           </div>
-      </div>
-      <div id="financeBody"  >
 
-        <!--  Instrument Name    -->
-            <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                name="name"
-                placeholder="Instrument Name"
-              />
-            </div>
+          <!-- Start Date -->
+          <div class="mb-3">
+            <label for="started_on" class="form-label">Start Date</label>
+            <input type="date" class="form-control shadow-sm" name="started_on" id="started_on" required />
+          </div>
 
-        <!--  started_on    -->
-            <div class="mb-3">
-              <input
-                type="date"
-                class="form-control"
-                name="started_on"
-                id="started_on"
+          <!-- Total Amount -->
+          <div class="mb-3">
+            <label for="amount" class="form-label">Total Amount (₹)</label>
+            <input type="number" class="form-control shadow-sm" name="amount" id="amount" placeholder="Enter Total Amount" required />
+          </div>
 
-                aria-describedby="started_on"
-              />
-            </div>
+          <!-- No of Installments -->
+          <div class="mb-3">
+            <label for="installments" class="form-label">No of Installments</label>
+            <input type="number" class="form-control shadow-sm" name="no_of_installments" id="installments" placeholder="Enter Number of Installments" required />
+          </div>
 
-          <!--  Instrument Amount    -->
-            <div class="mb-3">
-              <input
-                type="number"
-                class="form-control"
-                name="amount"
-                placeholder="Total Amount"
-                id="amount"
-                aria-describedby="emailHelp"
-                required
-              />
-            </div>
-
-          <!--  No of Installments    -->
-            <div class="mb-3">
-              <input
-                type="text"
-                class="form-control"
-                name="no_of_installments"
-                placeholder="No of Installments"
-                id="installments"
-                required
-              />
-            </div>
-
-          <!--  Submit Button    -->
-            <button
-              id="submitButton"
-              type="submit"
-              style="background-color: #2b6b32; border: none"
-              class="btn btn-primary"
-            >
-              Add
+          <!-- Submit Button -->
+          <div class="d-flex justify-content-center">
+            <button id="submitButton" type="submit" class="btn custom-btn-primary w-75 shadow-sm">
+              <i class="fa-solid fa-plus-circle me-2"></i> Add Finance
             </button>
-        </div>
-
+          </div>
         </form>
+
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
-    document.getElementById('started_on').value = new Date().toISOString().split('T')[0]
+  // Set current date for 'started_on' input field
+  document.getElementById('started_on').value = new Date().toISOString().split('T')[0];
 </script>

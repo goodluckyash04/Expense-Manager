@@ -1,5 +1,5 @@
 import traceback
-from datetime import datetime
+from datetime import datetime,timedelta
 
 from django.db.models import Q,Sum,Case, When, Value, CharField
 from django.shortcuts import render,redirect
@@ -14,7 +14,17 @@ from .decorators import auth_user
 from decimal import Decimal
 from django.utils import timezone
 
+
+# ...........................................About..................................................
+
+@auth_user
+def about(request,user):
+    return render(request,"about.html",{"user":user})
+
+
+
 # ...........................................Dashboard..................................................
+
 
 @auth_user
 def dashboard(request,user):
@@ -44,21 +54,49 @@ def dashboard(request,user):
                 category_wise_data[txn.category] = txn.amount 
         context['category_wise_data'] = category_wise_data
 
+        #--------------------- Monthly savings of last 12 month ----------------------
+        current_date = timezone.now()
+        current_year = current_date.year
+        current_month = current_date.month
 
-        #--------------------- Monthly savings of current year ----------------------
-        current_year = datetime.now().year
-        current_month = datetime.now().month
+        # Calculate the last 12 months including possible transitions to the previous year
+        last_12_months = [(current_date - timedelta(days=i * 30)).month for i in range(12)]
+        last_12_months_years = [
+            (current_date - timedelta(days=i * 30)).year for i in range(12)
+        ]
 
+        # Query transactions for both this year and the previous year (if necessary)
         transactions = Transaction.objects.filter(
             created_by=user,
             is_deleted=False,
-            date__year=current_year,
-            date__month__lte=current_month,
-        ).values('date__month').annotate(
+            date__year__in=last_12_months_years,  # Fix: Use the correct filter for multiple years
+            date__month__in=last_12_months,
+        ).values('date__year', 'date__month').annotate(
             total_expense=Sum('amount', filter=Q(type='Expense')),
             total_income=Sum('amount', filter=Q(type='Income'))
         )
-        context["savings"] = [(month['total_income'] or 0) - (month['total_expense'] or 0) for month in transactions]
+
+        # Prepare the savings data with formatted labels like Jan'24
+        savings_data = {}
+        for i in range(12):
+            month = last_12_months[i]
+            year = last_12_months_years[i]
+
+            # Find the corresponding transaction for the month and year
+            month_data = next(
+                (transaction for transaction in transactions 
+                if transaction['date__month'] == month and transaction['date__year'] == year), 
+                {}
+            )
+            total_expense = month_data.get('total_expense', 0)
+            total_income = month_data.get('total_income', 0)
+            
+            savings = total_income - total_expense
+            label = datetime(year, month, 1).strftime("%b'%y")  # Format as Jan'24
+            savings_data.update({ label: float(savings)})
+
+        context["savings"] = savings_data
+
         #---------------------------------- Year wise Income Expense -----------------------
         transactions = Transaction.objects.filter(
             created_by=user,
@@ -133,7 +171,7 @@ def home(request,user):
                 "title": "TRANSACTION",
                 "description": "Maintain Your Day to Day Transaction",
                 "modal_target": "#expensemodal",
-                "modal_button_icon": 'fa-circle-plus',
+                "modal_button_icon": 'fa-plus',
                 "report_url": "/transaction-detail/",
                 "report_button_icon":  datetime.today().strftime("%b'%y").upper(),
                 "delete_url": "/deleted-transaction-detail/",
@@ -145,7 +183,7 @@ def home(request,user):
                 "title": "TASK",
                 "description": "Don't Stress Your Brain Add Your Todos",
                 "modal_target": "#taskmodal",
-                "modal_button_icon": 'fa-circle-plus',
+                "modal_button_icon": 'fa-plus',
                 "report_url": "/currentMonthTaskReport/",
                 "report_button_icon": datetime.today().strftime("%b'%y").upper(),
                 "delete_url": "/taskReports/",
@@ -156,7 +194,7 @@ def home(request,user):
                 "title": "FINANCE",
                 "description": "Keep track of Your Virtual Loan/Sip ",
                 "modal_target": "#financeModal",
-                "modal_button_icon": 'fa-circle-plus',
+                "modal_button_icon": 'fa-plus',
                 "report_url": "/finance-details/",
                 "report_button_icon": 'fa-square-poll-horizontal',
                 # "delete_url": "/deletedEntries/",
@@ -167,7 +205,7 @@ def home(request,user):
                 "title": "LEDGER",
                 "description": "Keep track of your Payable and Receivables",
                 "modal_target": "#ledgerModal",
-                "modal_button_icon": 'fa-circle-plus',
+                "modal_button_icon": 'fa-plus',
                 "report_url": "/ledger-transaction-details/",
                 "report_button_icon": 'fa-square-poll-horizontal',
                 "delete_url": "/deleted-ledger-transaction/",

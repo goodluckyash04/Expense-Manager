@@ -1,0 +1,31 @@
+  .chart-canvas {
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+  }
+
+  /* Styling for Task List */
+  .list-group-item {
+      border: none;
+      padding: 10px 15px;
+      background-color: #f8f9fa;
+      margin-bottom: 10px;
+  }
+
+  .list-group-item:hover {
+      background-color: #e9ecef;
+      cursor: pointer;
+  }
+
+  .form-check-input {
+      width: 20px;
+      height: 20px;
+  }
+
+  .form-check-label {
+      font-size: 16px;
+  }
+
+  h5 {
+      font-size: 20px;
+  }

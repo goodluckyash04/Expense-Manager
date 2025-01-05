@@ -1,0 +1,126 @@
+:root {
+    --primary: #b0a36f;
+    /* --primary: #635c3dba; */
+    --primary-dark: #201b05;
+    --primary-dark-secondary: #9a8217;
+    --primary-dark-tertiary: #b0a36f;
+    --primary-dark-four: #635c3dba;
+    --secondary: #f6f6f6;
+    --primary-light: #b0a36f82
+}
+
+* {
+    font-family: "Montserrat";
+}
+  
+
+  .nav-text a:not(.profile a){
+    color: var(--secondary);
+    font-family: "Rubik Vinyl", "serif";
+}
+
+  .nav-text a:hover{
+    color: var(--primary-dark);
+    font-family: "Rubik Vinyl", "serif";
+  }
+
+  .card-design {
+    background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .custom-btn-danger {
+    color: #7c0a0a; 
+    background-color: white;
+    border: 1px solid transparent;  
+    transition: all 0.3s ease;  
+}
+
+/* Hover Effect */
+.custom-btn-danger:hover {
+    background-color: #7c0a0a; 
+    color: white;               
+    transform: scale(1.05);      
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+}
+
+
+.custom-btn-primary {
+  color: var(--primary); 
+  background-color: white;
+  border: 1px solid transparent;  
+  transition: all 0.3s ease;  
+}
+
+/* Hover Effect */
+.custom-btn-primary:hover {
+  background-color: var(--primary); 
+  color: white;               
+  transform: scale(1.05);      
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif; /* Example of font-family */
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: rgb(16, 0, 0);
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+
+.form-check-input {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border-color:var(--primary-dark) ;
+  background-color: #fff; 
+  transition: background-color 0.3s ease;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary); 
+  border-color:var(--primary-dark) ;
+}
+
+.form-check-input:checked::before {
+  color: #fff; /* Checkmark color */
+  border-color:var(--primary-dark) ;
+}
+
+.form-check-input:focus {
+  border-color: var(--primary-dark);
+  outline: none;
+  box-shadow: none;
+}
+
+.form-select:focus {
+  border-color: var(--primary-dark);
+  outline: none;
+  box-shadow: none;
+}
+
+
+.form-control:focus {
+  border-color: var(--primary-dark);  /* Blue color for focus */
+  box-shadow: 0 0 5px var(--primary-dark);  /* Subtle glow effect */
+  transition: border-color 0.3s, box-shadow 0.3s;
+}

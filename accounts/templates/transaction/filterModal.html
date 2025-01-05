@@ -1,92 +1,64 @@
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title text-center text-success fs-5" id="exampleModalLabel">Filter Report</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-                  <form action="/transaction-detail/" method="get">
-                      <!-- Type -->
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" name="type"   {% if "Expense" in data.type  %} checked {% endif %} type="checkbox" id="inlineCheckbox1" value="Expense">
-                        <label class="form-check-label" for="inlineCheckbox1">Expense</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" name="type" {% if "Income" in data.type  %} checked {% endif %} type="checkbox" id="inlineCheckbox2" value="Income">
-                        <label class="form-check-label" for="inlineCheckbox2">Income</label>
-                      </div>
-<!--                      <div class="form-check form-check-inline">-->
-<!--                        <input class="form-check-input" name="type" {% if "Loan" in data.type  %} checked {% endif %} type="checkbox" id="inlineCheckbox2" value="Loan">-->
-<!--                        <label class="form-check-label" for="inlineCheckbox2">Loan</label>-->
-<!--                      </div>-->
-
-                    <!-- Category and Mode -->
-                    <div class="container my-3">
-  <div class="row justify-content-between">
-    <div class="col-12 col-md-4 mb-3 mb-md-0">
-      <select class="form-select text-center border-0" name="category" aria-label="Default select example">
-        <option {% if data.category == "" %} selected {% endif %} value="">-- Category --</option>
-        {% for category in categories %}
-          <option {% if data.category == category %} selected {% endif %} value="{{ category }}">{{ category }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="col-12 col-md-4 mb-3 mb-md-0">
-      <select class="form-select text-center border-0" name="mode" aria-label="Default select example">
-        <option {% if data.mode == "" %} selected {% endif %} value="">-- Mode --</option>
-        <option {% if data.mode == "CreditCard" %} selected {% endif %} value="CreditCard">CreditCard</option>
-        <option {% if data.mode == "Online" %} selected {% endif %} value="Online">Online</option>
-        <option {% if data.mode == "Cash" %} selected {% endif %} value="Cash">Cash</option>
-      </select>
-    </div>
-    <div class="col-12 col-md-4">
-      <select class="form-select text-center border-0" name="status" aria-label="Default select example">
-        <option {% if data.status == "" %} selected {% endif %} value="">-- Status --</option>
-        <option {% if data.status == "Completed" %} selected {% endif %} value="Completed">Completed</option>
-        <option {% if data.status == "Pending" %} selected {% endif %} value="Pending">Pending</option>
-      </select>
-    </div>
-  </div>
-</div>
-
-                      <div class="mb-2">
-  <!-- Date and Status -->
-  <div class="container">
-    <div class="row justify-content-between mb-2">
-      <div class="col-12 col-md-4 mb-3 mb-md-0">
-        <input
-          type="text"
-          class="form-control text-center border-0"
-          id="beneficiary"
-          name="beneficiary"
-          placeholder="Beneficiary"
-          value="{{ data.beneficiary }}"
-        >
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header text-white" style="background-color: var(--primary);">
+        <h5 class="modal-title mx-auto" id="exampleModalLabel">Filter Transactions</h5>
+        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="col-12 col-md-6">
-        <input
-          type="text"
-          class="form-control border-0"
-          value="{{ data.daterange }}"
-          id="daterange"
-          name="daterange"
-        >
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-                  <button type="submit" class="btn btn-outline-success col-12 mb-3">Filter<i class="ms-1 fa-solid fa-filter"></i></button>
-              </form>
+      <div class="modal-body">
+        <form action="/transaction-detail/" method="get" class="needs-validation" novalidate>
+          <!-- Type -->
+          <div class="d-flex justify-content-start mb-3">
+            <div class="form-check me-4">
+              <input class="form-check-input" name="type" {% if "Expense" in data.type %} checked {% endif %} type="checkbox" id="inlineCheckbox1" value="Expense">
+              <label class="form-check-label" for="inlineCheckbox1">Expense</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" name="type" {% if "Income" in data.type %} checked {% endif %} type="checkbox" id="inlineCheckbox2" value="Income">
+              <label class="form-check-label" for="inlineCheckbox2">Income</label>
             </div>
           </div>
-        </div>
+          <!-- Category and Mode -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <select class="form-select" name="category" aria-label="Default select example">
+                <option {% if data.category == "" %} selected {% endif %} value="">-- Category --</option>
+                {% for category in categories %}
+                  <option {% if data.category == category %} selected {% endif %} value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" name="mode" aria-label="Default select example">
+                <option {% if data.mode == "" %} selected {% endif %} value="">-- Mode --</option>
+                <option {% if data.mode == "CreditCard" %} selected {% endif %} value="CreditCard">CreditCard</option>
+                <option {% if data.mode == "Online" %} selected {% endif %} value="Online">Online</option>
+                <option {% if data.mode == "Cash" %} selected {% endif %} value="Cash">Cash</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" name="status" aria-label="Default select example">
+                <option {% if data.status == "" %} selected {% endif %} value="">-- Status --</option>
+                <option {% if data.status == "Completed" %} selected {% endif %} value="Completed">Completed</option>
+                <option {% if data.status == "Pending" %} selected {% endif %} value="Pending">Pending</option>
+              </select>
+            </div>
+          </div>
+          <!-- Beneficiary and Date -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="beneficiary" name="beneficiary" placeholder="Beneficiary" value="{{ data.beneficiary }}">
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control" id="daterange" name="daterange" value="{{ data.daterange }}">
+            </div>
+          </div>
+          <button type="submit" class="btn custom-btn-primary w-100">Filter <i class="fa-solid fa-filter ms-1"></i></button>
+        </form>
       </div>
     </div>
-
+  </div>
+</div>
 
     <script>
         if ($('#daterange').val()){

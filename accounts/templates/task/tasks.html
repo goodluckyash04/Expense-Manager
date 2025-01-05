@@ -1,58 +1,68 @@
-{% extends 'header.html' %} {% load static %} {% block body %}
-<div class="container-fluid">
-    <h5 class="text-center text-success mt-3">Current Month Task</h5>
-        <div class="col-12 px-3 table-responsive">
-        <table class="table">
-            <thead>
-            <tr>
-                <th><a href="/taskReports/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a> </th>
-                <th scope="col">Priority</th>
-                <th scope="col">Complete_by</th>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
+{% extends 'header.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+    <h2 class="text-center  mt-3" style="color: var(--primary);font-family: dancing script">Current Month's Pending Task</h2>
+
+    <!-- Report Button Separated from Table -->
+    <div class="my-3 text-end">
+        <a href="/taskReports/" class="btn custom-btn-primary">
+            <i class="fa-solid fa-chart-line"></i> Task Reports
+        </a>
+    </div>
+
+    <div class="col-12 table-responsive">
+        <table class="table table-striped table-hover table-sm">
+            <thead class="sticky-top bg-white shadow-sm">
+                <tr>
+                    <th scope="col">Sr No.</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Complete by</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Complete</th>
+                    <th scope="col">Delete</th>
+                </tr>
             </thead>
-            <tbody>
-            {% if taskData %} {% for i in taskData %}
-            <tr>
-                <th scope="row">{{forloop.counter}}</th>
-                <td>{{i.priority}}</td>
-                <td>{{i.complete_by_date | date:"d M, Y" }}</td>
-                <td>{{i.name}}</td>
-                <td>{{i.description}}</td>
-                <td><a href={% url 'taskAction' i.id 'complete' %}><i class="fa-solid text-success fa-check"></i></a></td>
-                <td><a href={% url 'taskAction' i.id 'delete' %}><i class="fa-solid text-danger fa-trash"></i></a></td>
-            </tr>
-            {% endfor %}
+            <tbody style="max-height: 400px; overflow-y: auto;">
+            {% if taskData %}
+                {% for i in taskData %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ i.priority }}</td>
+                    <td>{{ i.complete_by_date | date:"d M, Y" }}</td>
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.description }}</td>
+                    <td><a href="{% url 'taskAction' i.id 'complete' %}"><i class="fa-solid text-success fa-check-circle"></i></a></td>
+                    <td><a href="{% url 'taskAction' i.id 'delete' %}"><i class="fa-solid text-danger fa-trash-alt"></i></a></td>
+                </tr>
+                {% endfor %}
             {% else %}
-            <tr>
-            <td colspan="8" class = "text-center">No pending task for this month</td>
-            </tr>
+                <tr>
+                    <td colspan="7" class="text-center">No pending task for this month</td>
+                </tr>
             {% endif %}
             </tbody>
         </table>
-        </div>
     </div>
 </div> 
-
+{% include 'floating_button.html' %}
 {% endblock body %}
+
 {% block script %}
 <script>
-    function dateCheck(){
-        var date = document.getElementById("complete_by").value
-        var submit = document.getElementById("submitbutton")
+    function dateCheck() {
+        var date = document.getElementById("complete_by").value;
+        var submit = document.getElementById("submitbutton");
         var current_time = new Date();
-
         var given_time = new Date(date);
+        
         if (!(given_time > current_time)) {
-            alert('Date must be in future')
-            submit.setAttribute('disabled',"true")
-            }else{
-                submit.removeAttribute('disabled')
+            alert('Date must be in future');
+            submit.setAttribute('disabled', "true");
+        } else {
+            submit.removeAttribute('disabled');
         }
     }
 </script>
 {% endblock script %}
-

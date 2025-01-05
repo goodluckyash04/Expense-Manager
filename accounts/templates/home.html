@@ -1,36 +1,44 @@
-{% extends 'header.html' %} {% load static %} {% block body %}
-<div class="row m-3">
-  {% for item in items %}
-  <div class="col-12 col-md-6 mb-3 {{ item.class_suffix }}">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title text-success">{{ item.title }}</h5>
-        <p class="card-text text-secondary">{{ item.description }}</p>
-        <!-- Add Button -->
-        <a data-bs-toggle="modal" data-bs-target="{{ item.modal_target }}" class="btn btn-success" ><i class="fa-solid {{ item.modal_button_icon }}"></i></a>
-        <!-- Report Button -->
-        {% if item.title == "FINANCE" or item.title == "LEDGER" %}
-        <a href="{{ item.report_url }}" class="btn btn-success" ><i class="fa-solid {{ item.report_button_icon }}"></i></a>
-        {% else %}
-        <a href="{{ item.report_url }}" class="btn btn-success" >{{ item.report_button_icon }}</a>
-        {% endif %}
-        <!-- Delete Button -->
-        {% if item.title != "FINANCE"  %}
-        <a href="{{ item.delete_url }}" class="btn btn-success" ><i class="fa-solid {{ item.delete_button_icon }}"></i></a>
-        {% endif %}
+{% extends 'header.html' %}
+{% load static %}
+{% block body %}
+<style>
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
 
+.btn:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+</style>
+<div class="container my-5">
+  <!-- Section Title -->
+  <h2 class="text-center fw-bold mb-4" style=" color: var(--primary-dark-secondary);font-family: Dancing Script;">My Utilities</h2>
+
+  <!-- Card Grid -->
+  <div class="row g-4 mx-2" >
+    {% for item in items %}
+    <a href="{{ item.report_url }}" class="text-decoration-none">
+
+    <div class="card h-100 border-0 shadow-sm rounded-3">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold" style="color: var(--primary);font-family: Cardo;">{{ item.title }}</h5>
+        <p class="card-text text-muted">{{ item.description }}</p>
       </div>
     </div>
+    </a>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
-{% include 'transaction/transactionModal.html' %}
-{% include 'financial_instrument/addFinanceModal.html' %}
-{% include 'task/taskModal.html' %}
-{% include 'ledger_transaction/ledgerTransactionModal.html' with counterparties=counterparties %}
 
+{% include 'floating_button.html' %}
 {% endblock body %}
 
-{% block script%}
-<script src='{% static "js/addTransaction.js" %}'></script>
-{% endblock script%}
+{% block script %}
+<script src="{% static 'js/addTransaction.js' %}"></script>
+{% endblock script %}

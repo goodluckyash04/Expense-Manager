@@ -1,13 +1,14 @@
 
  function openModalAndGetInstrument(Id) {
      document.getElementById("myFinanceForm").action = `/update-finance-detail/${Id}`
-     document.getElementById("submitButton").textContent = "Update"
 
      fetch(`/update-finance-detail/${Id}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("data",data)
-                document.getElementById("fi").textContent = `Edit ${data.type}`
+                document.getElementById("financeModalLabel").textContent = `Edit ${data.type}`
+                document.getElementById("submitButton").textContent = `Update ${data.type}`
+
 
                  // type
                 if (data.type == 'Loan'){

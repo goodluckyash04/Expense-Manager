@@ -1,63 +1,99 @@
 <!-- Add Task Modal -->
 <div class="modal fade" id="taskmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/addTask/" method="post" id="myTaskForm">
-                    {% csrf_token %}
-                    <select
-                        class="form-select mb-3"
-                        name="priority"
-                        id = "priority"
-                        aria-label="Default select example"
-                    >
-                        <option selected>-- Priority --</option>
-                        <option value="High">High</option>
-                        <option selected value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
-                    <div class="mb-3">
-                        <input
-                            type="date"
-                            class="form-control"
-                            name="complete_by_date"
-                            id="complete_by"
-                            onchange="dateCheck()"
-                            aria-describedby="complete_by"
-                        />
-                    </div>
-                    <div class="mb-3">
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="name"
-                            placeholder="Task Title"
-                            id="title"
-                            required
-                        />
-                    </div>
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" name="description" placeholder="Leave a comment here" id="descirption"></textarea>
-                        <label for="descirption">Task Detail</label>
-                    </div>
-                    <button
-                        type="submit"
-                        id="submitbutton"
-                        style="background-color: #2b6b32; border: none"
-                        class="btn btn-primary"
-                    >
-                        Add Task
-                    </button>
-                </form>
-            </div>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-4" id="exampleModalLabel">Add Task</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <form action="/addTask/" method="post" id="myTaskForm">
+            {% csrf_token %}
+            
+            <!-- Priority Selection -->
+            <div class="mb-3">
+              <label for="priority" class="form-label">Priority</label>
+              <select class="form-select" name="priority" id="priority" aria-label="Select task priority">
+                <option value="" disabled selected>-- Select Priority --</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+  
+            <!-- Due Date -->
+            <div class="mb-3">
+              <label for="complete_by" class="form-label">Complete By</label>
+              <input
+                type="date"
+                class="form-control"
+                name="complete_by_date"
+                id="complete_by"
+                onchange="dateCheck()"
+                aria-describedby="complete_by"
+                required
+              />
+            </div>
+  
+            <!-- Task Title -->
+            <div class="mb-3">
+              <label for="title" class="form-label">Task Title</label>
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                id="title"
+                placeholder="Enter task title"
+                required
+              />
+            </div>
+  
+            <!-- Task Description -->
+            <div class="form-floating mb-3">
+              <textarea
+                class="form-control"
+                name="description"
+                id="descirption"
+                placeholder="Enter task details"
+                style="height: 100px"
+                required
+              ></textarea>
+              <label for="description">Task Detail</label>
+            </div>
+  
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              id="submitbutton"
+              class="btn custom-btn-primary w-100"
+              style="border: none; font-size: 16px;"
+            >
+              <i class="fa-solid fa-plus-circle"></i> Add Task
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-</div>
-
-<script>
-    document.getElementById('complete_by').value = new Date().toISOString().split('T')[0]
-</script>
+  </div>
+  
+  <script>
+    // Set today's date as the default value for the complete by date field
+    document.getElementById('complete_by').value = new Date().toISOString().split('T')[0];
+  
+    // Function to check if the complete date is in the future
+    function dateCheck() {
+      var date = document.getElementById("complete_by").value;
+      var submitButton = document.getElementById("submitbutton");
+      var currentDate = new Date();
+      var givenDate = new Date(date);
+  
+      // Disable submit button if the date is not in the future
+      if (givenDate <= currentDate) {
+        alert('Complete By date must be in the future.');
+        submitButton.disabled = true;
+      } else {
+        submitButton.disabled = false;
+      }
+    }
+  </script>
+  
