@@ -2,6 +2,7 @@ import traceback
 from datetime import datetime,timedelta
 
 from django.db.models import Q,Sum,Case, When, Value, CharField
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.mail import send_mail
@@ -55,21 +56,23 @@ def dashboard(request,user):
         context['category_wise_data'] = category_wise_data
 
         #--------------------- Monthly savings of last 12 month ----------------------
+
+        # Current date and time
         current_date = timezone.now()
         current_year = current_date.year
         current_month = current_date.month
 
-        # Calculate the last 12 months including possible transitions to the previous year
-        last_12_months = [(current_date - timedelta(days=i * 30)).month for i in range(12)]
+        # Calculate the last 12 months, handling year transitions correctly
+        last_12_months = [(current_date - relativedelta(months=i)).month for i in range(12)]
         last_12_months_years = [
-            (current_date - timedelta(days=i * 30)).year for i in range(12)
+            (current_date - relativedelta(months=i)).year for i in range(12)
         ]
 
-        # Query transactions for both this year and the previous year (if necessary)
+        # Query transactions for the last 12 months
         transactions = Transaction.objects.filter(
             created_by=user,
             is_deleted=False,
-            date__year__in=last_12_months_years,  # Fix: Use the correct filter for multiple years
+            date__year__in=last_12_months_years,
             date__month__in=last_12_months,
         ).values('date__year', 'date__month').annotate(
             total_expense=Sum('amount', filter=Q(type='Expense')),
@@ -88,14 +91,15 @@ def dashboard(request,user):
                 if transaction['date__month'] == month and transaction['date__year'] == year), 
                 {}
             )
-            total_expense = month_data.get('total_expense', 0)
-            total_income = month_data.get('total_income', 0)
-            
+            total_expense = month_data.get('total_expense') or 0
+            total_income = month_data.get('total_income') or 0
+
             savings = total_income - total_expense
             label = datetime(year, month, 1).strftime("%b'%y")  # Format as Jan'24
-            savings_data.update({ label: float(savings)})
+            savings_data[label] = float(savings)
 
         context["savings"] = savings_data
+
 
         #---------------------------------- Year wise Income Expense -----------------------
         transactions = Transaction.objects.filter(
