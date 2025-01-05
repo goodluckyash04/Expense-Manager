@@ -12,6 +12,32 @@
 * {
     font-family: "Montserrat";
 }
+
+/* Slim scrollbar with header color */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; /* For horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b0a36f; /* Header color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1905e; /* Slightly darker shade for hover effect */
+}
+
+/* For Firefox */
+.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: #b0a36f #f1f1f1;
+}
+
   
 
   .nav-text a:not(.profile a){
@@ -124,3 +150,4 @@ tr:hover {
   box-shadow: 0 0 5px var(--primary-dark);  /* Subtle glow effect */
   transition: border-color 0.3s, box-shadow 0.3s;
 }
+
