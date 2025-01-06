@@ -1,0 +1,75 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+    <h2 class="text-center mt-3" style="color: var(--primary); font-family: dancing script">{% if key == "today" %}Today's{% else %} All {% endif %}Reminders</h2>
+
+    <!-- Report Button Separated from Table -->
+    <div class="my-3 text-end">
+        <a href='{% if key == "today" %}/view-reminder/{% else %}/view-today-reminder/{% endif %}' class="btn custom-btn-primary">
+            <i class="fa-solid fa-chart-line"></i> {% if key == "today" %}All{% else %} Today's {% endif %} Reminders
+        </a>
+    </div>
+
+    <div class="col-12 table-responsive">
+        <table class="table table-striped table-hover table-sm">
+            <thead class="sticky-top bg-white shadow-sm">
+                <tr>
+                    <th scope="col">Sr No.</th>
+                    <th scope="col">Reminder Date</th>
+                    <th scope="col">Frequency</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Cancel</th>
+                </tr>
+            </thead>
+            <tbody style="max-height: 400px; overflow-y: auto;">
+            {% if reminders %}
+                {% for reminder in reminders %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ reminder.reminder_date}}</td>
+                    <td> {% if reminder.frequency == "custom" %}
+                        Every {{ reminder.custom_repeat_days }} days
+                    {% else %}
+                        {{ reminder.frequency }}
+                    {% endif %}</td>
+                    <td>{{ reminder.title }}</td>
+                    <td>{{ reminder.description }}</td>
+                    <td>
+                        <a href="/cancel-reminder/{{reminder.id}}">
+                            <i class="fa-solid text-danger fa-xmark"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No pending reminders for this month</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div> 
+{% include 'floating_button.html' %}
+{% endblock body %}
+
+{% block script %}
+<script>
+    // Optional script to handle date-related checks if needed
+    function dateCheck() {
+        var date = document.getElementById("reminder_date").value;
+        var submit = document.getElementById("submitbutton");
+        var current_time = new Date();
+        var given_time = new Date(date);
+        
+        if (!(given_time > current_time)) {
+            alert('Date must be in the future');
+            submit.setAttribute('disabled', "true");
+        } else {
+            submit.removeAttribute('disabled');
+        }
+    }
+</script>
+{% endblock script %}

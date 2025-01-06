@@ -16,6 +16,7 @@
       <a data-bs-toggle="modal" data-bs-target="#financeModal" ><li>Financial Entry</li></a>
       <a data-bs-toggle="modal" data-bs-target="#taskmodal" ><li>Task</li></a>
       <a data-bs-toggle="modal" data-bs-target="#ledgerModal" ><li>Ledger Entry</li></a>
+      <a data-bs-toggle="modal" data-bs-target="#reminderModal" ><li>Reminder</li></a>
     </ul>
   </div>
 
@@ -23,6 +24,7 @@
   {% include 'financial_instrument/addFinanceModal.html' %}
   {% include 'task/taskModal.html' %}
   {% include 'ledger_transaction/ledgerTransactionModal.html' with counterparties=counterparties %} 
+  {% include 'reminder/createReminderModal.html' with counterparties=counterparties %} 
   {% endblock body %}
 
   {% block script %}

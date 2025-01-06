@@ -1,0 +1,103 @@
+<!-- Add Reminder Modal -->
+<div class="modal fade" id="reminderModal" tabindex="-1" aria-labelledby="reminderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-4" id="reminderModalLabel">Add Reminder</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/create-reminder/" method="post" id="reminderForm">
+                    {% csrf_token %}
+                    
+                    <!-- Reminder Title -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Reminder Title</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="title"
+                            id="title"
+                            placeholder="Enter reminder title"
+                            required
+                        />
+                    </div>
+
+                    <!-- Reminder Description -->
+                    <div class="form-floating mb-3">
+                        <textarea
+                            class="form-control"
+                            name="description"
+                            id="description"
+                            placeholder="Enter reminder details"
+                            style="height: 100px"
+                            required
+                        ></textarea>
+                        <label for="description">Reminder Detail</label>
+                    </div>
+
+                    <!-- Reminder Time -->
+                    <div class="mb-3">
+                        <label for="reminder_date" class="form-label">Reminder Date</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            name="reminder_date"
+                            id="reminder_date"
+                            required
+                        />
+                    </div>
+
+                    <!-- Frequency Selection -->
+                    <div class="mb-3">
+                        <label for="frequency" class="form-label">Frequency</label>
+                        <select class="form-select" name="frequency" id="frequency" aria-label="Select reminder frequency" required>
+                            <option value="" disabled selected>-- Select Frequency --</option>
+                            <option value="daily">Daily</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Repeat Days (only visible if Custom frequency is selected) -->
+                    <div class="mb-3" id="customRepeatDaysContainer" style="display: none;">
+                        <label for="custom_repeat_days" class="form-label">Custom Repeat (Days)</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            name="custom_repeat_days"
+                            id="custom_repeat_days"
+                            placeholder="Enter number of days"
+                            min="1"
+                        />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        id="submitButton"
+                        class="btn custom-btn-primary w-100"
+                        style="border: none; font-size: 16px;"
+                    >
+                        <i class="fa-solid fa-plus-circle"></i> Add Reminder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: JavaScript for Frequency Selection -->
+<script>
+    document.getElementById('frequency').addEventListener('change', function() {
+        const frequency = this.value;
+        const customRepeatDaysContainer = document.getElementById('customRepeatDaysContainer');
+        
+        if (frequency === 'custom') {
+            customRepeatDaysContainer.style.display = 'block'; // Show custom repeat input
+        } else {
+            customRepeatDaysContainer.style.display = 'none'; // Hide custom repeat input
+        }
+    });
+</script>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django.utils import timezone
 
 class User(models.Model):
     name = models.CharField(max_length=100)
@@ -134,3 +134,35 @@ class LedgerTransaction(models.Model):
     class Meta:
         verbose_name = _("LedgerTransaction")
         verbose_name_plural = _("LedgerTransactions")
+
+class Reminder(models.Model):
+    DAILY = 'daily'
+    MONTHLY = 'monthly'
+    YEARLY = 'yearly'
+    CUSTOM = 'custom'
+    
+    REMINDER_FREQUENCY_CHOICES = [
+        (DAILY, 'Daily'),
+        (MONTHLY, 'Monthly'),
+        (YEARLY, 'Yearly'),
+        (CUSTOM, 'Custom'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    reminder_date = models.DateField() 
+    frequency = models.CharField(
+        max_length=10,
+        choices=REMINDER_FREQUENCY_CHOICES,
+        default=DAILY
+    )
+    custom_repeat_days = models.PositiveIntegerField(null=True, blank=True)  # Days for custom repetition
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+

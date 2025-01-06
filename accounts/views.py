@@ -215,7 +215,18 @@ def home(request,user):
                 "delete_url": "/deleted-ledger-transaction/",
                 "delete_button_icon": 'fa-trash-can',
                 "class_suffix": ""
-            }
+            },
+             {
+                "title": "REMINDER",
+                "description": "Don't remember special days, stop worrying! Let the reminders handle it",
+                "modal_target": "#taskmodal",
+                "modal_button_icon": 'fa-plus',
+                "report_url": "/view-today-reminder/",
+                "report_button_icon": datetime.today().strftime("%b'%y").upper(),
+                "delete_url": "/taskReports/",
+                "delete_button_icon": 'fa-square-poll-horizontal',
+                "class_suffix": ""
+            },
         ]
         counterparties = LedgerTransaction.objects.filter(created_by=user).values_list('counterparty', flat=True).distinct()
         return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})

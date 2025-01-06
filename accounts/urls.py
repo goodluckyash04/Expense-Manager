@@ -9,6 +9,7 @@ from .view_transaction import create_transaction, transaction_detail, update_tra
 from .view_financial_instrument import create_finance, finance_details, fetch_financial_transaction, \
     update_instrument_status, update_finance_detail, remove_instrument
 from .view_task import *
+from .view_reminder import *
 urlpatterns = [
 
 # ..........................................Home Page..................................................
@@ -67,6 +68,15 @@ urlpatterns = [
     path("deleted-ledger-transaction/", fetch_deleted_ledger_transaction, name="deleted-ledger-transaction"),
     path("undo-ledger-transaction/", undo_ledger_transaction, name="undo-ledger-transaction"),
     path("undo-ledger-transaction/<int:id>", undo_ledger_transaction, name="undo-ledger-transaction"),
+
+# ..........................................Reminder Management..................................................
+
+
+    path('create-reminder/', add_reminder, name='add_reminder'),
+    path('view-today-reminder/', todays_reminder, name='todays-reminder'),
+    path('view-reminder/', reminder_list, name='view-reminders'),
+    path('cancel-reminder/<int:id>', cancel_reminder, name='cancel-reminder'),
+
 ]
 
 
