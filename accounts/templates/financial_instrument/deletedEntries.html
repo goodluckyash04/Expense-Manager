@@ -1,12 +1,18 @@
 {% extends 'header.html' %} {% load static %} {% block body %}
 
-<h5 class="text-center text-success mt-3" id = "key">Deleted Loan Entries</h5>
+<h5 class="text-center text-success mt-3" id="key">Deleted Loan Entries</h5>
 
 <div class="row mx-2 table-responsive">
-  <table id ='myTable' class="table">
+  <table id="myTable" class="table">
     <thead>
       <tr>
-      <th scope="col"> <a href="/loanHome/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+        <th scope="col">
+          <a
+            href="/loanHome/"
+            class="btn btn-secondary"
+            style="background-color: rgb(77, 168, 104)"
+            ><i class="fa-solid fa-square-poll-horizontal"></i
+          ></a>
         </th>
         <th scope="col">Loan</th>
         <th scope="col">Deleted_On</th>
@@ -14,12 +20,9 @@
         <th scope="col">Amount</th>
         <th scope="col">Detail</th>
         <th scope="col" colspan="2"></th>
-        
-       
       </tr>
     </thead>
     <tbody>
-      
       {% if data %} {% for i in data %}
       <tr>
         <td scope="row">{{forloop.counter}}</td>
@@ -28,9 +31,11 @@
         <td>{{i.paid_on | date:"d-m-Y"}}</td>
         <td>{{i.amount}}</td>
         <td>{{i.note}}</td>
-    <td> <a href="/undoEntries/{{i.id}}" ><i class="fa-solid text-success fa-rotate-left"></i></a>
-            </td>
-        
+        <td>
+          <a href="/undoEntries/{{i.id}}"
+            ><i class="fa-solid text-success fa-rotate-left"></i
+          ></a>
+        </td>
       </tr>
       {% endfor %}{% else %}
       <td colspan="8" class="text-center">No Records found</td>
@@ -39,7 +44,4 @@
   </table>
 </div>
 
-
-
 {% endblock body %}
-

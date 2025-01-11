@@ -27,7 +27,7 @@ def add_reminder(request,user):
         if existing_reminder:
             # If a duplicate reminder exists, add an error message
             messages.error(request, "A reminder with this title and date already exists.")
-            return redirect('home')  # Redirect back to the form or to another page
+            return redirect('utilities')  # Redirect back to the form or to another page
 
         # Create the reminder object
         reminder = Reminder(
@@ -44,7 +44,7 @@ def add_reminder(request,user):
 
         # Redirect or return a success message
         messages.success(request, "Reminder added successfully!")
-    return redirect('home')  # Adjust based on where you want to go after saving
+    return redirect('utilities')  # Adjust based on where you want to go after saving
 
 
 @auth_user

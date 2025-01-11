@@ -50,7 +50,7 @@
                             <h5 class="card-title text-start" style="color: var(--primary-dark-four); font-size: 1.2rem; font-weight: 600;">
                                 {{ i.name | title | truncatechars:25 }}
                             </h5>
-                            <a href="" data-bs-toggle="modal" data-bs-target="#financeModal" onclick="openModalAndGetInstrument({{ i.id }})" class="btn border-0 p-0 fs-5 text-primary" aria-label="Edit">
+                            <a href="" data-bs-toggle="modal" data-bs-target="#editFinance" onclick="openModalAndGetInstrument('{{ i.id }}')" class="btn border-0 p-0 fs-5 text-primary" aria-label="Edit">
                                 <i class="fa-regular fa-pen-to-square" style="color: var(--primary-dark-secondary);" ></i>                            </a>
                         </div>
         
@@ -143,11 +143,10 @@
     </div>
 </div>
 
-{% include 'financial_instrument/addFinanceModal.html' %}
+{% include 'financial_instrument/add_Finance.html' with modal_id='editFinance' title='Finance' submit_button='Update Transaction' action='' %}
 
-{% include 'floating_button.html' %}
 {% endblock body %}
 
 {% block script %}
-<script src="../static/js/updateFinance.js"></script>
+<script src="{% static 'js/finance.js' %}"></script>
 {% endblock script %}

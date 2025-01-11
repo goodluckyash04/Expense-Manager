@@ -1,0 +1,87 @@
+{% extends 'comman_template/add_update_modal.html' %} {% block modal_body %}
+<!-- Finance Type Selection -->
+<div class="row mb-4">
+  <label class="col-form-label col-12">Select Type</label>
+  <div class="col-6">
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="type"
+        id="loan"
+        value="Loan"
+        required
+      />
+      <label class="form-check-label" for="loan">Loan</label>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="form-check">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="type"
+        id="sip"
+        value="SIP"
+      />
+      <label class="form-check-label" for="sip">SIP</label>
+    </div>
+  </div>
+</div>
+
+<!-- Instrument Name -->
+<div class="mb-3">
+  <label for="name" class="form-label">Instrument Name</label>
+  <input
+    type="text"
+    class="form-control shadow-sm"
+    id="name"
+    name="name"
+    placeholder="Enter Instrument Name"
+    required
+  />
+</div>
+
+<!-- Start Date -->
+<div class="mb-3">
+  <label for="started_on" class="form-label">Start Date</label>
+  <input
+    type="date"
+    class="form-control shadow-sm"
+    name="started_on"
+    id="started_on"
+    required
+  />
+</div>
+
+<!-- Total Amount -->
+<div class="mb-3">
+  <label for="amount" class="form-label">Total Amount (₹)</label>
+  <input
+    type="number"
+    class="form-control shadow-sm"
+    name="amount"
+    id="amount"
+    placeholder="Enter Total Amount"
+    required
+  />
+</div>
+
+<!-- No of Installments -->
+<div class="mb-3">
+  <label for="installments" class="form-label">No of Installments</label>
+  <input
+    type="number"
+    class="form-control shadow-sm"
+    name="no_of_installments"
+    id="installments"
+    placeholder="Enter Number of Installments"
+    required
+  />
+</div>
+<script>
+  document.getElementById("started_on").value = new Date()
+    .toISOString()
+    .split("T")[0];
+</script>
+{% endblock modal_body %}

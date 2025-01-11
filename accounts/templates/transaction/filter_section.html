@@ -1,0 +1,69 @@
+<div class="row mx-3 mt-4 mb-4 justify-content-between align-items-center">
+  <!-- Filter Button (Mobile Full Width, Desktop Centered) -->
+  <div class="col-12 col-md-3 text-center text-md-start mb-3 mb-md-0">
+    <button
+      type="button"
+      class="btn btn-lg custom-btn-primary shadow-sm w-100 w-md-auto"
+      data-bs-toggle="modal"
+      data-bs-target="#exampleModal"
+    >
+      <i class="fa-solid fa-filter"></i> Filter
+    </button>
+  </div>
+
+  <!-- Search Bar (Mobile Full Width, Desktop Centered) -->
+  <div class="col-12 col-md-6 text-center mb-3 mb-md-0">
+    <form class="d-flex w-100" action="/transaction-detail/" method="get">
+      <div class="input-group">
+        <input
+          class="form-control form-control-lg shadow-sm"
+          type="search"
+          name="search"
+          placeholder="Search transactions..."
+          aria-label="Search"
+        />
+        <button
+          class="btn btn-lg custom-btn-primary border shadow-sm"
+          type="submit"
+        >
+          <i class="fa-solid fa-search"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Action Buttons (Mobile Stacked, Desktop Inline) -->
+  <div
+    class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end mb-3 mb-md-0"
+  >
+    <!-- Clear Button -->
+    <a
+      href="/transaction-detail/"
+      class="btn btn-lg custom-btn-danger w-100 w-md-auto me-md-2 shadow-sm"
+    >
+      <i class="fa-solid fa-broom"></i>
+    </a>
+
+    <!-- Export CSV Button -->
+    <button
+      type="button"
+      onclick="generateCSV()"
+      id="export-csv-button"
+      class="btn btn-lg custom-btn-primary w-100 w-md-auto mx-2 shadow-sm"
+    >
+      <i class="fa-solid fa-file-csv"></i>
+    </button>
+
+    <!-- Deleted Entries Button -->
+    <a
+      href="/deleted-transaction-detail/"
+      class="btn btn-lg custom-btn-primary w-100 w-md-auto shadow-sm"
+    >
+      <i class="fa-solid fa-trash-can"></i>
+    </a>
+  </div>
+</div>
+
+
+<!-- Filter Modal -->
+{% include 'transaction/filter_modal.html' with data=data categories=categories %}

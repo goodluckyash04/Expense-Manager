@@ -1,0 +1,23 @@
+  <div class="modal fade" id='{% if multiple == "true" %}confirmMultiModal{% else %}confirmModal{% endif %}' tabindex="-1" aria-labelledby="confirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="confirmLabel">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {{modal_body}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          {% if multiple == "true" %}
+          <button type="button" class="btn btn-success" onclick="document.getElementById('multi-form').submit();">
+              Confirm Undo
+            </button>
+            {% else %}
+            <a href="#" class="btn btn-outline-danger" id="confirmButton">Confirm</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>

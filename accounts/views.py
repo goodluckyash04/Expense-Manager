@@ -1,7 +1,6 @@
 import traceback
-from datetime import datetime,timedelta
-
-from django.db.models import Q,Sum,Case, When, Value, CharField
+from datetime import datetime
+from django.db.models import Q,Sum
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import make_password, check_password
@@ -168,7 +167,7 @@ def dashboard(request,user):
 # ...........................................Home Page..................................................
 
 @auth_user
-def home(request,user):
+def utilities(request,user):
     try:
         items = [
             {
@@ -229,7 +228,7 @@ def home(request,user):
             },
         ]
         counterparties = LedgerTransaction.objects.filter(created_by=user).values_list('counterparty', flat=True).distinct()
-        return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})
+        return render(request,"utilities.html",{"user":user,'items': items, "counterparties":counterparties})
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes

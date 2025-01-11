@@ -13,7 +13,7 @@ from .view_reminder import *
 urlpatterns = [
 
 # ..........................................Home Page..................................................
-    path("home/",home,name="home"),
+    path("utilities/",utilities,name="utilities"),
     path("dashboard/",dashboard,name="dashboard"),
     path("about/",about,name="about"),
 

@@ -27,7 +27,7 @@ def addTask(request, user):
         created_by=user
     )
     
-    return redirect('home')
+    return redirect('utilities')
 
 @auth_user
 def currentMonthTaskReport(request, user):

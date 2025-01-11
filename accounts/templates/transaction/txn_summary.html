@@ -1,0 +1,72 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="fs-6 text-secondary mb-2">
+            Expense:
+            <b
+              ><span style="color: #d9534f"
+                >₹ {{ transaction_calculation.expense }}</span
+              ></b
+            >
+          </p>
+          <p class="fs-6 text-secondary mb-2">
+            Balance:
+            <b
+              ><span style="color: #495057"
+                >₹ {{ transaction_calculation.total }}</span
+              ></b
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="fs-6 text-secondary mb-2">
+            EMI:
+            <b
+              ><span style="color: #5bc0de"
+                >₹ {{ transaction_calculation.emi }}</span
+              ></b
+            >
+          </p>
+          <p class="fs-6 text-secondary mb-2">
+            Investment:
+            <b
+              ><span style="color: #6f42c1"
+                >₹ {{ transaction_calculation.investment }}</span
+              ></b
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <p class="fs-6 text-secondary mb-2">
+            Previous Pending:
+            <b
+              ><span style="color: #f39c12"
+                >₹ {{ transaction_calculation.previous_pending }}</span
+              ></b
+            >
+          </p>
+          <p class="fs-6 text-secondary mb-2">
+            Pending Expense:
+            <b
+              ><span style="color: #ffcc00"
+                >₹ {{ transaction_calculation.pending_amount }}</span
+              ></b
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

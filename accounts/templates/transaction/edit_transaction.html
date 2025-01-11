@@ -1,0 +1,78 @@
+<!-- Edit Expense Modal -->
+{% extends 'comman_template/add_update_modal.html' %} {% block modal_body %}
+<div id="transactionUpdateBody">
+  <!-- Transaction Category -->
+  <div class="mb-3">
+    <select
+      class="form-select"
+      id="category"
+      name="category"
+      aria-label="Select Category"
+    >
+      <option value="" disabled selected>-- Select Category --</option>
+      <!-- Categories will be populated dynamically -->
+    </select>
+  </div>
+
+  <!-- Beneficiary (Self/Home/Other) -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      name="beneficiary"
+      id="beneficiary_data"
+      placeholder="Beneficiary (Self/Home/Other)"
+    />
+  </div>
+
+  <!-- Transaction Date -->
+  <div class="mb-3">
+    <input type="date" class="form-control" name="date" id="date" required />
+  </div>
+
+  <!-- Transaction Amount -->
+  <div class="mb-3">
+    <input
+      type="number"
+      class="form-control"
+      step="any"
+      name="amount"
+      id="amount"
+      placeholder="Amount"
+      required
+    />
+  </div>
+
+  <!-- Transaction Description -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      name="description"
+      id="description"
+      placeholder="Description"
+      required
+    />
+  </div>
+
+  <!-- Transaction Mode -->
+  <div class="mb-3">
+    <select class="form-select" name="mode" id="mode">
+      <option value="" disabled selected>-- Select Mode --</option>
+      <!-- Mode options will be populated dynamically -->
+    </select>
+  </div>
+
+  <!-- Mode Details -->
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      name="mode_detail"
+      id="mode_detail"
+      placeholder="Mode Description (e.g., bankDR, bankUPI, cash)"
+    />
+  </div>
+</div>
+
+{% endblock modal_body %}

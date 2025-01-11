@@ -66,13 +66,13 @@ def create_transaction(request, user):
                 created_by = user,
             )
             messages.success(request, f'{type} Transaction Added')
-        return redirect('home')
+        return redirect('utilities')
     except ValidationError as e:
         messages.error(request, str(e))
-        return redirect('home')
+        return redirect('utilities')
     except ValueError as e:
         messages.error(request, str(e))
-        return redirect('home')
+        return redirect('utilities')
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes
@@ -201,7 +201,7 @@ def transaction_detail(request, user):
         }
         CATEGORIES = ['Shopping', 'Food', 'Investment', 'Utilities', 'Groceries','Medical', 'General', 'Gifts', 'Entertainment', 'EMI', 'Salary','Other']
 
-        return render(request, "transaction/transactionDetails.html", {
+        return render(request, "transaction/index.html", {
             "user": user,
             "transaction_data": transaction_data,
             "transaction_calculation": transaction_calculation,
@@ -219,7 +219,7 @@ def transaction_detail(request, user):
     except Exception as e:
         print(traceback.print_exc())
         messages.error(request, f"An error occurred: try again after some time")
-        return render(request, "transaction/transactionDetails.html", {
+        return render(request, "transaction/index.html", {
              "user": user,
             "transaction_data": transaction_data,
             "transaction_calculation": transaction_calculation,
@@ -239,11 +239,11 @@ def transaction_detail(request, user):
 def fetch_deleted_transaction(request, user):
     try:
         transaction_detail = Transaction.objects.filter(created_by=user.id,is_deleted =True).order_by('-deleted_at')
-        return render(request, 'transaction/deletedTransactions.html', {"data": transaction_detail, "user": user})
+        return render(request, 'transaction/deleted_transactions.html', {"data": transaction_detail, "user": user})
     except Exception as e:
         print(traceback.print_exc())
         messages.error(request, f"An error occurred: will get back soon")
-        return redirect('home')
+        return redirect('utilities')
 
 
 @auth_user

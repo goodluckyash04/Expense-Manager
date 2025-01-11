@@ -2,7 +2,7 @@
   <div class="modal-dialog">
     <div class="modal-content border-0 shadow">
       <div class="modal-header text-white" style="background-color: var(--primary);">
-        <h5 class="modal-title mx-auto" id="exampleModalLabel">Filter Transactions</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Filter Transactions</h5>
         <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -60,40 +60,53 @@
   </div>
 </div>
 
-    <script>
-        if ($('#daterange').val()){
-        datee = $('#daterange').val().split("-")
-        var start = datee[0];
-         var end = datee[1];
-}else{
-        var start = moment().startOf('month');
-         var end = moment().endOf('month');
-}
-         function cb(start, end) {
-             $('#daterange').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
-         }
 
-         $('#daterange').daterangepicker({
-             startDate: start,
-             endDate: end,
-              locale: {
-            format: 'DD/MM/YYYY'
-         },
-         autoApply:true,
-         showDropdowns:true,
-         linkedCalendars:false,
-         opens:'center',
-             ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Current Year' : [moment().startOf('year'), moment()],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Last Year' : [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
-             }
-         }, cb);
- if ($('#daterange').val()==''){
-         cb(start, end);
+
+<script>
+      if ($("#daterange").val()) {
+  datee = $("#daterange").val().split("-");
+  var start = datee[0];
+  var end = datee[1];
+} else {
+  var start = moment().startOf("month");
+  var end = moment().endOf("month");
+}
+function cb(start, end) {
+  $("#daterange").html(
+    start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY")
+  );
+}
+
+$("#daterange").daterangepicker(
+  {
+    startDate: start,
+    endDate: end,
+    locale: {
+      format: "DD/MM/YYYY",
+    },
+    autoApply: true,
+    showDropdowns: true,
+    linkedCalendars: false,
+    opens: "center",
+    ranges: {
+      Today: [moment(), moment()],
+      Yesterday: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+      "Last 30 Days": [moment().subtract(29, "days"), moment()],
+      "This Month": [moment().startOf("month"), moment().endOf("month")],
+      "Current Year": [moment().startOf("year"), moment()],
+      "Last Month": [
+        moment().subtract(1, "month").startOf("month"),
+        moment().subtract(1, "month").endOf("month"),
+      ],
+      "Last Year": [
+        moment().subtract(1, "year").startOf("year"),
+        moment().subtract(1, "year").endOf("year"),
+      ],
+    },
+  },
+  cb
+);
+if ($("#daterange").val() == "") {
+  cb(start, end);
 }
     </script>

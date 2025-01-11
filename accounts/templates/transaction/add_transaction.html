@@ -1,0 +1,126 @@
+<!-- Add Transaction Modal -->
+{% extends 'comman_template/add_update_modal.html' %} {% block modal_body %}
+<div id="transactionUpdateBody">
+  <!-- Transaction Type -->
+  <div id="transactionType" class="mb-4">
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="type"
+        id="Expense"
+        value="Expense"
+        onchange="transactionType()"
+        required
+      />
+      <label class="form-check-label" for="Expense">Expense</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        name="type"
+        id="Income"
+        value="Income"
+        onchange="transactionType()"
+      />
+      <label class="form-check-label" for="Income">Income</label>
+    </div>
+  </div>
+
+  <div id="transactionBody" style="display: none">
+    <!-- Transaction Category -->
+    <div class="mb-3">
+      <select
+        class="form-select"
+        id="category"
+        name="category"
+        aria-label="Select Category"
+      >
+        <option value="" disabled selected>-- Select Category --</option>
+        <!-- Categories will be populated dynamically -->
+      </select>
+    </div>
+
+    <!-- Beneficiary -->
+    <div class="mb-3">
+      <select
+        class="form-select"
+        name="beneficiary"
+        id="add_beneficiary"
+      >
+        <option value="Self" selected>Self</option>
+        <option value="Home">Home</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <!-- Beneficiary if "Other" is selected -->
+    <div class="mb-3" id="other_beneficiary" style="display: none">
+      <input
+        type="text"
+        class="form-control"
+        id="beneficiary_text"
+        placeholder="Please specify the beneficiary"
+      />
+    </div>
+
+    <!-- Transaction Date -->
+    <div class="mb-3">
+      <input type="date" class="form-control" name="date" id="date" required />
+    </div>
+
+    <!-- Transaction Amount -->
+    <div class="mb-3">
+      <input
+        type="number"
+        class="form-control"
+        name="amount"
+        id="amount"
+        placeholder="Amount"
+        required
+      />
+    </div>
+
+    <!-- Transaction Description -->
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        name="description"
+        id="description"
+        placeholder="Description"
+        required
+      />
+    </div>
+
+    <!-- Transaction Mode -->
+    <div class="mb-3">
+      <select class="form-select" name="mode" id="mode">
+        <option value="CreditCard">Credit Card</option>
+        <option value="Online" selected>Online</option>
+        <option value="Cash">Cash</option>
+      </select>
+    </div>
+
+    <!-- Mode Details -->
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        name="mode_detail"
+        id="mode_detail"
+        placeholder="Mode description (e.g., bankDR, bankUPI, cash)"
+      />
+    </div>
+
+    <!-- Transaction Status -->
+    <div class="mb-3">
+      <select class="form-select" name="status" id="status">
+        <option value="Completed" selected>Completed</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+  </div>
+</div>
+{% endblock modal_body %}

@@ -12,23 +12,23 @@
   <!-- Activity list -->
   <div class="activity-list" id="activityList">
     <ul>
-      <a data-bs-toggle="modal" data-bs-target="#expensemodal" ><li>Transaction</li></a>
-      <a data-bs-toggle="modal" data-bs-target="#financeModal" ><li>Financial Entry</li></a>
+      <a data-bs-toggle="modal" data-bs-target="#addTransaction" ><li>Transaction</li></a>
+      <a data-bs-toggle="modal" data-bs-target="#addFinance" ><li>Financial Entry</li></a>
       <a data-bs-toggle="modal" data-bs-target="#taskmodal" ><li>Task</li></a>
       <a data-bs-toggle="modal" data-bs-target="#ledgerModal" ><li>Ledger Entry</li></a>
       <a data-bs-toggle="modal" data-bs-target="#reminderModal" ><li>Reminder</li></a>
     </ul>
   </div>
 
-  {% include 'transaction/transactionModal.html' %}
-  {% include 'financial_instrument/addFinanceModal.html' %}
+  {% include 'transaction/add_transaction.html' with modal_id='addTransaction' title='Transaction' submit_button='' action='/create-transaction/' %}
+  {% include 'financial_instrument/add_Finance.html' with modal_id='addFinance' title='Finance' submit_button='Add Transaction' action='/create-finance/' %}
   {% include 'task/taskModal.html' %}
   {% include 'ledger_transaction/ledgerTransactionModal.html' with counterparties=counterparties %} 
   {% include 'reminder/createReminderModal.html' with counterparties=counterparties %} 
   {% endblock body %}
 
   {% block script %}
-  <script src='{% static "js/addTransaction.js" %}'></script>
+  <script src='{% static "js/transaction.js" %}'></script>
 
   <script>
     // Function to toggle the activity list visibility
