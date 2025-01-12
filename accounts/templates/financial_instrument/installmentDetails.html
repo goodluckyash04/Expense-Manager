@@ -77,11 +77,6 @@
             <td>{{ i.date }}</td>
             <td><a href="" data-bs-toggle="modal" data-bs-target="#editExpenseModal" class="text-decoration-none" style="color: var(--primary-dark-secondary);"  onclick="openModalAndGetExpense({{ i.id }})">{{ i.amount }}</a></td>
             <td>{{ i.description }}</td>
-            <!-- <td>
-              <a href="" data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick="openModalAndGetExpense({{ i.id }})">
-                <i class="fa-solid fa-pen" style="color: #B197fc"></i>
-              </a>
-            </td> -->
             <td>
               <a href="#" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setDeleteAction('/delete-transaction/{{ i.id }}')">
                 <i class="fa-solid fa-trash text-danger"></i>
@@ -125,42 +120,9 @@
 
 {% block script %}
 <script src="../static/js/updateTransaction.js"></script>
+<script src="../static/js/transactionReport.js"></script>
 
 <script>
-  function generateCSV() {
-    var table = document.getElementById("myTable");
-    var csvContent = "data:text/csv;charset=utf-8,";
-    var cont = document.getElementById("key").textContent.split('-');
-    
-    // Extract table headers
-    var headers = table.getElementsByTagName("th");
-    var headerValues = [];
-    for (var i = 0; i < headers.length; i++) {
-      headerValues.push(headers[i].textContent);
-    }
-    csvContent += '"' + headerValues.join('","') + '"\r\n';
-    
-    // Extract table data
-    var rows = table.getElementsByTagName("tr");
-    for (var i = 0; i < rows.length; i++) {
-      var cells = rows[i].getElementsByTagName("td");
-      var rowValues = [];
-      for (var j = 0; j < cells.length; j++) {
-        rowValues.push(cells[j].textContent);
-      }
-      csvContent += rowValues.join(",") + "\r\n";
-    }
-    
-    // Create download link
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${cont[0]}.csv`);
-    document.body.appendChild(link);
-    
-    // Trigger download
-    link.click();
-  }
 
   function setDeleteAction(url) {
     const confirmDeleteButton = document.getElementById("confirmDeleteButton");

@@ -4,21 +4,23 @@ var currentDate = new Date().toISOString().split('T')[0]
 
 document.getElementById('beneficiary').addEventListener('change', beneficiary);
 
-function beneficiary(){
-console.log('erfefrf')
-    var pay = document.getElementById("beneficiary")
-    var other = document.getElementById("beneficiary_text")
-
-    if (pay.value == "Other"){
-        pay.removeAttribute("name")
-        other.setAttribute("name","beneficiary")
-        other.removeAttribute('style')
-    }else{
-        other.removeAttribute("name")
-        other.style.display= "none"
-        pay.setAttribute("name","beneficiary")
+function beneficiary() {
+    var bene = document.getElementById("beneficiary");
+    var other_bene = document.getElementById("other_beneficiary");
+    var other_input = document.getElementById("beneficiary_text");
+    other_input.removeAttribute("style");
+    if (bene.value == "Other") {
+      bene.removeAttribute("name");
+      other_input.setAttribute("name", "beneficiary");
+      other_bene.removeAttribute("style");
+      console.log(other_bene);
+    } else {
+      other_bene.style.display = "none";
+      other_input.removeAttribute("name");
+      bene.setAttribute("name", "beneficiary");
+      console.log(other_bene);
     }
-}
+  }
 
 
 function payType() {

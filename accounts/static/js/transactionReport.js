@@ -15,49 +15,48 @@ function hiddendiscription(){
     th.setAttribute('hidden',true)
     }   
 }
+function generateCSV() {
+  // Get the table and key elements by their IDs
+  var table = document.getElementById("myTable");
+  var filename = document.getElementById("key")
+  if (filename){
+      filename = filename.textContent.trim() + ".csv";
+  }else{
+      filename = "mhb-report.csv";
+  }
+  // Initialize an empty array for the CSV content
+  var csvRows = [];
 
+  // Loop through each row in the table
+  for (var i = 0; i < table.rows.length; i++) {
+    var row = table.rows[i];
+    var rowData = [];
 
-    document.getElementById("export-csv-button").addEventListener("click", function () {
-      // Get the table element by its ID
-      var table = document.getElementById("myTable");
-      var cont = document.getElementById("key").textContent;
+    // Loop through each cell in the row
+    for (var j = 0; j < row.cells.length; j++) {
+      var cell = row.cells[j];
+      // Push the cell's text content, escaped for CSV
+      rowData.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
+    }
 
+    // Join the row data with commas and add to the csvRows array
+    csvRows.push(rowData.join(","));
+  }
 
-      // Initialize an empty CSV content
-      var csvContent = "";
+  // Join all rows with newline characters
+  var csvContent = csvRows.join("\n");
 
-      // Loop through each row in the table
-      for (var i = 0; i < table.rows.length; i++) {
-        var row = table.rows[i];
+  // Create a Blob with the CSV content
+  var blob = new Blob([csvContent], { type: "text/csv" });
 
-        // Loop through each cell in the row
-        for (var j = 0; j < row.cells.length; j++) {
-          var cell = row.cells[j];
+  // Create a temporary download link for the CSV file
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
 
-          // Append the cell's text content to the CSV, enclosed in double quotes
-          csvContent += '"' + cell.textContent.trim().replace(/"/g, '""') + '"';
-
-          // Add a comma separator, except for the last cell in the row
-          if (j < row.cells.length - 1) {
-            csvContent += ",";
-          }
-        }
-
-        // Add a newline character to separate rows
-        csvContent += "\n";
-      }
-
-      // Create a Blob with the CSV content
-      var blob = new Blob([csvContent], { type: "text/csv" });
-
-      // Create a temporary download link for the CSV file
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `${cont}.csv`;
-
-      // Trigger a click event on the link to initiate the download
-      a.click();
-    });
+  // Trigger a click event on the link to initiate the download
+  a.click();
+}
 
 
 

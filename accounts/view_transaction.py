@@ -66,13 +66,13 @@ def create_transaction(request, user):
                 created_by = user,
             )
             messages.success(request, f'{type} Transaction Added')
-        return redirect('home')
+        return redirect('utilities')
     except ValidationError as e:
         messages.error(request, str(e))
-        return redirect('home')
+        return redirect('utilities')
     except ValueError as e:
         messages.error(request, str(e))
-        return redirect('home')
+        return redirect('utilities')
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes
@@ -243,7 +243,7 @@ def fetch_deleted_transaction(request, user):
     except Exception as e:
         print(traceback.print_exc())
         messages.error(request, f"An error occurred: will get back soon")
-        return redirect('home')
+        return redirect('utilities')
 
 
 @auth_user

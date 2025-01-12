@@ -13,7 +13,8 @@ STATUS = ['Pendiing','Completed']
                 .then(data => {
                     console.log("data",data)
                  // title
-                 document.getElementById("title").textContent = `Update ${data.type}`
+                 document.getElementById("title").textContent = `${data.type}`
+                 document.getElementById("submitButton").textContent = `Update ${data.type}`
 
                     // category
                     var categorySelect = document.getElementById("category");

@@ -36,16 +36,23 @@ def dashboard(request,user):
         investment = sum(entry.amount for entry in transactions if entry.category.lower() == 'investment' and entry.date <= datetime.now().date())
         overdue = sum(entry.amount for entry in transactions if entry.category.lower() == 'emi'and entry.status.lower()=="pending")
         
-        #---------------------- Financial Overview ----------------------------
-        context = {}
-        max_amount = max([income, expense, income-expense, investment, overdue])
+        first_txn_date = min(entry.date for entry in transactions if entry.category.lower())
+        account_age = (timezone.now() - user.created_at).days
 
-        context["finance_view"] =  {
-                "labels": ["Income", "Expense", "Savings", "Investments", "Overdue"],
-                "data": [income, expense, income-expense, investment, overdue],
-                "max": round(max_amount + max_amount/10) 
+        user_info = {}
+        user_info['first_txn_date'] = first_txn_date 
+        user_info['account_age'] = account_age
+
+        context = {}
+        #---------------------- Financial Overview ----------------------------
+        financial_data = {
+                "Income" :format_amount(income), 
+                "Expense" :format_amount(expense-investment), 
+                "Saving" :format_amount(income-expense), 
+                "Investment" :format_amount(investment),
+                "Due":format_amount(overdue),
             }
-        
+                
         #---------------------- Category wise Expense ----------------------------
         category_wise_data = {}
         for txn in [entry for entry in transactions if entry.type.lower() == 'expense' and entry.date <= datetime.now().date() ]:
@@ -100,13 +107,17 @@ def dashboard(request,user):
 
         context["savings"] = savings_data
 
-
         #---------------------------------- Year wise Income Expense -----------------------
+        if current_date.month == 12:
+            first_day_of_next_month = datetime(current_date.year + 1, 1, 1)
+        else:
+            first_day_of_next_month = datetime(current_date.year, current_date.month + 1, 1)
+
+        print(first_day_of_next_month)
         transactions = Transaction.objects.filter(
             created_by=user,
             is_deleted=False,
-            date__month__lte=current_month,
-            date__year__lte=current_year,
+            date__lte=first_day_of_next_month,
         ).values('date__year').annotate(
             total_expense=Sum('amount', filter=Q(type='Expense')),
             total_income=Sum('amount', filter=Q(type='Income'))
@@ -156,7 +167,7 @@ def dashboard(request,user):
             if isinstance(obj, Decimal):
                 return float(obj)  # Convert Decimal to float (or str(obj) for string)
             return obj
-        context = {'data': json.dumps(context,default=convert_decimal),'user':user}
+        context = {'data': json.dumps(context,default=convert_decimal),'financial_data':financial_data,'user_info':user_info,'user':user}
 
         return render(request,'dashboard.html',context=context)
     except Exception as e:
@@ -168,7 +179,7 @@ def dashboard(request,user):
 # ...........................................Home Page..................................................
 
 @auth_user
-def home(request,user):
+def utilities(request,user):
     try:
         items = [
             {
@@ -218,7 +229,7 @@ def home(request,user):
             },
              {
                 "title": "REMINDER",
-                "description": "Don't remember special days, stop worrying! Let the reminders handle it",
+                "description": "Stop worrying! about special days, Let the reminders handle it",
                 "modal_target": "#taskmodal",
                 "modal_button_icon": 'fa-plus',
                 "report_url": "/view-today-reminder/",
@@ -229,7 +240,7 @@ def home(request,user):
             },
         ]
         counterparties = LedgerTransaction.objects.filter(created_by=user).values_list('counterparty', flat=True).distinct()
-        return render(request,"home.html",{"user":user,'items': items, "counterparties":counterparties})
+        return render(request,"utiltities.html",{"user":user,'items': items, "counterparties":counterparties})
     except Exception as e:
         messages.error(request, "An unexpected error occurred.")
         # Log the error for debugging purposes
@@ -380,7 +391,15 @@ def hide_email(value):
     username = username[:2] + '*' * 8 + username[-1:]  # Hide all characters except the first two and last
     return f"{username}@{domain}"
 
-
+def format_amount(amount):
+    if amount >= 1_00_00_000:  # 1 Crore or more
+        return f"{amount / 1_00_00_000:.2f} Cr"
+    elif amount >= 1_00_000:  # 1 Lakh or more
+        return f"{amount / 1_00_000:.2f} L"
+    elif amount >= 1_000:  # 1 Thousand or more
+        return f"{amount / 1_000:.2f} K"
+    else:
+        return f"{amount:.2f}"
 
 # hashed_pwd = make_password("plain_text")
 # check_password("plain_text",hashed_pwd)  # returns True

@@ -1,7 +1,7 @@
 <!-- Edit Expense Modal -->
 
 <div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5 text-center" style="color: var(--primary-dark);" id="title">Edit Transaction</h1>
@@ -56,9 +56,15 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn custom-btn-primary w-100 mt-4">
-              Update Transaction
-            </button>
+            <div class="d-flex justify-content-center">
+              <button
+                id="submitButton"
+                type="submit"
+                class="btn custom-btn-primary w-100 shadow-sm"
+              >
+                <i class="fa-solid fa-plus-circle"></i> Update Transaction 
+              </button>
+            </div>
           </div>
 
         </form>

@@ -31,7 +31,7 @@
       </a>
 
       <!-- Export CSV Button -->
-      <button type="button" disabled onclick="generateCSV()" id="export-csv-button" class="btn btn-lg custom-btn-primary w-100 w-md-auto mx-2 shadow-sm">
+      <button type="button" onclick="generateCSV()" id="export-csv-button" class="btn btn-lg custom-btn-primary w-100 w-md-auto mx-2 shadow-sm">
           <i class="fa-solid fa-file-csv" ></i> 
       </button>
 
@@ -103,7 +103,7 @@
 <div class="table-responsive mx-2" style="max-height: 370px; overflow-y: auto; overflow-x: auto;">
     <form method="POST" action="/delete-transaction/">
         {% csrf_token %}
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover" id="myTable">
             <thead class="table-light sticky-top">
                 <tr>
                     <th><input type="checkbox" id="select-all-checkbox"></th>
@@ -135,7 +135,7 @@
                                 </a>
                             </td>
                             <td>{{ i.date }}</td>
-                            <td><a href="#" class="text-decoration-none" style="color: var(--primary-dark-secondary);" data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick="openModalAndGetExpense({{ i.id }})">{{ i.type }}</a></td>
+                            <td><a href="#" class="text-decoration-none" style="color: var(--primary-dark-secondary);" data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick="openModalAndGetExpense('{{ i.id }}')">{{ i.type }}</a></td>
                             <td>{{ i.category }}</td>
                             <td class="">{{ i.amount | floatformat:2 }}</td>
                             <td>{{ i.beneficiary }}</td>

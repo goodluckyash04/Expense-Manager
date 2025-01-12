@@ -1,11 +1,21 @@
 <!-- Add Transaction Modal -->
-
-<div class="modal fade" id="expensemodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div
+  class="modal fade"
+  id="expensemodal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5 text-center" id="wefef">Add Transaction</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title fs-5" id="wefef">Transaction</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
 
       <div class="modal-body">
@@ -14,27 +24,53 @@
           <!-- Transaction Type -->
           <div id="transactionType" class="mb-4">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="type" id="Expense" value="Expense" onchange="payType()" required />
+              <input
+                class="form-check-input"
+                type="radio"
+                name="type"
+                id="Expense"
+                value="Expense"
+                onchange="payType()"
+                required
+              />
               <label class="form-check-label" for="Expense">Expense</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="type" id="Income" value="Income" onchange="payType()" />
+              <input
+                class="form-check-input"
+                type="radio"
+                name="type"
+                id="Income"
+                value="Income"
+                onchange="payType()"
+              />
               <label class="form-check-label" for="Income">Income</label>
             </div>
           </div>
 
-          <div id="transactionBody" style="display:none">
+          <div id="transactionBody" style="display: none">
             <!-- Transaction Category -->
             <div class="mb-3">
-              <select class="form-select" id="category" name="category" aria-label="Select Category">
-                <option value="" disabled selected>-- Select Category --</option>
+              <select
+                class="form-select"
+                id="category"
+                name="category"
+                aria-label="Select Category"
+              >
+                <option value="" disabled selected>
+                  -- Select Category --
+                </option>
                 <!-- Categories will be populated dynamically -->
               </select>
             </div>
 
             <!-- Beneficiary -->
             <div class="mb-3">
-              <select class="form-select" name="beneficiary" id="beneficiary" onchange="beneficiary()">
+              <select
+                class="form-select"
+                name="beneficiary"
+                id="beneficiary"
+              >
                 <option value="Self" selected>Self</option>
                 <option value="Home">Home</option>
                 <option value="Other">Other</option>
@@ -42,23 +78,49 @@
             </div>
 
             <!-- Beneficiary if "Other" is selected -->
-            <div class="mb-3" id="beneficiary_text" style="display: none;">
-              <input type="text" class="form-control" id="beneficiary_text" name="beneficiary_text" placeholder="Please specify the beneficiary" />
+            <div class="mb-3" id="other_beneficiary"  style="display: none">
+              <input
+                type="text"
+                class="form-control"
+                id="beneficiary_text"
+                name="beneficiary_text"
+                placeholder="Please specify the beneficiary"
+              />
             </div>
 
             <!-- Transaction Date -->
             <div class="mb-3">
-              <input type="date" class="form-control" name="date" id="date" required />
+              <input
+                type="date"
+                class="form-control"
+                name="date"
+                id="date"
+                required
+              />
             </div>
 
             <!-- Transaction Amount -->
             <div class="mb-3">
-              <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" required />
+              <input
+                type="number"
+                class="form-control"
+                name="amount"
+                id="amount"
+                placeholder="Amount"
+                required
+              />
             </div>
 
             <!-- Transaction Description -->
             <div class="mb-3">
-              <input type="text" class="form-control" name="description" id="description" placeholder="Description" required />
+              <input
+                type="text"
+                class="form-control"
+                name="description"
+                id="description"
+                placeholder="Description"
+                required
+              />
             </div>
 
             <!-- Transaction Mode -->
@@ -72,7 +134,13 @@
 
             <!-- Mode Details -->
             <div class="mb-3">
-              <input type="text" class="form-control" name="mode_detail" id="mode_detail" placeholder="Mode description (e.g., bankDR, bankUPI, cash)" />
+              <input
+                type="text"
+                class="form-control"
+                name="mode_detail"
+                id="mode_detail"
+                placeholder="Mode description (e.g., bankDR, bankUPI, cash)"
+              />
             </div>
 
             <!-- Transaction Status -->
@@ -84,9 +152,15 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit"  id="submitButton" class="btn custom-btn-primary w-100 mt-4" >
-              Add Transaction
-            </button>
+            <div class="d-flex justify-content-center">
+              <button
+                id="submitButton"
+                type="submit"
+                class="btn custom-btn-primary w-100 shadow-sm"
+              >
+                <i class="fa-solid fa-plus-circle"></i> Add Transaction
+              </button>
+            </div>
           </div>
         </form>
       </div>

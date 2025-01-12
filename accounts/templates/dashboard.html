@@ -3,48 +3,63 @@
     {% load static %}
 
     {% block body %}
-
-    <div class="text-center mt-3 " >
-        <p class="text-secondary d-inline"> Welcome Back <h2 class="mt-2" style="color:var(--primary);font-family: Dancing Script;">{{user.name}}</h2> </p>
-      </div>
-          <div class="container mt-3">
-        <!-- Row 1: Progress Bar Charts (All in One Line) -->
-        <div class="row">
-            <!-- Financial Overview Progress Bar Chart (Income, Expense, Savings, Investment) -->
-            <div class="col-md-6 mb-4">
-                <canvas id="financialOverviewChart"></canvas>
+    <div class="text-center mt-3">
+        <p class="text-secondary d-inline"> Welcome Back <h2 class="mt-2" style="color:var(--primary);font-family: Dancing Script;">{{ user.name }}</h2> </p>
+    </div>
+    <div class="container mt-4">
+        <div class="row g-2">
+            {% for label, amount in financial_data.items %}
+                {% if label == "Income" or label == "Expense" %}
+                    <!-- Cards for Income and Expense -->
+                    <div class="col-md-3 col-6">
+                        <div class="card text-center shadow-sm">
+                            <div class="card-body">
+                                <p class="card-title fs-6 text-secondary">{{ label }}</p>
+                                <p class="card-text fs-3" style="color:var(--primary)">{{ amount }}</p>
+                            </div>
+                        </div>                
+                    </div>
+                
+                {% else %}
+                    <!-- Cards for other labels (Saving, Investment, etc.) -->
+                    <div class="col-md-2 col-4">
+                        <div class="card text-center shadow-sm">
+                            <div class="card-body">
+                                <p class="card-title fs-6 text-secondary">{{ label }}</p>
+                                <p class="card-text fs-3" style="color:var(--primary)">{{ amount }}</p>
+                            </div>
+                        </div>                
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+    
+        <div class="row mt-5">
+            <div class="col-12 col-sm-6 col-md-3" style="min-height: 35vh;">
+                <canvas id="savingsChart"></canvas>
             </div>
-
-               <!-- Total Expense by Category Bar Chart -->
-        <div class="col-md-6 mb-4">
-            <canvas id="savingsChart" ></canvas>
-        </div>
-        </div>
-
-        <!-- Row 2: Main and Sub Graphs (All in Another Row) -->
-        <div class="row mt-4">
-            <!-- Main Chart -->
-               <!-- Month-wise Savings Chart -->
-        <div class="col-12 col-md-4 mb-4">
-            <canvas id="expenseCategoryChart" ></canvas>
-
-        </div>
-
-            <!-- Sub Chart 1 -->
-            <div class="col-12 col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3" style="min-height: 35vh;">
+                <canvas id="expenseCategoryChart"></canvas>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3" style="min-height: 35vh;">
                 <canvas id="subChart1"></canvas>
             </div>
-
-            <!-- Sub Chart 2 -->
-            <div class="col-12 col-md-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-3" style="min-height: 35vh;">
                 <canvas id="subChart2"></canvas>
             </div>
         </div>
+        <div class="row mt-5">
+            <p class="text-muted mb-0 col-6" style="font-size: 1.2vh;">Active since {{user.created_at|date:'M d, Y' }}</p>
+            <p class="text-muted col-6 text-end" style="font-size: 1.2vh;">* All the data displayed above calculated from transaction date {{user_info.first_txn_date}}</p>
+        </div>
+    </div>
+        
         <link rel="stylesheet" href="{% static 'css/floatingButton.css' %}">
-
-        <button class="floating-button" id="floatingHome"><a href="/home/"><i class="fa-solid fa-home" style="color:var(--secondary)"></i></a></button>
-
+        <button class="floating-button" id="floatingHome"><a href="/utilities/"><i class="fa-solid fa-home" style="color:var(--secondary)"></i></a></button>
+    
     {% endblock body %}
+        
 
     {% block script %}
     <script type="text/javascript">
