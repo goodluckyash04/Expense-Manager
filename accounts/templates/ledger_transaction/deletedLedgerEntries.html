@@ -1,0 +1,68 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+
+<h5 class="text-center text-success mt-3" id = "key">DELETED LEDGER TRANSACTIONS</h5>
+
+
+
+
+
+<div class="row mx-2 table-responsive">
+  <form method="POST" action="/undo-ledger-transaction/">
+    {% csrf_token %}
+    <table id ='myTable' class="table">
+        <thead>
+          <tr>
+            <th scope="col" ><input type="checkbox" id="select-all-checkbox"></th>
+                   <th scope="col" > <a href="/ledger-transaction-details/" class="btn btn-secondary" style="background-color:rgb(77, 168, 104);"><i class="fa-solid fa-square-poll-horizontal"></i></a>
+            </th>
+            <th scope="col" class="text-success">COUNTER_PARTY</th>
+            <th scope="col" class="text-success">TRANSACTION_TYPE</th>
+            <th scope="col" class="text-success">STATUS</th>
+            <th scope="col" class="text-success">AMOUNT</th>
+            <th scope="col" class="text-success">DATE</th>
+            <th scope="col" class="text-success">COMPLETION_DATE</th>
+            <th scope="col" class="text-success">DESCRIPTION</th>
+            <th scope="col" class="text-success">DELETED</th>
+           <th scope="col" class="text-center" ><button type="submit" class="border-0 text-success bg-transparent"><b>UNDO SELECTED</b></button></th>
+
+
+          </tr>
+        </thead>
+        <tbody>
+          {% if data %} {% for i in data %}
+          <tr>
+            <td><input type="checkbox"  id="select" name="record_ledger_ids" value={{ i.id }}></td>
+            <td scope="row">{{forloop.counter}}</td>
+            <td>{{i.counterparty}}</td>
+            <td>{{i.transaction_type}}</td>
+            <td>{{i.status}}</td>
+            <td>{{i.amount }}</td>
+            <td>{{i.date }}</td>
+            <td>{{i.completion_date}}</td>
+            <td >{{i.description}}</td>
+            <td >{{i.deleted_at}}</td>
+            <td class="text-center"><a href="/undo-ledger-transaction/{{i.id}}"><i class="fa-solid text-success fa-rotate-left"></i></a></td>
+          </tr>
+          {% endfor %}{% else %}
+          <td colspan="8" class="text-center">No Records found</td>
+          {% endif %}
+        </tbody>
+
+      </table>
+    </form>
+</div>
+
+
+
+{% endblock body %}
+
+{% block script %}
+<script>
+  document.getElementById("select-all-checkbox").addEventListener("change", function() {
+    var checkboxes = document.getElementsByName("record_ledger_ids");
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = this.checked;
+    }
+  });
+</script>
+{% endblock script %}

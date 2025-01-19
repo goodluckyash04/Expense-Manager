@@ -1,0 +1,122 @@
+<!-- Add Finance Modal -->
+<div
+  class="modal fade"
+  id="financeModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="fi">Add Finance</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="/create-finance/" id="myFinanceForm" method="post">
+          {% csrf_token %}
+
+      <!--   Type    -->
+        <div id="transactionType" >
+        <!-- Loan -->
+          <div class="form-check form-check-inline mb-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="type"
+              id="loan"
+              value="Loan"
+              required
+            />
+            <label class="form-check-label" for="Loan">Loan</label>
+          </div>
+
+        <!-- SIP -->
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="type"
+              id="sip"
+              value="SIP"
+            />
+            <label class="form-check-label" for="SIP">SIP</label>
+          </div>
+      </div>
+      <div id="financeBody"  >
+
+        <!--  Instrument Name    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                placeholder="Instrument Name"
+              />
+            </div>
+
+        <!--  started_on    -->
+            <div class="mb-3">
+              <input
+                type="date"
+                class="form-control"
+                name="started_on"
+                id="started_on"
+
+                aria-describedby="started_on"
+              />
+            </div>
+
+          <!--  Instrument Amount    -->
+            <div class="mb-3">
+              <input
+                type="number"
+                class="form-control"
+                name="amount"
+                placeholder="Total Amount"
+                id="amount"
+                aria-describedby="emailHelp"
+                required
+              />
+            </div>
+
+          <!--  No of Installments    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="no_of_installments"
+                placeholder="No of Installments"
+                id="installments"
+                required
+              />
+            </div>
+
+          <!--  Submit Button    -->
+            <button
+              id="submitButton"
+              type="submit"
+              style="background-color: #2b6b32; border: none"
+              class="btn btn-primary"
+            >
+              Add
+            </button>
+        </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    document.getElementById('started_on').value = new Date().toISOString().split('T')[0]
+</script>

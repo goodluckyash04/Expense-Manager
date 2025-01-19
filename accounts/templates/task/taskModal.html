@@ -7,24 +7,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/addTask/" method="post">
+                <form action="/addTask/" method="post" id="myTaskForm">
                     {% csrf_token %}
                     <select
                         class="form-select mb-3"
                         name="priority"
+                        id = "priority"
                         aria-label="Default select example"
                     >
                         <option selected>-- Priority --</option>
                         <option value="High">High</option>
-                        <option selected value="Moderate">Moderate</option>
+                        <option selected value="Medium">Medium</option>
                         <option value="Low">Low</option>
-                        <option value="Urgent">Urgent</option>
                     </select>
                     <div class="mb-3">
                         <input
-                            type="datetime-local"
+                            type="date"
                             class="form-control"
-                            name="complete_by"
+                            name="complete_by_date"
                             id="complete_by"
                             onchange="dateCheck()"
                             aria-describedby="complete_by"
@@ -34,15 +34,15 @@
                         <input
                             type="text"
                             class="form-control"
-                            name="task_title"
+                            name="name"
                             placeholder="Task Title"
                             id="title"
                             required
                         />
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" name="task_detail" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                        <label for="floatingTextarea">Task Detail</label>
+                        <textarea class="form-control" name="description" placeholder="Leave a comment here" id="descirption"></textarea>
+                        <label for="descirption">Task Detail</label>
                     </div>
                     <button
                         type="submit"
@@ -57,3 +57,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('complete_by').value = new Date().toISOString().split('T')[0]
+</script>

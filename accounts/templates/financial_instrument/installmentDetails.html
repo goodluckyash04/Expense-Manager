@@ -1,0 +1,135 @@
+{% extends 'header.html' %} {% load static %} {% block body %}
+
+  <p class="text-success fs-3 mt-3 ms-5"  id = "key">{{product_details.name | upper}}</p>
+
+  <div class="container-fluid mt-1 px-5">
+  <div class="row">
+    <!-- First Section -->
+    <div class="col-12 col-md-6 mb-3">
+      <div class="d-flex flex-wrap">
+        <p class="fs-6 me-3 text-secondary">Type: <b><span class="text-success">{{product_details.type}}</span></b></p>
+        <p class="fs-6 me-3 text-secondary">Started: <b><span class="text-info">{{product_details.started_on}}</span></b></p>
+        <p class="fs-6 text-secondary me-3">Status: <b><span class="text-info">{{product_details.status}}</span></b></p>
+        <p class="fs-6 text-secondary ">Total Amount: <b><span class="text-info">₹ {{product_details.amount}}</span></b></p>
+      </div>
+    </div>
+
+    <!-- Second Section -->
+    <div class="col-12 col-md-6">
+      <div class="d-flex flex-wrap justify-content-md-end">
+        <p class="text-secondary fs-6 me-3">Installments: <b><span class="text-info"><span class="text-success">{{product_details.paid_installment}}</span> / {{product_details.no_of_installments}}</span></b></p>
+        <p class="text-secondary fs-6 me-3">Paid Amount: <b><span class="text-success">₹ {{product_details.paid_amount}}</span></b></p>
+        <p class="text-secondary fs-6">Remaining: <b><span class="text-danger">₹ {{product_details.remaining_amount}}</span></b></p>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="col-md-1 col-5">
+    </div>
+
+
+
+
+<div class="row mx-2 table-responsive">
+  <table id ='myTable' class="table">
+    <thead>
+      <tr>
+      <th scope="col"> <a href="/finance-details/" class="btn" style=""><i class="fa-solid fa-arrow-left"></i></a>
+      </th>
+
+        <th scope="col">Status</th>
+        <th scope="col">Payment Date</th>
+        <th scope="col">Amount (₹)</th>
+        <th scope="col">Detail</th>
+        <th scope="col" colspan="2"> <button type="button" onclick="generateCSV()" class="btn btn-success form-control"><i class="fa-solid fa-file-csv"></i></button>
+</th>
+        
+       
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% if all_transaction %} {% for i in all_transaction %}
+      <tr>
+        <td scope="row">{{forloop.counter}}</td>
+        <td>
+          <a href="/update-transaction-status/{{i.id}}">
+          {% if i.status == 'Completed' %}
+          <i class="fa-solid fa-square-check fs-5" style="color: #63E6BE;"></i>
+          {% else %}
+          <i class="fa-solid fa-circle-exclamation fs-5" style="color: #ead78f;"></i>
+          {% endif %}
+            </a>
+        </td>
+        <td>{{i.date }}</td>
+        <td>{{i.amount}}</td>
+        <td>{{i.description}}</td>
+        <td><a href="" data-bs-toggle="modal" data-bs-target="#editExpenseModal" onclick="openModalAndGetExpense({{ i.id }})"><i class="fa-solid  fa-pen"  style="color: #B197fc"></i></a></td>
+        <td></td>
+        <td><a href="/delete-transaction/{{i.id}}"><i class="fa-solid text-danger fa-trash"></i></a></td>
+        
+      </tr>
+      {% endfor %}{% else %}
+      <td colspan="8" class="text-center">No Records found</td>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% include 'transaction/editTransactionModal.html' %}
+
+
+{% endblock body %}
+
+{% block script %}
+
+<script src="../static/js/updateTransaction.js"></script>
+
+<script>
+  function generateCSV() {
+    var table = document.getElementById("myTable");
+    var csvContent = "data:text/csv;charset=utf-8,";
+    var cont = document.getElementById("key").textContent.split('-');
+    console.log(cont)
+    // Extract the table headers
+    var headers = table.getElementsByTagName("th");
+    var headerValues = [];
+    for (var i = 0; i < headers.length; i++) {
+      headerValues.push(headers[i].textContent);
+    }
+    csvContent += '"' + headerValues.join('","') + '"\r\n';
+  
+    // Extract the table data
+    var rows = table.getElementsByTagName("tr");
+    for (var i = 0; i < rows.length; i++) {
+      var cells = rows[i].getElementsByTagName("td");
+      var rowValues = [];
+      
+      // Extract cell values
+      for (var j = 0; j < cells.length; j++) {
+        // Wrap date values in double quotes
+        if (j === 2) {
+          rowValues.push('"' + cells[j].textContent + '"');
+        } else {
+          rowValues.push(cells[j].textContent);
+        }
+      }
+  
+      // Format the row as CSV and add to the content
+      csvContent += rowValues.join(",") + "\r\n";
+    }
+  
+    // Create a download link for the CSV file
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${cont[0]}.csv`);
+    document.body.appendChild(link);
+  
+    // Trigger the link to start the download
+    link.click();
+  }
+
+
+
+</script>
+{% endblock script %}

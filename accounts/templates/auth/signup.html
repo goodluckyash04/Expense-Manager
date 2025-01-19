@@ -1,16 +1,16 @@
 {% extends 'index.html' %} {% load static %} {% block body %}
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-10 col-md-4">
+    <div class="col-10 col-sm-10 col-md-8 col-lg-4">
       <form
         method="post"
         action="/signup/"
-        class="border rounded p-5"
-        style="margin-top: 25%; background-color: #abf3b3"
+        style="margin-top: 30%;"
       >
-      <p class="text-danger mb-0">{{msg}}</p>  
         {% csrf_token %}
-        <h3 class="mb-3 text-success">User Signup</h3>
+        <h3 class="mb-4 text-secondary  text-center">Welcome to <span class="text-success">Go-Expense</span></h3>
+        <p class="fs-4 text-success text-center">Sign-Up</p>
+
         <div class="mb-3">
           <input
             type="text"
@@ -18,6 +18,7 @@
             class="form-control"
             name="name"
             id="name"
+            style="line-height:2rem"
             aria-describedby="emailHelp"
           />
         </div>
@@ -28,6 +29,7 @@
             class="form-control"
             name="username"
             id="username"
+            style="line-height:2rem"
             aria-describedby="emailHelp"
             required
           />
@@ -39,6 +41,7 @@
             class="form-control"
             name="email"
             id="email"
+            style="line-height:2rem"
             aria-describedby="emailHelp"
             required
           />
@@ -48,6 +51,7 @@
             type="password"
             placeholder="Password"
             class="form-control"
+            style="line-height:2rem"
             name="password"
             id="password"
           />
@@ -57,23 +61,27 @@
             type="password"
             placeholder="Re-Enter Password"
             class="form-control"
+            style="line-height:2rem"
             name="rpassword"
             id="rpassword"
           />
         </div>
+      <p class="text-danger mb-0">{{msg}}</p>
         <div class="mb-3">
-          <button
+         <button
             type="submit"
             class="btn btn-primary form-control"
-            style="background-color: #2b6b32; border: none"
+            style="background-color: #2b6b32; border: none; line-height:2.2rem"
           >
-            Signup
+            SIGN UP
           </button>
+          <hr>
         </div>
-        <a class="text-success" href="/">
-            Already have an Account?
-          </a>
+
       </form>
+        <div class="d-flex justify-content-center">
+          <a class="text-secondary text-decoration-none" href="/">Already have an Account? &nbsp; <b class="text-success">LOGIN</b></a>
+        </div>
     </div>
   </div>
 </div>

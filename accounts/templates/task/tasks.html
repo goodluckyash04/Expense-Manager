@@ -19,9 +19,9 @@
             <tr>
                 <th scope="row">{{forloop.counter}}</th>
                 <td>{{i.priority}}</td>
-                <td>{{i.complete_by | date:"d M, Y" }}</td>
-                <td>{{i.task_title}}</td>
-                <td>{{i.task_detail}}</td>
+                <td>{{i.complete_by_date | date:"d M, Y" }}</td>
+                <td>{{i.name}}</td>
+                <td>{{i.description}}</td>
                 <td><a href={% url 'taskAction' i.id 'complete' %}><i class="fa-solid text-success fa-check"></i></a></td>
                 <td><a href={% url 'taskAction' i.id 'delete' %}><i class="fa-solid text-danger fa-trash"></i></a></td>
             </tr>

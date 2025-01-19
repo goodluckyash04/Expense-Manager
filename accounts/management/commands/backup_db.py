@@ -1,9 +1,19 @@
+import traceback
+
 from cryptography.fernet import Fernet
 from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import base64
 import datetime
+import os
+
+from django.db.models import Q
+
+from accounts.models import Task, Transaction, LedgerTransaction, FinancialProduct
+
+
+# from decouple import config
 
 class Command(BaseCommand):
     help = 'Backup and send the encrypted database via email'
@@ -11,7 +21,36 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             print("Starting the backup and encryption process...")
+            today = datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
+            models_to_check = [
+                (Transaction, Q(updated_at__date=today)),
+                (LedgerTransaction, Q(updated_at__date=today)),
+                (FinancialProduct, Q(updated_at__date=today)),
+                (Task, Q(updated_at__date=today))
+            ]
 
+            changes_detected = False
+
+            for model, query in models_to_check:
+                if model.objects.filter(query).exists():
+                    changes_detected = True
+                    break
+            print("changes_detected",changes_detected)
+            due_tasks = Task.objects.filter(complete_by_date__lte=today.date(),status = 'Pending')
+
+            task_list = []
+            for task in due_tasks:
+                task_list.append(task.name+'-'+task.description)
+            list_string = "\n".join(task_list)
+            task_email = EmailMessage(
+                'Task Reminder',
+                f'Reminder for task:\n {list_string}',
+                settings.EMAIL_HOST_USER,
+                [settings.RECIEPINT_EMAIL]
+            )
+            print(today.date())
+            if task_list:
+                task_email.send()
             # Perform a database backup
             db_file_path = settings.DATABASES['default']['NAME']  # Assuming the default database settings
             with open(db_file_path, 'rb') as f:
@@ -35,13 +74,16 @@ class Command(BaseCommand):
             email = EmailMessage(subject, message, from_email, recipient_list)
             today = datetime.datetime.today().strftime("%Y%m%d%H%M")
             email.attach(f'{today}.bin', encrypted_data, 'application/octet-stream')
-
+            # if changes_detected:
             email_sent = email.send()
             if email_sent:
                 print("Email sent successfully.")
             else:
                 print("Email sending failed.")
+            # else:
+                # print("No changes Made Today")
         except Exception as e:
+            print(traceback.print_exc())
             print(f"An error occurred: {e}")
 
 

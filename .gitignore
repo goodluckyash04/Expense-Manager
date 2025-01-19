@@ -3,11 +3,11 @@ accounts/templates/addEMI.html
 accounts/templates/expense.html
 accounts/templates/loanadd.html
 backup/
+home/
 
 # Ignore database files
 *.sqlite3
 *.db
-*.bin
 
 # Ignore static and media files (served by Django during development)
 /staticfiles/
@@ -45,5 +45,4 @@ Pipfile.lock
 .DS_Store
 Thumbs.db
 
-commands/decrypt.py
-accounts/management/commands/decrypt.py
+Django.txt

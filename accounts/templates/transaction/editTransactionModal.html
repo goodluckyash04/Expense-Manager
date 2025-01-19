@@ -1,0 +1,123 @@
+<div
+  class="modal fade"
+  id="editExpenseModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-success"  id="title"></h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="" id="updateExpenseForm" method="post">
+          {% csrf_token %}
+
+      <div id="transactionUpdateBody" >
+
+        <!--  Transaction Category    -->
+            <select
+              class="form-select mb-3"
+              id="category"
+              name="category"
+              aria-label="Default select example"
+            >
+            </select>
+
+        <!--  Beneficiary if selected other    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="beneficiary"
+                id="beneficiary_data"
+                placeholder="Beneficiary Self/Home/Other"
+              />
+            </div>
+
+        <!--  Transaction Date    -->
+            <div class="mb-3">
+              <input
+                type="date"
+                class="form-control"
+                name="date"
+                id="date"
+
+                aria-describedby="emailHelp"
+              />
+            </div>
+
+          <!--  Transaction Amount    -->
+            <div class="mb-3">
+              <input
+                type="number"
+                class="form-control"
+                step="any"
+                name="amount"
+                placeholder="Amount"
+                id="amount"
+                aria-describedby="emailHelp"
+                required
+              />
+            </div>
+
+          <!--  Transaction Description    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="description"
+                placeholder="Description"
+                id="description"
+                required
+              />
+            </div>
+
+        <!-- Transaction Mode  -->
+             <select
+              class="form-select mb-3"
+              name="mode"
+              id="mode"
+            >
+            </select>
+
+
+        <!--  Mode Details    -->
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="mode_detail"
+                placeholder="Mode Description ex: bankDR, bankUPI, cash"
+                id="mode_detail"
+
+              />
+            </div>
+
+
+
+          <!--  Submit Button    -->
+            <button
+              id="submitButton"
+              type="submit"
+              style="background-color: #2b6b32; border: none"
+              class="btn btn-primary"
+            >
+              Update
+            </button>
+        </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
